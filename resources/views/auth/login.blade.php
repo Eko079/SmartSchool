@@ -1,6 +1,3 @@
-﻿<?php
-declare(strict_types=1);
-?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -16,24 +13,7 @@ declare(strict_types=1);
       href="https://fonts.googleapis.com/css2?family=Inter%3Aital%2Cwght%400%2C100..900%3B1%2C100..900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      *, ::before, ::after {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-      }
-    </style>
-
-    <style>
-      body {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}" />
   </head>
   <body style="background-color: #F4F5F7">
     <div
