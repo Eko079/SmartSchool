@@ -335,12 +335,13 @@
                       fill="#94A3B8"
                     ></path>
                   </svg>
-                  <div
-                    data-pencil-name="admin@univ-nusantara.ac.id"
-                    class="text-[14px]/[normal] box-border text-[#94A3B8] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                  >
-                    admin@smanusantara.sch.id
-                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="admin@smanusantara.sch.id"
+                    autocomplete="username"
+                    class="login-input text-[14px]/[normal] box-border text-[#0F172A] font-[Inter,system-ui,sans-serif] font-normal text-left placeholder:text-[#94A3B8]"
+                  />
                 </div>
               </div>
               <div
@@ -371,13 +372,14 @@
                       fill="#94A3B8"
                     ></path>
                   </svg>
-                  <div
-                    data-pencil-name="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-                    class="text-[14px]/[normal] box-border text-[#0F172A] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]"
-                  >
-                    â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢
-                  </div>
-                  <div data-pencil-name="sp" class="box-border [flex:1_1_0] h-[18px]"></div>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="••••••••••"
+                    autocomplete="current-password"
+                    class="login-input text-[14px]/[normal] box-border text-[#0F172A] font-[Inter,system-ui,sans-serif] font-normal text-left placeholder:text-[#0F172A]"
+                  />
+                  
                   <svg
                     data-pencil-name="Eye"
                     data-icon-name="eye"
