@@ -64,7 +64,7 @@
             data-pencil-name="Menu Utama"
             style="align-items: flex-start; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; gap: 4px; height: fit-content; justify-content: flex-start; width: 100%"
           >
-            <a href="/beranda" data-pencil-name="Beranda" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/beranda" data-pencil-name="Beranda" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Beranda Icon"
@@ -87,7 +87,7 @@
                 Beranda
               </div>
             </a>
-            <a href="/siswa" data-pencil-name="Data Siswa" style="align-items: center; background-color: #2563EB; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/siswa" data-pencil-name="Data Siswa" style="align-items: center; background-color: #2563EB; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Data Siswa Icon"
@@ -110,7 +110,7 @@
                 Data Siswa
               </div>
             </a>
-            <a href="/kategori-tagihan" data-pencil-name="Kategori Tagihan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/kategori-tagihan" data-pencil-name="Kategori Tagihan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Kategori Tagihan Icon"
@@ -133,7 +133,7 @@
                 Kategori Tagihan
               </div>
             </a>
-            <a href="/billing-generator" data-pencil-name="Billing Generator" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/billing-generator" data-pencil-name="Billing Generator" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Billing Generator Icon"
@@ -156,7 +156,7 @@
                 Billing Generator
               </div>
             </a>
-            <a href="/laporan" data-pencil-name="Laporan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/laporan" data-pencil-name="Laporan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Laporan Icon"
@@ -190,7 +190,7 @@
             data-pencil-name="Menu Lainnya"
             style="align-items: flex-start; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; gap: 4px; height: fit-content; justify-content: flex-start; width: 100%"
           >
-            <a href="/pengaturan" data-pencil-name="Pengaturan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/pengaturan" data-pencil-name="Pengaturan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Pengaturan Icon"
@@ -213,7 +213,7 @@
                 Pengaturan
               </div>
             </a>
-            <a href="/bantuan" data-pencil-name="Bantuan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100% text-decoration: none;"
+            <a href="/bantuan" data-pencil-name="Bantuan" style="align-items: center; background-color: #00000000; border-radius: 10px; box-sizing: border-box; display: flex; flex-direction: row; flex-shrink: 0; gap: 12px; height: fit-content; justify-content: flex-start; padding: 10px 12px; width: 100%; text-decoration: none;"
             >
               <svg
                 data-pencil-name="Bantuan Icon"
