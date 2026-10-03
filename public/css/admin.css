@@ -1,0 +1,18 @@
+*, ::before, ::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+/* Halaman admin: konten tinggi dan scroll, bukan flex-center seperti login */
+body {
+  display: block;
+}
