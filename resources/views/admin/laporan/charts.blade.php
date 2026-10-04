@@ -12,7 +12,10 @@
         <div class="flex items-end gap-2 h-44 pt-4 border-b border-slate-200 dark:border-slate-800">
             @foreach($trend ?? [] as $i => $val)
             @php $h = max(round($val / $max * 100), $val > 0 ? 4 : 1); @endphp
-            <div class="flex-1 flex flex-col items-center gap-2 justify-end h-full group" title="{{ $labels[$i] ?? '' }}: Rp {{ number_format($val, 0, ',', '.') }}">
+            <div class="flex-1 flex flex-col items-center gap-2 justify-end h-full group relative">
+                <div class="absolute -top-1 hidden group-hover:block rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-white whitespace-nowrap z-10">
+                    {{ $labels[$i] ?? '' }} • Rp {{ number_format($val, 0, ',', '.') }}
+                </div>
                 <div class="ss-bar w-full max-w-[28px] rounded-t-md group-hover:opacity-80 {{ $i === $lastIdx ? 'bg-blue-600' : 'bg-blue-200 dark:bg-blue-900' }}" data-bar-h="{{ $h }}" style="height: {{ $h }}%"></div>
                 <span class="text-[11px] {{ $i === $lastIdx ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400' }}">{{ $labels[$i] ?? '' }}</span>
             </div>
