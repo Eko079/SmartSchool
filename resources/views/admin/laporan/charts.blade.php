@@ -26,10 +26,25 @@
         $wait = $donut['waiting'] ?? 0;
         $late = $donut['overdue'] ?? 0;
         $tot = max($donutTotal ?? ($paid + $wait + $late), 1);
-        $c = 87.96; // keliling lingkaran r=14
-        $pPaid = round($paid / $tot * $c, 1);
-        $pWait = round($wait / $tot * $c, 1);
-        $pLate = round($late / $tot * $c, 1);
+        $c = round(2 * M_PI * 14, 2); // keliling lingkaran r=14 → ±87.96
+        // Segmen presisi: lewati 0 (biang titik kaku), koreksi drift rounding di segmen terakhir.
+        $rawSegs = [
+            ['color' => '#22c55e', 'count' => $paid],
+            ['color' => '#f59e0b', 'count' => $wait],
+            ['color' => '#ef4444', 'count' => $late],
+        ];
+        $segs = [];
+        $acc = 0;
+        foreach ($rawSegs as $rs) {
+            if ($rs['count'] <= 0) continue;
+            $len = round($rs['count'] / $tot * $c, 1);
+            $segs[] = ['color' => $rs['color'], 'len' => $len, 'off' => round($acc, 1)];
+            $acc += $len;
+        }
+        if (!empty($segs)) {
+            $drift = round($c - $acc, 1);
+            $segs[count($segs) - 1]['len'] = round($segs[count($segs) - 1]['len'] + $drift, 1);
+        }
         $pctPaid = round($paid / $tot * 100);
     @endphp
     <div class="ss-card ss-tip flex flex-col justify-between gap-4" data-tip="Status seluruh tagihan">
@@ -41,12 +56,14 @@
             <div class="relative w-32 h-32">
                 <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
                     <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" class="dark:stroke-slate-700" stroke-width="4.5"/>
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#22c55e" stroke-width="4.5" stroke-dasharray="{{ $pPaid }} {{ $c }}" stroke-linecap="round"/>
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="{{ $pWait }} {{ $c }}" stroke-dashoffset="-{{ $pPaid }}" stroke-linecap="round"/>
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-dasharray="{{ $pLate }} {{ $c }}" stroke-dashoffset="-{{ $pPaid + $pWait }}" stroke-linecap="round"/>
+                    @foreach($segs as $seg)
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="{{ $seg['color'] }}" stroke-width="4.5" stroke-linecap="butt"
+                        class="ss-donut-seg" data-len="{{ $seg['len'] }}" data-off="{{ $seg['off'] }}" data-circ="{{ $c }}"
+                        stroke-dasharray="{{ $seg['len'] }} {{ $c }}" stroke-dashoffset="-{{ $seg['off'] }}"/>
+                    @endforeach
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span class="text-xl font-bold text-slate-800 dark:text-white">{{ $pctPaid }}%</span>
+                    <span class="text-xl font-bold text-slate-800 dark:text-white" data-donut-count="{{ $pctPaid }}" data-donut-decimals="0">{{ $pctPaid }}%</span>
                     <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Lunas</span>
                 </div>
             </div>

@@ -2,8 +2,7 @@
     use App\Http\Controllers\Admin\DashboardController;
 
     $maxIncome = max(1, collect($monthlyIncome ?? [])->max('total') ?? 0);
-    $circ = 2 * M_PI * 14; // r=14 → ±87.96
-    $offset = 0;
+    $circ = round(2 * M_PI * 14, 2); // r=14 → ±87.96
 @endphp
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -50,26 +49,39 @@
             <p class="text-xs text-slate-500">Distribusi total penerimaan</p>
         </div>
         @if(!empty($categoryShares) && !empty($categoryTop) && ($categoryTop['percent'] ?? 0) > 0)
+        @php
+            // Segmen presisi: lewati 0% (biang titik oranye), koreksi drift rounding di segmen terakhir.
+            $circVal = round($circ, 2);
+            $segs = [];
+            $acc = 0;
+            foreach (($categoryShares ?? []) as $share) {
+                if (($share['percent'] ?? 0) <= 0) continue;
+                $len = round($share['percent'] / 100 * $circ, 1);
+                $segs[] = ['share' => $share, 'len' => $len, 'off' => round($acc, 1)];
+                $acc += $len;
+            }
+            if (!empty($segs)) {
+                $drift = round($circ - $acc, 1);
+                $segs[count($segs) - 1]['len'] = round($segs[count($segs) - 1]['len'] + $drift, 1);
+            }
+            $topPct = (float) ($categoryTop['percent'] ?? 0);
+        @endphp
         <div class="flex justify-center py-2">
             <div class="relative w-32 h-32">
                 <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90" role="img"
                     aria-label="Distribusi penerimaan: {{ collect($categoryShares)->map(fn ($s) => $s['code'] . ' ' . number_format($s['percent'], 1, ',', '.') . '%')->implode(', ') }}">
                     <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" class="dark:stroke-slate-700" stroke-width="4.5"/>
-                    @foreach($categoryShares as $share)
-                    @php
-                        $len = round($share['percent'] / 100 * $circ, 1);
-                        $dashOffset = -$offset;
-                        $offset += $len;
-                    @endphp
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="{{ $share['stroke'] }}"
-                        stroke-width="4.5" stroke-dasharray="{{ $len }} {{ round($circ, 2) }}"
-                        stroke-dashoffset="{{ round($dashOffset, 1) }}" stroke-linecap="round">
-                        <title>{{ $share['name'] }} ({{ $share['code'] }}): {{ number_format($share['percent'], 1, ',', '.') }}% — Rp {{ number_format($share['amount'], 0, ',', '.') }}</title>
+                    @foreach($segs as $seg)
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="{{ $seg['share']['stroke'] }}"
+                        stroke-width="4.5" stroke-linecap="butt"
+                        class="ss-donut-seg" data-len="{{ $seg['len'] }}" data-off="{{ $seg['off'] }}" data-circ="{{ $circVal }}"
+                        stroke-dasharray="{{ $seg['len'] }} {{ $circVal }}" stroke-dashoffset="-{{ $seg['off'] }}">
+                        <title>{{ $seg['share']['name'] }} ({{ $seg['share']['code'] }}): {{ number_format($seg['share']['percent'], 1, ',', '.') }}% — Rp {{ number_format($seg['share']['amount'], 0, ',', '.') }}</title>
                     </circle>
                     @endforeach
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span class="text-xl font-bold text-slate-800 dark:text-white">{{ number_format($categoryTop['percent'], 1, ',', '.') }}%</span>
+                    <span class="text-xl font-bold text-slate-800 dark:text-white" data-donut-count="{{ number_format($topPct, 1, ',', '.') }}" data-donut-decimals="1">{{ number_format($topPct, 1, ',', '.') }}%</span>
                     <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{{ $categoryTop['code'] }}</span>
                 </div>
             </div>

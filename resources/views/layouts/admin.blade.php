@@ -82,6 +82,67 @@
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
             document.getElementById('sidebar-overlay').classList.toggle('hidden');
         }
+
+        // Animasi draw-in donat: 0% → nilai akhir saat chart masuk viewport.
+        function animateDonut(scope) {
+            var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            scope.querySelectorAll('[data-donut-count]').forEach(function (el) {
+                var raw = (el.getAttribute('data-donut-count') || '0').replace(/[^0-9.,-]/g, '').replace(',', '.');
+                var target = parseFloat(raw) || 0;
+                var decimals = parseInt(el.getAttribute('data-donut-decimals') || '0', 10) || 0;
+                var fmt = function (v) {
+                    return v.toLocaleString('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+                };
+                if (reduce) { el.textContent = fmt(target); return; }
+                var t0 = null, dur = 900;
+                function frame(t) {
+                    if (!t0) t0 = t;
+                    var p = Math.min((t - t0) / dur, 1);
+                    var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+                    el.textContent = fmt(target * eased);
+                    if (p < 1) requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            });
+            scope.querySelectorAll('circle.ss-donut-seg').forEach(function (seg) {
+                var len = parseFloat(seg.getAttribute('data-len') || '0');
+                var off = parseFloat(seg.getAttribute('data-off') || '0');
+                var circ = parseFloat(seg.getAttribute('data-circ') || '87.96');
+                seg.style.transition = 'none';
+                seg.setAttribute('stroke-dasharray', '0 ' + circ);
+                seg.setAttribute('stroke-dashoffset', String(-off));
+                seg.getBoundingClientRect(); // reflow agar transisi bisa jalan
+                if (reduce) {
+                    seg.setAttribute('stroke-dasharray', len + ' ' + circ);
+                    return;
+                }
+                seg.style.transition = 'stroke-dasharray 0.9s cubic-bezier(.22,.61,.36,1)';
+                requestAnimationFrame(function () {
+                    seg.setAttribute('stroke-dasharray', len + ' ' + circ);
+                });
+            });
+        }
+        (function () {
+            var done = false;
+            function run() {
+                if (done) return;
+                if (!document.querySelector('circle.ss-donut-seg')) return;
+                done = true;
+                animateDonut(document);
+            }
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (e) {
+                        if (e.isIntersecting) { run(); io.disconnect(); }
+                    });
+                }, { threshold: 0.25 });
+                var first = document.querySelector('circle.ss-donut-seg');
+                if (first) io.observe(first.closest('svg') || first);
+                setTimeout(run, 1500); // fallback bila observer tak fire
+            } else {
+                run();
+            }
+        })();
     </script>
 </body>
 </html>
