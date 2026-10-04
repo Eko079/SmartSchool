@@ -165,6 +165,22 @@
                 requestAnimationFrame(frame);
             });
         }
+        // Tooltip hover segmen donat (bubble seragam kayak bar chart).
+        (function () {
+            document.querySelectorAll('[data-donut-tip]').forEach(function (box) {
+                var wrap = box.parentElement;
+                if (!wrap) return;
+                wrap.querySelectorAll('circle.ss-donut-seg[data-seg-tip]').forEach(function (seg) {
+                    seg.addEventListener('mouseenter', function () {
+                        box.textContent = seg.getAttribute('data-seg-tip') || '';
+                        box.classList.remove('hidden');
+                    });
+                    seg.addEventListener('mouseleave', function () {
+                        box.classList.add('hidden');
+                    });
+                });
+            });
+        })();
         (function () {
             var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (reduce) return; // biarkan nilai akhir Blade tampil langsung

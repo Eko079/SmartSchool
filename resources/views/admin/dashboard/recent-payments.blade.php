@@ -1,5 +1,4 @@
-<div class="ss-card ss-tip lg:col-span-2 flex flex-col gap-3"
-    data-tip="6 pembayaran sukses terbaru — klik Lihat Semua untuk rekap lengkap">
+<div class="ss-card lg:col-span-2 flex flex-col gap-3">
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Pembayaran Terbaru</h2>

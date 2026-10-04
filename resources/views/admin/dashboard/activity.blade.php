@@ -1,7 +1,6 @@
 @php use App\Http\Controllers\Admin\DashboardController; @endphp
 
-<div class="ss-card ss-tip flex flex-col justify-between gap-4"
-    data-tip="Ringkasan kejadian terbaru: pembayaran lunas, tagihan menunggu, dan siswa baru">
+<div class="ss-card flex flex-col justify-between gap-4">
     <div class="space-y-3">
         <h2 class="text-sm font-bold text-slate-800 dark:text-white">Aktivitas Terbaru</h2>
         <div class="space-y-3">
@@ -20,8 +19,7 @@
     </div>
 
     {{-- Realisasi pemasukan bulan berjalan vs tagihan terbit bulan ini --}}
-    <div class="ss-tip ss-tip-bottom rounded-xl bg-slate-50 dark:bg-slate-800 p-3.5 space-y-2 border border-slate-200 dark:border-slate-700"
-        data-tip="Pemasukan bulan ini dibagi tagihan yang terbit bulan ini — target ideal 100%">
+    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3.5 space-y-2 border border-slate-200 dark:border-slate-700">
         <div class="flex items-center justify-between text-xs font-semibold">
             <span class="text-slate-800 dark:text-white">Realisasi Bulan Ini</span>
             <span class="text-blue-600 dark:text-blue-400">{{ $realizationPct ?? 0 }}%</span>

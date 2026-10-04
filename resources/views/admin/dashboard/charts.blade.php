@@ -8,7 +8,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     {{-- Bar Chart: pemasukan 12 bulan terakhir (dari tabel payments) --}}
     <div class="ss-card ss-tip lg:col-span-2 flex flex-col justify-between gap-4"
-        data-tip="Dihitung dari pembayaran sukses per bulan — arahkan kursor ke tiap batang untuk nominalnya">
+        data-tip="Sukses per bulan">
         <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
                 <h2 class="text-sm font-bold text-slate-800 dark:text-white">Grafik Pembayaran</h2>
@@ -43,7 +43,7 @@
 
     {{-- Donat: distribusi penerimaan per kategori (dari paid_amount tagihan) --}}
     <div class="ss-card ss-tip flex flex-col justify-between gap-4"
-        data-tip="Porsi penerimaan per kategori dari total yang sudah terbayar">
+        data-tip="Porsi per kategori">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Pembayaran per Kategori</h2>
             <p class="text-xs text-slate-500">Distribusi total penerimaan</p>
@@ -68,6 +68,7 @@
         @endphp
         <div class="flex justify-center py-2">
             <div class="relative w-32 h-32">
+                <div data-donut-tip class="absolute left-1/2 -translate-x-1/2 -top-1 hidden rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-white whitespace-nowrap z-10 pointer-events-none"></div>
                 <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90" role="img"
                     aria-label="Distribusi penerimaan: {{ collect($categoryShares)->map(fn ($s) => $s['code'] . ' ' . number_format($s['percent'], 1, ',', '.') . '%')->implode(', ') }}">
                     <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" class="dark:stroke-slate-700" stroke-width="4.5"/>
@@ -75,9 +76,9 @@
                     <circle cx="18" cy="18" r="14" fill="none" stroke="{{ $seg['share']['stroke'] }}"
                         stroke-width="4.5" stroke-linecap="butt"
                         class="ss-donut-seg" data-len="{{ $seg['len'] }}" data-off="{{ $seg['off'] }}" data-circ="{{ $circVal }}"
-                        stroke-dasharray="{{ $seg['len'] }} {{ $circVal }}" stroke-dashoffset="-{{ $seg['off'] }}">
-                        <title>{{ $seg['share']['name'] }} ({{ $seg['share']['code'] }}): {{ number_format($seg['share']['percent'], 1, ',', '.') }}% — Rp {{ number_format($seg['share']['amount'], 0, ',', '.') }}</title>
-                    </circle>
+                        data-seg-tip="{{ $seg['share']['code'] }} • {{ number_format($seg['share']['percent'], 1, ',', '.') }}% • Rp {{ number_format($seg['share']['amount'], 0, ',', '.') }}"
+                        stroke-dasharray="{{ $seg['len'] }} {{ $circVal }}" stroke-dashoffset="-{{ $seg['off'] }}"
+                        style="pointer-events: stroke; cursor: pointer" />
                     @endforeach
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -88,8 +89,8 @@
         </div>
         <div class="space-y-2 text-xs border-t border-slate-200 dark:border-slate-800 pt-3">
             @foreach($categoryShares as $share)
-            <div class="ss-tip ss-tip-bottom flex items-center justify-between"
-                data-tip="{{ $share['name'] }}: Rp {{ number_format($share['amount'], 0, ',', '.') }} dari total penerimaan">
+            <div class="flex items-center justify-between"
+                title="{{ $share['name'] }}: Rp {{ number_format($share['amount'], 0, ',', '.') }} dari total penerimaan">
                 <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                     <span class="w-2.5 h-2.5 rounded-full {{ $share['dot'] }}"></span>
                     {{ $share['code'] }}

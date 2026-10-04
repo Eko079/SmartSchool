@@ -1,6 +1,6 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     {{-- Tren penerimaan 12 bulan nyata --}}
-    <div class="ss-card ss-tip lg:col-span-2 flex flex-col justify-between gap-4" data-tip="Penerimaan sukses 12 bulan">
+    <div class="ss-card ss-tip lg:col-span-2 flex flex-col justify-between gap-4" data-tip="Sukses 12 bulan">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Tren Penerimaan • {{ $labels[0] ?? '' }} – {{ $labels[11] ?? '' }}</h2>
             <p class="text-xs text-slate-500">Total pembayaran sukses per bulan</p>
@@ -29,16 +29,16 @@
         $c = round(2 * M_PI * 14, 2); // keliling lingkaran r=14 → ±87.96
         // Segmen presisi: lewati 0 (biang titik kaku), koreksi drift rounding di segmen terakhir.
         $rawSegs = [
-            ['color' => '#22c55e', 'count' => $paid],
-            ['color' => '#f59e0b', 'count' => $wait],
-            ['color' => '#ef4444', 'count' => $late],
+            ['color' => '#22c55e', 'count' => $paid, 'tip' => 'Lunas • ' . $paid . ' tagihan • ' . round($paid / $tot * 100) . '%'],
+            ['color' => '#f59e0b', 'count' => $wait, 'tip' => 'Menunggu • ' . $wait . ' tagihan • ' . round($wait / $tot * 100) . '%'],
+            ['color' => '#ef4444', 'count' => $late, 'tip' => 'Tertunggak • ' . $late . ' tagihan • ' . round($late / $tot * 100) . '%'],
         ];
         $segs = [];
         $acc = 0;
         foreach ($rawSegs as $rs) {
             if ($rs['count'] <= 0) continue;
             $len = round($rs['count'] / $tot * $c, 1);
-            $segs[] = ['color' => $rs['color'], 'len' => $len, 'off' => round($acc, 1)];
+            $segs[] = ['color' => $rs['color'], 'tip' => $rs['tip'], 'len' => $len, 'off' => round($acc, 1)];
             $acc += $len;
         }
         if (!empty($segs)) {
@@ -47,19 +47,22 @@
         }
         $pctPaid = round($paid / $tot * 100);
     @endphp
-    <div class="ss-card ss-tip flex flex-col justify-between gap-4" data-tip="Status seluruh tagihan">
+    <div class="ss-card ss-tip flex flex-col justify-between gap-4" data-tip="Porsi status">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Status</h2>
             <p class="text-xs text-slate-500">Seluruh tagihan di database</p>
         </div>
         <div class="flex justify-center py-2">
             <div class="relative w-32 h-32">
+                <div data-donut-tip class="absolute left-1/2 -translate-x-1/2 -top-1 hidden rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-white whitespace-nowrap z-10 pointer-events-none"></div>
                 <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
                     <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" class="dark:stroke-slate-700" stroke-width="4.5"/>
                     @foreach($segs as $seg)
                     <circle cx="18" cy="18" r="14" fill="none" stroke="{{ $seg['color'] }}" stroke-width="4.5" stroke-linecap="butt"
                         class="ss-donut-seg" data-len="{{ $seg['len'] }}" data-off="{{ $seg['off'] }}" data-circ="{{ $c }}"
-                        stroke-dasharray="{{ $seg['len'] }} {{ $c }}" stroke-dashoffset="-{{ $seg['off'] }}"/>
+                        data-seg-tip="{{ $seg['tip'] }}"
+                        stroke-dasharray="{{ $seg['len'] }} {{ $c }}" stroke-dashoffset="-{{ $seg['off'] }}"
+                        style="pointer-events: stroke; cursor: pointer" />
                     @endforeach
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -69,15 +72,15 @@
             </div>
         </div>
         <div class="space-y-2 text-xs border-t border-slate-200 dark:border-slate-800 pt-3">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between" title="Lunas • {{ $paid }} tagihan">
                 <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Lunas • {{ $paid }}</span>
                 <span class="font-bold text-slate-800 dark:text-white">{{ round($paid / $tot * 100) }}%</span>
             </div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between" title="Menunggu • {{ $wait }} tagihan">
                 <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Menunggu • {{ $wait }}</span>
                 <span class="font-bold text-slate-800 dark:text-white">{{ round($wait / $tot * 100) }}%</span>
             </div>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between" title="Tertunggak • {{ $late }} tagihan">
                 <span class="flex items-center gap-2 text-slate-600 dark:text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Tertunggak • {{ $late }}</span>
                 <span class="font-bold text-slate-800 dark:text-white">{{ round($late / $tot * 100) }}%</span>
             </div>
