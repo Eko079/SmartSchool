@@ -5,6 +5,8 @@
         [
             'title' => 'Total Terkumpul',
             'val' => 'Rp ' . number_format($totalIncome ?? 0, 0, ',', '.'),
+            'count' => (float) ($totalIncome ?? 0),
+            'fmt' => 'rp',
             'bg' => 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400',
             'type' => 'curr',
             'tip' => 'Akumulasi seluruh pembayaran berstatus sukses'
@@ -13,6 +15,8 @@
         [
             'title' => 'Tagihan Tertunggak',
             'val' => 'Rp ' . number_format($totalPending ?? 0, 0, ',', '.'),
+            'count' => (float) ($totalPending ?? 0),
+            'fmt' => 'rp',
             'bg' => 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400',
             'type' => 'bill',
             'tip' => 'Selisih total tagihan terbit dikurangi yang sudah terbayar',
@@ -20,6 +24,8 @@
         [
             'title' => 'Siswa Aktif',
             'val' => number_format($activeStudents ?? 0, 0, ',', '.'),
+            'count' => (float) ($activeStudents ?? 0),
+            'fmt' => 'int',
             'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400',
             'type' => 'user',
             'tip' => 'Siswa berstatus aktif dari total ' . number_format($totalStudents ?? 0, 0, ',', '.') . ' siswa terdaftar',
@@ -27,6 +33,8 @@
         [
             'title' => 'Rasio Pelunasan',
             'val' => ($collectionRate ?? 0) . '%',
+            'count' => (float) ($collectionRate ?? 0),
+            'fmt' => 'pct1',
             'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400',
             'type' => 'check',
             'tip' => 'Total terbayar dibagi total tagihan terbit, dalam persen',
@@ -52,7 +60,7 @@
             </div>
         </div>
         <div>
-            <div class="text-2xl font-bold text-slate-800 dark:text-white">{{ $s['val'] }}</div>
+            <div class="text-2xl font-bold text-slate-800 dark:text-white" data-count-up="{{ $s['count'] ?? 0 }}" data-count-fmt="{{ $s['fmt'] ?? 'int' }}">{{ $s['val'] }}</div>
             <div class="flex items-center gap-1.5 text-xs mt-1">
                 @if($i === 0)
                     @if(!empty($incomeDelta))

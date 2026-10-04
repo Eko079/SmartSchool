@@ -27,8 +27,8 @@
                 <div class="absolute -top-1 hidden group-hover:block rounded-md bg-slate-800 dark:bg-slate-700 px-2 py-1 text-[10px] font-semibold text-white whitespace-nowrap z-10">
                     {{ $m['title'] }} • Rp {{ number_format($m['total'], 0, ',', '.') }}
                 </div>
-                <div class="w-full max-w-[28px] rounded-t-md transition-all group-hover:opacity-80 {{ $m['current'] ? 'bg-blue-600' : 'bg-blue-200 dark:bg-blue-900' }}"
-                    style="height: {{ $h }}%"></div>
+                <div class="ss-bar w-full max-w-[28px] rounded-t-md group-hover:opacity-80 {{ $m['current'] ? 'bg-blue-600' : 'bg-blue-200 dark:bg-blue-900' }}"
+                    data-bar-h="{{ $h }}" style="height: {{ $h }}%"></div>
                 <span class="text-[11px] {{ $m['current'] ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400' }}">{{ $m['label'] }}</span>
             </div>
             @endforeach

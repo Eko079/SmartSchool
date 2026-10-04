@@ -13,7 +13,7 @@
             @foreach($trend ?? [] as $i => $val)
             @php $h = max(round($val / $max * 100), $val > 0 ? 4 : 1); @endphp
             <div class="flex-1 flex flex-col items-center gap-2 justify-end h-full group" title="{{ $labels[$i] ?? '' }}: Rp {{ number_format($val, 0, ',', '.') }}">
-                <div class="w-full max-w-[28px] rounded-t-md transition-all group-hover:opacity-80 {{ $i === $lastIdx ? 'bg-blue-600' : 'bg-blue-200 dark:bg-blue-900' }}" style="height: {{ $h }}%"></div>
+                <div class="ss-bar w-full max-w-[28px] rounded-t-md group-hover:opacity-80 {{ $i === $lastIdx ? 'bg-blue-600' : 'bg-blue-200 dark:bg-blue-900' }}" data-bar-h="{{ $h }}" style="height: {{ $h }}%"></div>
                 <span class="text-[11px] {{ $i === $lastIdx ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-slate-400' }}">{{ $labels[$i] ?? '' }}</span>
             </div>
             @endforeach

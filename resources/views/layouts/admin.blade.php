@@ -83,9 +83,41 @@
             document.getElementById('sidebar-overlay').classList.toggle('hidden');
         }
 
-        // Animasi draw-in donat: 0% → nilai akhir saat chart masuk viewport.
+        // Animasi chart: donat draw-in + bar grow + angka count-up, saat masuk viewport.
+        // Prinsip: markup Blade = nilai akhir (aman no-JS/SEO); JS reset ke 0 lalu animasikan.
+        function fmtCountUp(v, kind) {
+            if (kind === 'rp') return 'Rp ' + Math.round(v).toLocaleString('id-ID');
+            if (kind === 'pct1') return v.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+            return Math.round(v).toLocaleString('id-ID');
+        }
+        function prepScope(scope) {
+            scope.querySelectorAll('circle.ss-donut-seg').forEach(function (seg) {
+                var circ = parseFloat(seg.getAttribute('data-circ') || '87.96');
+                var off = parseFloat(seg.getAttribute('data-off') || '0');
+                seg.style.transition = 'none';
+                seg.setAttribute('stroke-dasharray', '0 ' + circ);
+                seg.setAttribute('stroke-dashoffset', String(-off));
+            });
+            scope.querySelectorAll('.ss-bar[data-bar-h]').forEach(function (bar) {
+                bar.style.transition = 'none';
+                bar.style.height = '0%';
+            });
+            scope.querySelectorAll('[data-count-up]').forEach(function (el) {
+                el.textContent = fmtCountUp(0, el.getAttribute('data-count-fmt') || 'int');
+            });
+            scope.querySelectorAll('[data-donut-count]').forEach(function (el) {
+                var decimals = parseInt(el.getAttribute('data-donut-decimals') || '0', 10) || 0;
+                el.textContent = (0).toLocaleString('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+            });
+            // Paksa reflow agar state awal 0% ke-paint sebelum transisi jalan.
+            void scope.offsetWidth;
+            scope.querySelectorAll('circle.ss-donut-seg, .ss-bar[data-bar-h]').forEach(function (el) {
+                el.style.transition = '';
+            });
+        }
         function animateDonut(scope) {
             var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce) return;
             scope.querySelectorAll('[data-donut-count]').forEach(function (el) {
                 var raw = (el.getAttribute('data-donut-count') || '0').replace(/[^0-9.,-]/g, '').replace(',', '.');
                 var target = parseFloat(raw) || 0;
@@ -93,7 +125,6 @@
                 var fmt = function (v) {
                     return v.toLocaleString('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
                 };
-                if (reduce) { el.textContent = fmt(target); return; }
                 var t0 = null, dur = 900;
                 function frame(t) {
                     if (!t0) t0 = t;
@@ -106,41 +137,59 @@
             });
             scope.querySelectorAll('circle.ss-donut-seg').forEach(function (seg) {
                 var len = parseFloat(seg.getAttribute('data-len') || '0');
-                var off = parseFloat(seg.getAttribute('data-off') || '0');
                 var circ = parseFloat(seg.getAttribute('data-circ') || '87.96');
-                seg.style.transition = 'none';
-                seg.setAttribute('stroke-dasharray', '0 ' + circ);
-                seg.setAttribute('stroke-dashoffset', String(-off));
-                seg.getBoundingClientRect(); // reflow agar transisi bisa jalan
-                if (reduce) {
-                    seg.setAttribute('stroke-dasharray', len + ' ' + circ);
-                    return;
-                }
                 seg.style.transition = 'stroke-dasharray 0.9s cubic-bezier(.22,.61,.36,1)';
                 requestAnimationFrame(function () {
                     seg.setAttribute('stroke-dasharray', len + ' ' + circ);
                 });
             });
+            // Bar chart grow: 0% → tinggi akhir, stagger per batang.
+            scope.querySelectorAll('.ss-bar[data-bar-h]').forEach(function (bar, i) {
+                var h = parseFloat(bar.getAttribute('data-bar-h') || '0');
+                setTimeout(function () {
+                    requestAnimationFrame(function () { bar.style.height = h + '%'; });
+                }, Math.min(i * 55, 660));
+            });
+            // Count-up kartu statistik: Rp / int / persen naik bertahap.
+            scope.querySelectorAll('[data-count-up]').forEach(function (el) {
+                var target = parseFloat(el.getAttribute('data-count-up') || '0') || 0;
+                var fmtKind = el.getAttribute('data-count-fmt') || 'int';
+                var t0 = null, dur = 1100;
+                function frame(t) {
+                    if (!t0) t0 = t;
+                    var p = Math.min((t - t0) / dur, 1);
+                    var eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = fmtCountUp(target * eased, fmtKind);
+                    if (p < 1) requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            });
         }
         (function () {
-            var done = false;
-            function run() {
-                if (done) return;
-                if (!document.querySelector('circle.ss-donut-seg')) return;
-                done = true;
-                animateDonut(document);
+            var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce) return; // biarkan nilai akhir Blade tampil langsung
+            prepScope(document);
+            var seen = new WeakSet();
+            function runScope(el) {
+                if (seen.has(el)) return;
+                seen.add(el);
+                animateDonut(el);
             }
+            var cards = document.querySelectorAll('.ss-card');
+            if (!cards.length) return;
             if ('IntersectionObserver' in window) {
                 var io = new IntersectionObserver(function (entries) {
                     entries.forEach(function (e) {
-                        if (e.isIntersecting) { run(); io.disconnect(); }
+                        if (e.isIntersecting) {
+                            runScope(e.target);
+                            io.unobserve(e.target);
+                        }
                     });
-                }, { threshold: 0.25 });
-                var first = document.querySelector('circle.ss-donut-seg');
-                if (first) io.observe(first.closest('svg') || first);
-                setTimeout(run, 1500); // fallback bila observer tak fire
+                }, { threshold: 0.2 });
+                cards.forEach(function (c) { io.observe(c); });
+                setTimeout(function () { cards.forEach(runScope); io.disconnect(); }, 2500);
             } else {
-                run();
+                cards.forEach(runScope);
             }
         })();
     </script>

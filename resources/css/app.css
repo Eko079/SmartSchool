@@ -97,6 +97,8 @@ body {
 .pill-success { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; }
 .pill-warning { background: #FEF9C3; color: #92400E; border: 1px solid #FDE68A; }
 .pill-danger  { background: #FEE2E2; color: #B91C1C; border: 1px solid #FECACA; }
+.ss-bar { transition: height 0.7s cubic-bezier(.22,.61,.36,1); }
+@media (prefers-reduced-motion: reduce) { .ss-bar { transition: none; } }
 .dark .pill-success { background: rgba(22,101,52,.4); color: #86efac; border-color: rgba(34,197,94,.3); }
 .dark .pill-warning { background: rgba(133,77,14,.4); color: #fde047; border-color: rgba(234,179,8,.3); }
 .dark .pill-danger  { background: rgba(153,27,27,.4); color: #fca5a5; border-color: rgba(239,68,68,.3); }
