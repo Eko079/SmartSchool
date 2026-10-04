@@ -1,11 +1,275 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --color-sidebar: #0F1E33;
+    --color-brand: #2563EB;
+}
+
+:root {
+    --ss-bg: #F4F5F7;
+    --ss-card: #FFFFFF;
+    --ss-border: #E2E8F0;
+    --ss-text: #0F172A;
+    --ss-muted: #64748B;
+    --ss-placeholder: #94A3B8;
+}
+.dark {
+    --ss-bg: #0f172a;
+    --ss-card: #1e293b;
+    --ss-border: #334155;
+    --ss-text: #f1f5f9;
+    --ss-muted: #94a3b8;
+}
+
+html { font-family: 'Inter', system-ui, sans-serif; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--ss-bg);
+    color: var(--ss-text);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+/* Kartu standar SmartSchool — persis desain: bg #FFFFFF, border #E2E8F0, radius 16px */
+.ss-card {
+    background: var(--ss-card);
+    border: 1px solid var(--ss-border);
+    border-radius: 16px;
+    padding: 16px;
+}
+.dark .ss-card { background: #1e293b; border-color: #334155; }
+
+/* Input standar — radius 10px, border #E2E8F0, placeholder #94A3B8 */
+.ss-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--ss-border);
+    background: var(--ss-card);
+    color: var(--ss-text);
+    font-size: 14px;
+    font-family: 'Inter', system-ui, sans-serif;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ss-input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.ss-input::placeholder { color: #94A3B8; }
+
+.ss-btn-primary {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px;
+    background: #2563EB; color: #fff;
+    font-weight: 600; font-size: 15px; font-family: 'Inter', system-ui, sans-serif;
+    border: none; border-radius: 10px; cursor: pointer;
+    box-shadow: 0px 4px 12px #2563EB66;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.ss-btn-primary:hover { background: #1d4ed8; box-shadow: 0 6px 16px rgba(37,99,235,.5); }
+
+.ss-btn-outline {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 13px;
+    background: var(--ss-card); color: var(--ss-text);
+    font-weight: 600; font-size: 14px; font-family: 'Inter', system-ui, sans-serif;
+    border: 1px solid var(--ss-border); border-radius: 10px; cursor: pointer;
+}
+.ss-btn-outline:hover { background: #f8fafc; }
+.dark .ss-btn-outline { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+.dark .ss-btn-outline:hover { background: #334155; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; }
+.pill-success { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; }
+.pill-warning { background: #FEF9C3; color: #92400E; border: 1px solid #FDE68A; }
+.pill-danger  { background: #FEE2E2; color: #B91C1C; border: 1px solid #FECACA; }
+.dark .pill-success { background: rgba(22,101,52,.4); color: #86efac; border-color: rgba(34,197,94,.3); }
+.dark .pill-warning { background: rgba(133,77,14,.4); color: #fde047; border-color: rgba(234,179,8,.3); }
+.dark .pill-danger  { background: rgba(153,27,27,.4); color: #fca5a5; border-color: rgba(239,68,68,.3); }
+
+/* ============ Theme toggle (topbar) + transisi mulus gelap/terang ============ */
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+/* Selama .theme-anim terpasang, semua perubahan warna dianimasikan mulus */
+html.theme-anim,
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+    transition: background-color .45s ease, border-color .45s ease, color .35s ease,
+        fill .35s ease, stroke .35s ease, box-shadow .45s ease !important;
+}
+
+.theme-toggle {
+    cursor: pointer;
+    transition: transform .15s ease, background-color .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.theme-toggle:active { transform: scale(.94); }
+.theme-toggle:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; }
+
+/* Tombolnya sendiri adalah switch (single elemen).
+   Selektor kedua (.theme-toggle .track) dipertahankan utk kompatibilitas. */
+.theme-toggle.track,
+.theme-toggle .track {
+    position: relative;
+    display: block;
+    padding: 0;
+    width: 60px; height: 32px; flex-shrink: 0;
+    border-radius: 999px;
+    background: #E2E8F0;
+    border: 1px solid #E2E8F0;
+    transition: background-color .45s ease, border-color .45s ease;
+    overflow: hidden;
+}
+.dark .theme-toggle.track,
+.dark .theme-toggle .track { background: #334155; border-color: #475569; }
+
+.theme-toggle .knob {
+    position: absolute; top: 2px; left: 2px;
+    width: 26px; height: 26px; border-radius: 999px;
+    background: #FFFFFF;
+    box-shadow: 0 1px 4px rgba(15,23,42,.3);
+    display: flex; align-items: center; justify-content: center;
+    transform: translateX(0);
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1), background-color .4s ease, box-shadow .4s ease;
+}
+.dark .theme-toggle .knob {
+    transform: translateX(28px);
+    background: #0F172A;
+    box-shadow: 0 0 0 1px #475569, 0 0 12px rgba(37,99,235,.55);
+}
+
+.theme-toggle .knob svg {
+    width: 16px; height: 16px;
+    transition: opacity .3s ease, transform .55s cubic-bezier(.34,1.56,.64,1);
+}
+.theme-toggle .icon-moon { position: absolute; opacity: 0; transform: rotate(-120deg) scale(.4); color: #FBBF24; }
+.theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg) scale(1); color: #D97706; }
+.dark .theme-toggle .icon-sun { opacity: 0; transform: rotate(120deg) scale(.4); }
+.dark .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
+
+/* Ikon dekorasi di dalam track (matahari / bulan samar) */
+.theme-toggle .track-deco {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; justify-content: center;
+    opacity: .7;
+    transition: opacity .4s ease;
+}
+.theme-toggle .track-deco svg { width: 13px; height: 13px; }
+.theme-toggle .deco-sun { left: 6px; color: #94A3B8; }
+.theme-toggle .deco-moon { right: 6px; color: #64748B; }
+.dark .theme-toggle .deco-sun { opacity: .25; }
+.theme-toggle .deco-moon { opacity: .25; }
+.dark .theme-toggle .deco-moon { opacity: .9; }
+
+/* Efek klik: gelombang (ripple) + denting */
+.theme-toggle .ripple {
+    position: absolute; inset: 0; border-radius: 999px;
+    pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at center, rgba(37,99,235,.35) 0%, transparent 65%);
+}
+.theme-toggle.toggle-pop .ripple { animation: theme-ripple .55s ease-out; }
+.theme-toggle.toggle-pop .knob { animation: knob-pop .45s cubic-bezier(.34,1.56,.64,1); }
+@keyframes theme-ripple {
+    0% { opacity: .9; transform: scale(.6); }
+    100% { opacity: 0; transform: scale(1.25); }
+}
+@keyframes knob-pop {
+    0% { scale: 1; }
+    35% { scale: .82; }
+    70% { scale: 1.1; }
+    100% { scale: 1; }
+}
+
+/* ============ Tooltip seragam SmartSchool (.ss-tip) ============
+   Pakai: class="ss-tip" data-tip="Isi penjelasan..."
+   Varian: .ss-tip-bottom (gelembung muncul di bawah elemen).
+   Untuk tombol/link, tooltip juga muncul saat fokus keyboard. */
+.ss-tip { position: relative; }
+.ss-tip[data-tip]:not([data-tip=""])::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    width: max-content;
+    max-width: 160px;
+    white-space: normal;
+    text-align: center;
+    background: #0F172A;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.35;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 50;
+}
+.ss-tip[data-tip]:not([data-tip=""])::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #0F172A;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease;
+    z-index: 50;
+}
+.ss-tip[data-tip]:not([data-tip=""]):hover::after,
+.ss-tip[data-tip]:not([data-tip=""]):focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.ss-tip[data-tip]:not([data-tip=""]):hover::before,
+.ss-tip[data-tip]:not([data-tip=""]):focus-visible::before {
+    opacity: 1;
+}
+.dark .ss-tip[data-tip]:not([data-tip=""])::after { background: #F1F5F9; color: #0F172A; }
+.dark .ss-tip[data-tip]:not([data-tip=""])::before { border-top-color: #F1F5F9; }
+
+/* Gelembung di bawah elemen */
+.ss-tip-bottom[data-tip]:not([data-tip=""])::after {
+    top: calc(100% + 8px);
+    bottom: auto;
+    transform: translateX(-50%) translateY(-4px);
+}
+.ss-tip-bottom[data-tip]:not([data-tip=""])::before {
+    top: calc(100% + 3px);
+    bottom: auto;
+    border-top-color: transparent;
+    border-bottom-color: #0F172A;
+}
+.dark .ss-tip-bottom[data-tip]:not([data-tip=""])::before {
+    border-top-color: transparent;
+    border-bottom-color: #F1F5F9;
+}
+.ss-tip-bottom[data-tip]:not([data-tip=""]):hover::after,
+.ss-tip-bottom[data-tip]:not([data-tip=""]):focus-visible::after {
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: none !important; }
+    .theme-toggle .knob, .theme-toggle .knob svg { transition: none; animation: none; }
 }
