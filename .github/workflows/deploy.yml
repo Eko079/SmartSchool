@@ -1,0 +1,30 @@
+name: Deploy SmartSchool to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Production VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute deployment commands via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            echo "🚀 Mulai proses deployment SmartSchool..."
+            cd /home/ubuntu/smartschool
+            git pull origin main
+            composer install --no-dev --optimize-autoloader --no-interaction
+            npm install --no-audit --prefer-offline
+            npm run build
+            php artisan migrate --force
+            php artisan optimize
+            echo "✅ Deployment SmartSchool berhasil diperbarui!"
