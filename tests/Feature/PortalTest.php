@@ -48,6 +48,28 @@ class PortalTest extends TestCase
         $this->get(route('portal.pengaturan'))->assertOk()->assertSee('Pengaturan Akun');
     }
 
+    public function test_portal_phone_gets_mobile_desktop_gets_desktop(): void
+    {
+        $wali = $this->waliUser();
+        $this->actingAs($wali, 'wali');
+        $this->actingAs($wali);
+
+        $phoneUa = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1';
+        $desktopUa = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36';
+
+        foreach (['portal.dashboard', 'portal.tagihan', 'portal.riwayat', 'portal.profil', 'portal.bantuan', 'portal.pengaturan'] as $route) {
+            $phoneHtml = $this->withHeaders(['User-Agent' => $phoneUa])->get(route($route))->assertOk()->getContent();
+            $this->assertStringContainsString('m-shell', $phoneHtml, "HP $route harus pakai layout mobile");
+
+            $desktopHtml = $this->withHeaders(['User-Agent' => $desktopUa])->get(route($route))->assertOk()->getContent();
+            $this->assertStringNotContainsString('m-bottomnav', $desktopHtml, "Desktop $route jangan pakai bottomnav mobile");
+        }
+
+        $this->post(route('portal.logout'));
+        $phoneLogin = $this->withHeaders(['User-Agent' => $phoneUa])->get(route('portal.login'))->assertOk()->getContent();
+        $this->assertStringContainsString('m-shell', $phoneLogin, 'Login HP harus mobile');
+    }
+
     public function test_wali_can_login_with_nis(): void
     {
         $wali = $this->waliUser();
