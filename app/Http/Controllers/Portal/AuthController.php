@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(\Illuminate\Http\Request $request)
     {
         if (Auth::guard('wali')->check()) {
             return redirect()->route('portal.dashboard');
+        }
+
+        if (\App\Support\Device::isPhone($request) && view()->exists('portal-mobile.login')) {
+            return view('portal-mobile.login');
         }
 
         return view('portal.login');
