@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Percayai proxy Cloudflare/VPS agar skema https dari X-Forwarded-Proto terbaca.
         $middleware->trustProxies(at: '*');
+        $middleware->alias([
+            'wali' => \App\Http\Middleware\EnsureWali::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
