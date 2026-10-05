@@ -16,11 +16,11 @@
     <div class="flex min-h-screen">
         {{-- Branding Panel (kiri, sesuai referensi: 600px, padding 48px) --}}
         <div class="hidden lg:flex w-[600px] shrink-0 flex-col justify-between bg-[#0F1E33] p-12 text-white">
-            {{-- Logo --}}
+            {{-- Logo (nama ikut Pengaturan) --}}
             <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-[22px] font-bold">S</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-[22px] font-bold">{{ strtoupper(substr($siteBrand['school_name'] ?? 'S', 0, 1)) }}</div>
                 <div>
-                    <div class="text-lg font-bold tracking-wide">SmartSchool ERP</div>
+                    <div class="text-lg font-bold tracking-wide">{{ $siteBrand['school_name'] ?? 'SmartSchool ERP' }}</div>
                     <div class="text-xs text-slate-400">Digitalisasi Data Siswa dan Pembayaran Terpadu</div>
                 </div>
             </div>
@@ -32,12 +32,12 @@
                     PANEL ADMIN v2.4
                 </div>
                 <h1 class="text-4xl font-bold leading-[1.15]">Kelola Sekolah dan Pembayaran dalam Satu Dasbor</h1>
-                <p class="text-sm leading-relaxed text-slate-400">Pantau 1.284 siswa, tagihan SPP, LAB, GEDUNG, KEG, dan laporan pembayaran real-time.</p>
+                <p class="text-sm leading-relaxed text-slate-400">Pantau {{ number_format($siteBrand['total_students'] ?? 0, 0, ',', '.') }} siswa, tagihan SPP, LAB, GEDUNG, KEG, dan laporan pembayaran real-time.</p>
 
-                {{-- Stats card --}}
+                {{-- Stats card (angka nyata dari DB) --}}
                 <div class="rounded-2xl border border-[#243B5E] bg-[#162C4E] p-5 space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-[13px] font-semibold">Aktivitas Semester Ganjil</span>
+                        <span class="text-[13px] font-semibold">Aktivitas Semester {{ $siteBrand['semester'] ?? 'Ganjil' }}</span>
                         <span class="flex items-center gap-1 text-xs font-semibold text-green-400">
                             +12,4%
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 17L17 7M7 7h10v10"/></svg>
@@ -50,7 +50,14 @@
                         @endforeach
                     </div>
                     <div class="flex gap-3">
-                        @foreach([['1.284','Siswa'],['87','Guru'],['36','Kelas']] as [$val,$label])
+                        @php
+                            $brandStats = [
+                                [number_format($siteBrand['total_students'] ?? 0, 0, ',', '.'), 'Siswa'],
+                                [number_format($siteBrand['total_classes'] ?? 0, 0, ',', '.'), 'Kelas'],
+                                [$siteBrand['academic_year'] ?? '-', 'TA Aktif'],
+                            ];
+                        @endphp
+                        @foreach($brandStats as [$val,$label])
                         <div class="flex-1 rounded-xl bg-[#0F1E33] p-3">
                             <div class="text-lg font-bold">{{ $val }}</div>
                             <div class="text-[11px] text-slate-400">{{ $label }}</div>
@@ -60,10 +67,10 @@
                 </div>
             </div>
 
-            {{-- Footer --}}
+            {{-- Footer (ikut data Pengaturan) --}}
             <div class="space-y-3">
                 <p class="text-xs italic leading-relaxed text-slate-300">Sejak pakai SmartSchool, rekap akademik dan pembayaran 3x lebih cepat. (Dr. Ratna, Kepala Sekolah)</p>
-                <p class="text-[11px] text-slate-500">© 2026 SMA Nusantara Plus | support@smartschool.id | v2.4.1</p>
+                <p class="text-[11px] text-slate-500">© {{ date('Y') }} {{ $siteBrand['school_name'] ?? 'SmartSchool' }} | {{ $siteBrand['school_email'] ?? 'support@smartschool.id' }} | {{ $siteBrand['version'] ?? 'v2.4.1' }}</p>
             </div>
         </div>
 
@@ -78,7 +85,7 @@
                 <div class="flex items-center gap-3 text-[13px] text-slate-500">
                     <span class="flex items-center gap-1.5">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-                        ID v2.4.1
+                        ID {{ $siteBrand['version'] ?? 'v2.4.1' }}
                     </span>
                     <a href="{{ route('admin.bantuan') }}" class="hover:text-blue-600 hover:underline">Bantuan</a>
                 </div>

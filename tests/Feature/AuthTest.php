@@ -14,6 +14,18 @@ class AuthTest extends TestCase
         $response->assertSee('Selamat Datang Kembali');
     }
 
+    public function test_login_branding_follows_school_settings(): void
+    {
+        \App\Models\SchoolSetting::set('school_name', 'SMK Branding Test');
+        \App\Models\SchoolSetting::set('school_email', 'branding@test.sch.id');
+
+        $response = $this->get('/login');
+        $response->assertStatus(200);
+        $response->assertSee('SMK Branding Test');
+        $response->assertSee('branding@test.sch.id');
+        $response->assertDontSee('Nusantara Plus');
+    }
+
     public function test_user_can_login_with_valid_credentials(): void
     {
         $response = $this->post('/login', [
