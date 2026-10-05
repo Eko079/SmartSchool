@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Portal\Concerns\RendersPortalMobile;
 use App\Models\Faq;
 use App\Models\HelpTicket;
 use App\Models\TicketReply;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SupportController extends Controller
 {
+    use RendersPortalMobile;
     public function index(Request $request)
     {
         $faqs = Faq::where('is_active', true)->orderBy('sort_order')->get();
@@ -22,7 +24,7 @@ class SupportController extends Controller
             return response()->json(['faqs' => $faqs, 'tickets' => $tickets]);
         }
 
-        return view('portal.bantuan', compact('faqs', 'tickets'));
+        return $this->portalView($request, 'portal.bantuan', 'portal-mobile.bantuan', compact('faqs', 'tickets'));
     }
 
     public function store(Request $request)

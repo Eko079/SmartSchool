@@ -4,6 +4,8 @@
 
 @source '../views/mobile/**/*.blade.php';
 @source '../views/layouts/mobile.blade.php';
+@source '../views/layouts/portal-mobile.blade.php';
+@source '../views/portal-mobile/**/*.blade.php';
 
 /* ===== SmartSchool Mobile (390px, sesuai Desain/Admin Mobile Responsif.html) ===== */
 :root {

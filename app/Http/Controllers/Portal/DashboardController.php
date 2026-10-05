@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Portal\Concerns\RendersPortalMobile;
 use App\Models\Bill;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    use RendersPortalMobile;
     public function index(Request $request)
     {
         $user = Auth::guard('wali')->user() ?? Auth::user();
@@ -50,6 +52,6 @@ class DashboardController extends Controller
             return response()->json($payload);
         }
 
-        return view('portal.dashboard', $payload);
+        return $this->portalView($request, 'portal.dashboard', 'portal-mobile.dashboard', $payload);
     }
 }

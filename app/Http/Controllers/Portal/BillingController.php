@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Portal\Concerns\RendersPortalMobile;
 use App\Models\Bill;
 use App\Models\BillEvent;
 use App\Models\Payment;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BillingController extends Controller
 {
+    use RendersPortalMobile;
     protected function student()
     {
         $user = Auth::guard('wali')->user() ?? Auth::user();
@@ -59,7 +61,7 @@ class BillingController extends Controller
             return response()->json(['bills' => $bills, 'summary' => $summary]);
         }
 
-        return view('portal.tagihan', compact('bills', 'summary'));
+        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary'));
     }
 
     public function show(Request $request, Bill $bill)
@@ -73,7 +75,7 @@ class BillingController extends Controller
             return response()->json(['bill' => $bill]);
         }
 
-        return view('portal.tagihan-detail', compact('bill'));
+        return $this->portalView($request, 'portal.tagihan-detail', 'portal-mobile.tagihan-detail', compact('bill'));
     }
 
     public function pay(Request $request, Bill $bill, MidtransService $midtrans, WaService $wa)
@@ -122,7 +124,7 @@ class BillingController extends Controller
             return response()->json(['payments' => $payments]);
         }
 
-        return view('portal.riwayat', compact('payments'));
+        return $this->portalView($request, 'portal.riwayat', 'portal-mobile.riwayat', compact('payments'));
     }
 
     public function receipt(Request $request, Payment $payment, ReceiptService $receipts)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Portal\Concerns\RendersPortalMobile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +11,7 @@ use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
+    use RendersPortalMobile;
     public function show(Request $request)
     {
         $user = Auth::guard('wali')->user() ?? Auth::user();
@@ -19,7 +21,7 @@ class AccountController extends Controller
             return response()->json(['user' => $user]);
         }
 
-        return view('portal.pengaturan', compact('user'));
+        return $this->portalView($request, 'portal.pengaturan', 'portal-mobile.pengaturan', compact('user'));
     }
 
     public function update(Request $request)
@@ -76,6 +78,6 @@ class AccountController extends Controller
             return response()->json(['student' => $student]);
         }
 
-        return view('portal.profil', compact('student'));
+        return $this->portalView($request, 'portal.profil', 'portal-mobile.profil', compact('student'));
     }
 }
