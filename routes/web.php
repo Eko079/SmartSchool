@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MobileController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\FeeCategoryController;
 use App\Http\Controllers\Admin\BillingController;
@@ -54,16 +53,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         $settings = \App\Models\SchoolSetting::pluck('value', 'key')->toArray();
         return view('admin.bantuan', compact('settings'));
     })->name('bantuan');
-});
-
-// Mobile responsif (terisolasi, data sama dari DB via MobileController)
-Route::prefix('m')->name('m.')->middleware('auth')->group(function () {
-    Route::get('/', [MobileController::class, 'dashboard'])->name('dashboard');
-    Route::get('/siswa', [MobileController::class, 'siswa'])->name('siswa');
-    Route::get('/tagihan', [MobileController::class, 'tagihan'])->name('tagihan');
-    Route::get('/laporan', [MobileController::class, 'laporan'])->name('laporan');
-    Route::get('/pengaturan', [MobileController::class, 'pengaturan'])->name('pengaturan');
-    Route::get('/bantuan', [MobileController::class, 'bantuan'])->name('bantuan');
 });
 
 
