@@ -15,6 +15,13 @@ class Payment extends Model
         'student_id',
         'amount',
         'payment_method',
+        'gateway',
+        'transaction_id',
+        'va_number',
+        'expiry_at',
+        'settlement_at',
+        'callback_payload',
+        'receipt_path',
         'status',
         'paid_at',
         'note',
@@ -23,6 +30,9 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'expiry_at' => 'datetime',
+        'settlement_at' => 'datetime',
+        'callback_payload' => 'array',
     ];
 
     public function bill()

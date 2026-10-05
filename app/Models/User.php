@@ -22,6 +22,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'student_id',
+        'google_id',
+        'phone',
+        'failed_attempts',
+        'locked_until',
+        'notify_wa',
+        'notify_email',
     ];
 
     /**
@@ -44,6 +52,19 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'locked_until' => 'datetime',
+            'notify_wa' => 'boolean',
+            'notify_email' => 'boolean',
         ];
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
+
+    public function helpTickets()
+    {
+        return $this->hasMany(HelpTicket::class, 'user_id');
     }
 }

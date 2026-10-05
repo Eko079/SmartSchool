@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             BillingSeeder::class,
             SettingSeeder::class,
+            PortalSeeder::class,
         ]);
     }
 }

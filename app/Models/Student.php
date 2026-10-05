@@ -14,6 +14,10 @@ class Student extends Model
         'nis',
         'nisn',
         'name',
+        'email',
+        'entry_year',
+        'photo_path',
+        'birthdate',
         'gender',
         'status',
         'guardian_name',
@@ -34,5 +38,10 @@ class Student extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'student_id');
+    }
+
+    public function portalUsers()
+    {
+        return $this->hasMany(User::class, 'student_id');
     }
 }

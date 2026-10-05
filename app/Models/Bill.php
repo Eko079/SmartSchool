@@ -11,12 +11,17 @@ class Bill extends Model
 
     protected $fillable = [
         'bill_code',
+        'order_id',
         'student_id',
         'fee_category_id',
         'period_month',
         'period_year',
         'amount',
         'paid_amount',
+        'fine_amount',
+        'va_number',
+        'qris_payload',
+        'expired_at',
         'status',
         'due_date',
     ];
@@ -24,7 +29,9 @@ class Bill extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'fine_amount' => 'decimal:2',
         'due_date' => 'date',
+        'expired_at' => 'datetime',
     ];
 
     public function student()
@@ -40,5 +47,10 @@ class Bill extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'bill_id');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(BillEvent::class, 'bill_id');
     }
 }
