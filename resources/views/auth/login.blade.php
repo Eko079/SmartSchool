@@ -12,7 +12,7 @@
     </div>
 @endif
 
-<form method="POST" action="{{ url('/login') }}" class="space-y-4 mt-2">
+<form method="POST" action="{{ route('login.attempt') }}" class="space-y-4 mt-2">
 
     @csrf
     <div>
@@ -43,7 +43,7 @@
             <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
             <span class="text-slate-700 dark:text-slate-300">Ingat saya</span>
         </label>
-        <a href="{{ url('/forgot-password') }}" class="font-semibold text-blue-600 hover:underline">Lupa kata sandi?</a>
+        <a href="{{ route('password.request') }}" class="font-semibold text-blue-600 hover:underline">Lupa kata sandi?</a>
     </div>
 
     <button type="submit" class="ss-btn-primary">Masuk ke SmartSchool

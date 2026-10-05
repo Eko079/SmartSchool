@@ -10,7 +10,7 @@ class ExampleTest extends TestCase
     public function test_root_redirects_to_admin_dashboard(): void
     {
         $response = $this->get('/');
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('portal.login'));
     }
 
     public function test_guest_is_redirected_to_login(): void

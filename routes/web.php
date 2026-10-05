@@ -15,13 +15,14 @@ use App\Http\Controllers\Portal\SupportController as PortalSupportController;
 use App\Http\Controllers\Portal\AccountController as PortalAccountController;
 
 Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
+    return redirect()->route('portal.login');
 });
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
+// Auth admin di bawah /admin agar root milik portal.
+Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/admin/login', [AuthController::class, 'login'])->name('login.attempt');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('logout');
+Route::view('/admin/forgot-password', 'auth.forgot-password')->name('password.request');
 
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
@@ -63,30 +64,40 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     })->name('bantuan');
 });
 
-// ---------- Portal Siswa / Wali (terisolasi dari admin) ----------
-Route::prefix('portal')->name('portal.')->group(function () {
-    Route::get('/login', [PortalAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [PortalAuthController::class, 'login'])->name('login.attempt');
-    Route::post('/otp', [PortalAuthController::class, 'requestOtp'])->name('otp');
-    Route::post('/reset-password', [PortalAuthController::class, 'resetPassword'])->name('reset');
-    Route::post('/midtrans/callback', [PortalBillingController::class, 'callback'])->name('midtrans.callback');
+// ---------- Portal Siswa / Wali di root (main link milik portal) ----------
+// Auth portal di root agar domain utama langsung portal.
+Route::get('/login', [PortalAuthController::class, 'showLoginForm'])->name('portal.login');
+Route::post('/login', [PortalAuthController::class, 'login'])->name('portal.login.attempt');
+Route::post('/otp', [PortalAuthController::class, 'requestOtp'])->name('portal.otp');
+Route::post('/reset-password', [PortalAuthController::class, 'resetPassword'])->name('portal.reset');
+Route::post('/midtrans/callback', [PortalBillingController::class, 'callback'])->name('portal.midtrans.callback');
 
-    Route::middleware(['wali'])->group(function () {
-        Route::post('/logout', [PortalAuthController::class, 'logout'])->name('logout');
-        Route::get('/', [PortalDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/tagihan', [PortalBillingController::class, 'index'])->name('tagihan');
-        Route::get('/tagihan/{bill}', [PortalBillingController::class, 'show'])->name('tagihan.show');
-        Route::post('/tagihan/{bill}/bayar', [PortalBillingController::class, 'pay'])->name('tagihan.pay');
-        Route::get('/riwayat', [PortalBillingController::class, 'history'])->name('riwayat');
-        Route::get('/kuitansi/{payment}', [PortalBillingController::class, 'receipt'])->name('kuitansi');
-        Route::get('/profil', [PortalAccountController::class, 'profile'])->name('profil');
-        Route::get('/bantuan', [PortalSupportController::class, 'index'])->name('bantuan');
-        Route::post('/bantuan', [PortalSupportController::class, 'store'])->name('bantuan.store');
-        Route::post('/bantuan/{ticket}/balas', [PortalSupportController::class, 'reply'])->name('bantuan.reply');
-        Route::get('/pengaturan', [PortalAccountController::class, 'show'])->name('pengaturan');
-        Route::put('/pengaturan', [PortalAccountController::class, 'update'])->name('pengaturan.update');
-        Route::put('/pengaturan/sandi', [PortalAccountController::class, 'password'])->name('pengaturan.sandi');
-    });
+Route::middleware(['wali'])->name('portal.')->group(function () {
+    Route::post('/logout', [PortalAuthController::class, 'logout'])->name('logout');
+    Route::get('/', [PortalDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/tagihan', [PortalBillingController::class, 'index'])->name('tagihan');
+    Route::get('/tagihan/{bill}', [PortalBillingController::class, 'show'])->name('tagihan.show');
+    Route::post('/tagihan/{bill}/bayar', [PortalBillingController::class, 'pay'])->name('tagihan.pay');
+    Route::get('/riwayat', [PortalBillingController::class, 'history'])->name('riwayat');
+    Route::get('/kuitansi/{payment}', [PortalBillingController::class, 'receipt'])->name('kuitansi');
+    Route::get('/profil', [PortalAccountController::class, 'profile'])->name('profil');
+    Route::get('/bantuan', [PortalSupportController::class, 'index'])->name('bantuan');
+    Route::post('/bantuan', [PortalSupportController::class, 'store'])->name('bantuan.store');
+    Route::post('/bantuan/{ticket}/balas', [PortalSupportController::class, 'reply'])->name('bantuan.reply');
+    Route::get('/pengaturan', [PortalAccountController::class, 'show'])->name('pengaturan');
+    Route::put('/pengaturan', [PortalAccountController::class, 'update'])->name('pengaturan.update');
+    Route::put('/pengaturan/sandi', [PortalAccountController::class, 'password'])->name('pengaturan.sandi');
+});
+
+// Kompatibilitas link lama /portal/* -> root.
+Route::prefix('portal')->group(function () {
+    Route::redirect('/login', '/login', 301);
+    Route::redirect('/', '/', 301);
+    Route::redirect('/tagihan', '/tagihan', 301);
+    Route::redirect('/riwayat', '/riwayat', 301);
+    Route::redirect('/profil', '/profil', 301);
+    Route::redirect('/bantuan', '/bantuan', 301);
+    Route::redirect('/pengaturan', '/pengaturan', 301);
 });
 
 

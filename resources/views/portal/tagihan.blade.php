@@ -54,7 +54,7 @@
     function payBill(id) {
         var method = prompt('Pilih metode: bca_va, bni_va, qris', 'bca_va');
         if (!method) return;
-        fetch('/portal/tagihan/' + id + '/bayar', {
+        fetch('/tagihan/' + id + '/bayar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
             body: JSON.stringify({ method: method })

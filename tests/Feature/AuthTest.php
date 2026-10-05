@@ -9,7 +9,7 @@ class AuthTest extends TestCase
 {
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get('/admin/login');
         $response->assertStatus(200);
         $response->assertSee('Selamat Datang Kembali');
     }
@@ -19,7 +19,7 @@ class AuthTest extends TestCase
         \App\Models\SchoolSetting::set('school_name', 'SMK Branding Test');
         \App\Models\SchoolSetting::set('school_email', 'branding@test.sch.id');
 
-        $response = $this->get('/login');
+        $response = $this->get('/admin/login');
         $response->assertStatus(200);
         $response->assertSee('SMK Branding Test');
         $response->assertSee('branding@test.sch.id');
@@ -28,7 +28,7 @@ class AuthTest extends TestCase
 
     public function test_user_can_login_with_valid_credentials(): void
     {
-        $response = $this->post('/login', [
+        $response = $this->post('/admin/login', [
             'email' => 'admin@smartschool.id',
             'password' => 'admin123',
         ]);
@@ -39,12 +39,12 @@ class AuthTest extends TestCase
 
     public function test_user_cannot_login_with_invalid_password(): void
     {
-        $response = $this->from('/login')->post('/login', [
+        $response = $this->from('/admin/login')->post('/admin/login', [
             'email' => 'admin@smartschool.id',
             'password' => 'wrongpassword',
         ]);
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/admin/login');
         $this->assertGuest();
     }
 
@@ -52,9 +52,9 @@ class AuthTest extends TestCase
     {
         $user = User::where('email', 'admin@smartschool.id')->first();
 
-        $response = $this->actingAs($user)->post('/logout');
+        $response = $this->actingAs($user)->post('/admin/logout');
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/admin/login');
         $this->assertGuest();
     }
 }

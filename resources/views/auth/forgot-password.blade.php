@@ -37,7 +37,7 @@
     </div>
 
     <div class="text-center">
-        <a href="{{ url('/login') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline">
+        <a href="{{ route('login') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Kembali ke Login
         </a>
