@@ -6,31 +6,32 @@
     Kelola data siswa tahun ajaran {{ $academicYear ?? '' }}. Cari, filter, dan urutkan berdasarkan kolom tabel.
 @endsection
 
-@section('topbar-actions')
-<div class="flex items-center gap-2">
-    <button type="button" title="Impor CSV"
-        onclick="document.getElementById('import-modal').classList.remove('hidden')"
-        class="ss-tip ss-tip-bottom flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs"
-        data-tip="Import CSV">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Import CSV
-    </button>
-    <button type="button" title="Tambah siswa"
-        onclick="document.getElementById('create-modal').classList.remove('hidden')"
-        class="ss-tip ss-tip-bottom flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-xs"
-        data-tip="Tambah siswa">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Tambah Siswa
-    </button>
-</div>
-@endsection
-
 @section('content')
     @include('admin.siswa.stats')
 
     <x-ss-table>
         <x-slot name="filters">
-            <form method="GET" action="{{ route('admin.siswa') }}" class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 dark:text-white">Daftar Siswa</h2>
+                    <p class="text-xs text-slate-400">Kelola NIS, kelas dan status</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" title="Impor CSV"
+                        onclick="document.getElementById('import-modal').classList.remove('hidden')"
+                        class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Import CSV
+                    </button>
+                    <button type="button" title="Tambah siswa"
+                        onclick="document.getElementById('create-modal').classList.remove('hidden')"
+                        class="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tambah Siswa
+                    </button>
+                </div>
+            </div>
+            <form method="GET" action="{{ route('admin.siswa') }}" class="flex flex-wrap items-center justify-between gap-3 pt-3">
                 <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
                     <div class="relative flex-1 min-w-[180px] max-w-sm">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">

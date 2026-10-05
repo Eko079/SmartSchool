@@ -1,4 +1,15 @@
-<div class="ss-card !p-4">
+<div class="ss-card !p-4 space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white">Alur Generate Tagihan</h2>
+            <p class="text-xs text-slate-400">Ikuti 3 langkah sampai review</p>
+        </div>
+        <button type="button" title="Riwayat generate" onclick="document.getElementById('history-modal').classList.remove('hidden')"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Riwayat Generate
+        </button>
+    </div>
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         {{-- Step 1 --}}
         <div class="flex items-center gap-3 w-full sm:w-auto">

@@ -2,25 +2,23 @@
 @section('title', 'Pengaturan')
 @section('breadcrumb', 'Pengaturan / Umum')
 @section('page-title', 'Pengaturan')
-@section('page-subtitle', 'Profil sekolah, tahun ajaran & pembayaran.')
-
-@section('topbar-actions')
-<button type="button" title="Ubah pengaturan" onclick="document.getElementById('settings-modal').classList.remove('hidden')"
-    class="ss-tip ss-tip-bottom flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-xs"
-    data-tip="Ubah pengaturan">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-    Ubah Pengaturan
-</button>
-@endsection
+@section('page-subtitle', 'Profil sekolah, tahun ajaran dan pembayaran.')
 
 @section('content')
-    {{-- Mode lihat: nilai dari $settings, edit via popup --}}
+    {{-- Mode lihat: nilai dari $settings, edit via popup per kartu --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div class="space-y-4">
             <div class="ss-card space-y-4">
-                <div>
-                    <h2 class="text-sm font-bold text-slate-800 dark:text-white">Profil Sekolah</h2>
-                    <p class="text-xs text-slate-400">Tampil di invoice dan portal siswa</p>
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-800 dark:text-white">Profil Sekolah</h2>
+                        <p class="text-xs text-slate-400">Tampil di invoice dan portal siswa</p>
+                    </div>
+                    <button type="button" title="Ubah profil sekolah" onclick="document.getElementById('settings-modal').classList.remove('hidden')"
+                        class="flex shrink-0 items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        Ubah
+                    </button>
                 </div>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">

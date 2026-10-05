@@ -1,10 +1,17 @@
 <x-ss-table>
     <x-slot name="filters">
-        <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div>
                 <h2 class="text-sm font-bold text-slate-800 dark:text-white">Daftar Kategori Tagihan</h2>
                 <p class="text-xs text-slate-400">Parameter nominal dasar billing generator</p>
             </div>
+            <button type="button" title="Tambah kategori" onclick="document.getElementById('create-category-modal').classList.remove('hidden')"
+                class="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Kategori
+            </button>
+        </div>
+        <div class="pt-3">
             <form method="GET" action="{{ route('admin.kategori-tagihan') }}" class="flex flex-wrap items-center gap-2">
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">

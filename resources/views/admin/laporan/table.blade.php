@@ -1,10 +1,24 @@
 <x-ss-table>
     <x-slot name="filters">
-        <form method="GET" action="{{ route('admin.laporan') }}" class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
             <div>
                 <h2 class="text-sm font-bold text-slate-800 dark:text-white">Rincian Riwayat Pembayaran</h2>
-                <p class="text-xs text-slate-400">Transaksi kasir & gateway</p>
+                <p class="text-xs text-slate-400">Transaksi kasir dan gateway</p>
             </div>
+            <div class="flex items-center gap-2">
+                <button type="button" title="Cetak PDF" onclick="window.print()"
+                    class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Export PDF
+                </button>
+                <button type="button" title="Unduh Excel" id="btn-export-excel"
+                    class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Excel
+                </button>
+            </div>
+        </div>
+        <form method="GET" action="{{ route('admin.laporan') }}" class="flex flex-wrap items-center justify-between gap-3 pt-3">
             <div class="flex flex-wrap items-center gap-2">
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
