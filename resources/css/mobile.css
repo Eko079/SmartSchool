@@ -209,3 +209,11 @@
 .m-input:focus, .m-select:focus { border-color: #2563EB; box-shadow: 0 0 0 3px #2563eb1f; }
 .m-row2 { display: flex; gap: 10px; }
 .m-row2 > * { flex: 1; }
+
+/* Animasi ala web desktop: bar grow + seg fill + transisi tema */
+[data-m-bar] { transition: height .7s cubic-bezier(.22,.61,.36,1); }
+[data-m-seg] { transition: width .9s cubic-bezier(.22,.61,.36,1); }
+.m-theme-anim, .m-theme-anim .m-card, .m-theme-anim .m-bottomnav { transition: background-color .4s, color .4s, border-color .4s; }
+@media (prefers-reduced-motion: reduce) {
+    [data-m-bar], [data-m-seg] { transition: none; }
+}

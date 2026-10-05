@@ -10,7 +10,7 @@
 @section('hero')
     <div class="m-rev-label">{{ $revLabel }}</div>
     <div class="m-rev-row">
-        <div class="m-rev-value">{{ DashboardController::rpShort($incomeThisMonth) }}</div>
+        <div class="m-rev-value" data-m-count="{{ $incomeThisMonth }}" data-m-fmt="rp-short">{{ DashboardController::rpShort($incomeThisMonth) }}</div>
         @if($delta)
             <span class="m-delta {{ $deltaUp ? '' : 'down' }}">{{ $delta }}</span>
         @endif
@@ -20,17 +20,17 @@
 
 @section('kpi')
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($totalBilled > 0 ? $totalPaid : 0, 0, ',', '.') === '0' ? number_format($paidCount, 0, ',', '.') : DashboardController::rpShort($totalPaid) }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $totalPaid }}" data-m-fmt="rp-short">{{ $totalBilled > 0 ? DashboardController::rpShort($totalPaid) : number_format($paidCount, 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Terkumpul</div>
         <div class="m-kpi-sub">{{ number_format($paidCount, 0, ',', '.') }} lunas</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($activeStudents, 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $activeStudents }}" data-m-fmt="int">{{ number_format($activeStudents, 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Siswa aktif</div>
         <div class="m-kpi-sub">Terdaftar</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($unpaidCount, 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $unpaidCount }}" data-m-fmt="int">{{ number_format($unpaidCount, 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Menunggu</div>
         <div class="m-kpi-sub">Perlu ditagih</div>
     </div>
@@ -90,7 +90,7 @@
             <div class="m-sec-title">Target Bulanan</div>
         </div>
         @php $pct = $billedThisMonth > 0 ? min(100, round($incomeThisMonth / $billedThisMonth * 100, 1)) : 0; @endphp
-        <div class="m-fdesc">{{ $pct }}% tercapai · {{ DashboardController::rpShort($incomeThisMonth) }} / {{ DashboardController::rpShort($billedThisMonth) }}</div>
-        <div class="m-seg"><div style="width: {{ $pct }}%"></div></div>
+        <div class="m-fdesc"><span data-m-count="{{ $pct }}" data-m-fmt="pct1">{{ number_format($pct, 1, ',', '.') }}%</span> tercapai · {{ DashboardController::rpShort($incomeThisMonth) }} / {{ DashboardController::rpShort($billedThisMonth) }}</div>
+        <div class="m-seg"><div data-m-seg="{{ $pct }}" style="width: {{ $pct }}%"></div></div>
     </div>
 @endsection

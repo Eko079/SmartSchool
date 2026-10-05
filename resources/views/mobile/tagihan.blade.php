@@ -7,7 +7,7 @@
 @section('hero')
     <div class="m-rev-label">TAGIHAN AKTIF</div>
     <div class="m-rev-row">
-        <div class="m-rev-value">{{ number_format($stats['total'], 0, ',', '.') }}</div>
+        <div class="m-rev-value" data-m-count="{{ $stats['total'] }}" data-m-fmt="int">{{ number_format($stats['total'], 0, ',', '.') }}</div>
         <span class="m-delta {{ $stats['tunggakan'] > 0 ? 'down' : '' }}">{{ number_format($stats['lunas'], 0, ',', '.') }} lunas</span>
     </div>
     <div class="m-rev-sub">{{ DashboardController::rpShort($stats['nominal']) }} total nominal</div>
@@ -15,17 +15,17 @@
 
 @section('kpi')
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($stats['lunas'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $stats['lunas'] }}" data-m-fmt="int">{{ number_format($stats['lunas'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Lunas</div>
         <div class="m-kpi-sub">Selesai</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($stats['tunggakan'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $stats['tunggakan'] }}" data-m-fmt="int">{{ number_format($stats['tunggakan'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Tunggakan</div>
         <div class="m-kpi-sub">Perlu ditagih</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ $categories->count() }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $categories->count() }}" data-m-fmt="int">{{ $categories->count() }}</div>
         <div class="m-kpi-lab">Kategori</div>
         <div class="m-kpi-sub">Aktif</div>
     </div>

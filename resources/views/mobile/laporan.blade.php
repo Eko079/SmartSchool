@@ -7,25 +7,25 @@
 @section('hero')
     <div class="m-rev-label">TOTAL TERKUMPUL</div>
     <div class="m-rev-row">
-        <div class="m-rev-value">{{ DashboardController::rpShort($totalIncome) }}</div>
-        <span class="m-delta">{{ $rate }}%</span>
+        <div class="m-rev-value" data-m-count="{{ $totalIncome }}" data-m-fmt="rp-short">{{ DashboardController::rpShort($totalIncome) }}</div>
+        <span class="m-delta" data-m-count="{{ $rate }}" data-m-fmt="pct1">{{ $rate }}%</span>
     </div>
     <div class="m-rev-sub">Kolektibilitas {{ $rate }}% · {{ number_format($successCount, 0, ',', '.') }} sukses</div>
 @endsection
 
 @section('kpi')
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($successCount, 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $successCount }}" data-m-fmt="int">{{ number_format($successCount, 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Sukses</div>
         <div class="m-kpi-sub">Transaksi</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ $rate }}%</div>
+        <div class="m-kpi-val" data-m-count="{{ $rate }}" data-m-fmt="pct1">{{ $rate }}%</div>
         <div class="m-kpi-lab">Kolektibilitas</div>
         <div class="m-kpi-sub">Target 90%</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ DashboardController::rpShort($totalIncome) }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $totalIncome }}" data-m-fmt="rp-short">{{ DashboardController::rpShort($totalIncome) }}</div>
         <div class="m-kpi-lab">Nominal</div>
         <div class="m-kpi-sub">Terkumpul</div>
     </div>
@@ -36,9 +36,9 @@
         <div class="m-sec-head"><div class="m-sec-title">Tren 6 Bulan</div></div>
         <div style="display:flex;align-items:flex-end;gap:6px;height:110px;margin-top:10px">
             @foreach($trend as $i => $v)
-                @php $h = $maxTrend > 0 ? max(6, round($v / $maxTrend * 100)) : 6; @endphp
+                @php $h = $maxTrend > 0 ? max(6, round($v / $maxTrend * 100)) : 6; $px = round($h / 100 * 86); @endphp
                 <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                    <div style="width:100%;background:#2563EB;border-radius:6px;height:{{ $h }}px" title="{{ $labels[$i] }}: Rp {{ number_format($v, 0, ',', '.') }}"></div>
+                    <div data-m-bar="{{ $px }}" style="width:100%;background:#2563EB;border-radius:6px;height:{{ $px }}px" title="{{ $labels[$i] }}: Rp {{ number_format($v, 0, ',', '.') }}"></div>
                     <div class="m-fdesc">{{ $labels[$i] }}</div>
                 </div>
             @endforeach

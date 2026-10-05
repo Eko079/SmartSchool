@@ -5,7 +5,7 @@
 @section('hero')
     <div class="m-rev-label">DATA SISWA · TA {{ $academicYear }}</div>
     <div class="m-rev-row">
-        <div class="m-rev-value">{{ number_format($stats['aktif'], 0, ',', '.') }}</div>
+        <div class="m-rev-value" data-m-count="{{ $stats['aktif'] }}" data-m-fmt="int">{{ number_format($stats['aktif'], 0, ',', '.') }}</div>
         <span class="m-delta">Aktif</span>
     </div>
     <div class="m-rev-sub">{{ number_format($stats['total'], 0, ',', '.') }} siswa terdaftar</div>
@@ -13,17 +13,17 @@
 
 @section('kpi')
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($stats['total'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $stats['total'] }}" data-m-fmt="int">{{ number_format($stats['total'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Total</div>
         <div class="m-kpi-sub">Semua status</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($stats['baru'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $stats['baru'] }}" data-m-fmt="int">{{ number_format($stats['baru'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Baru</div>
         <div class="m-kpi-sub">Bulan ini</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ number_format($stats['nonaktif'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $stats['nonaktif'] }}" data-m-fmt="int">{{ number_format($stats['nonaktif'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Nonaktif</div>
         <div class="m-kpi-sub">Cuti / lulus</div>
     </div>
