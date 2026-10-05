@@ -19,7 +19,7 @@ class AuthController extends Controller
             return redirect()->route('portal.dashboard');
         }
 
-        return response()->json(['view' => 'portal.login', 'message' => 'Portal login placeholder. Frontend menyusul.']);
+        return view('portal.login');
     }
 
     public function login(Request $request)

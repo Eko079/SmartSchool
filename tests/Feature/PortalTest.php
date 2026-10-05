@@ -29,6 +29,25 @@ class PortalTest extends TestCase
         $this->get(route('portal.tagihan'))->assertRedirect(route('portal.login'));
     }
 
+    public function test_portal_login_page_renders(): void
+    {
+        $this->get(route('portal.login'))->assertOk()->assertSee('Selamat Datang Kembali');
+    }
+
+    public function test_portal_pages_render_for_wali(): void
+    {
+        $wali = $this->waliUser();
+        $this->actingAs($wali, 'wali');
+        $this->actingAs($wali);
+
+        $this->get(route('portal.dashboard'))->assertOk()->assertSee('Tagihan Terbaru');
+        $this->get(route('portal.tagihan'))->assertOk()->assertSee('Tagihan Saya');
+        $this->get(route('portal.riwayat'))->assertOk()->assertSee('Riwayat Pembayaran');
+        $this->get(route('portal.profil'))->assertOk()->assertSee('Profil Anak');
+        $this->get(route('portal.bantuan'))->assertOk()->assertSee('Pusat Bantuan');
+        $this->get(route('portal.pengaturan'))->assertOk()->assertSee('Pengaturan Akun');
+    }
+
     public function test_wali_can_login_with_nis(): void
     {
         $wali = $this->waliUser();
@@ -121,6 +140,21 @@ class PortalTest extends TestCase
         $this->actingAs($wali, 'wali');
 
         $bill = Bill::where('student_id', $wali->student_id)->where('status', '!=', 'paid')->first();
+        if (! $bill) {
+            $category = \App\Models\FeeCategory::firstOrFail();
+            $bill = Bill::create([
+                'bill_code' => 'INV-TEST-' . uniqid(),
+                'order_id' => 'SS-INV-TEST-' . uniqid(),
+                'student_id' => $wali->student_id,
+                'fee_category_id' => $category->id,
+                'period_month' => 10,
+                'period_year' => 2026,
+                'amount' => 850000,
+                'paid_amount' => 0,
+                'status' => 'unpaid',
+                'due_date' => now()->addDays(7),
+            ]);
+        }
         $this->assertNotNull($bill, 'Butuh tagihan belum lunas untuk uji bayar.');
 
         $pay = $this->postJson(route('portal.tagihan.pay', $bill->id), ['method' => 'bca_va']);
