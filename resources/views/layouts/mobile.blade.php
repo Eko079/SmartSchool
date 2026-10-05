@@ -32,7 +32,7 @@
                 <div class="m-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</div>
                 <div class="m-meta">
                     <div class="m-hi">Halo, {{ explode(' ', Auth::user()->name ?? 'Admin')[0] }}</div>
-                    <div class="m-name">{{ $schoolName ?? config('app.name', 'SmartSchool') }} · {{ Auth::user()->name ?? 'Admin' }}</div>
+                    <div class="m-name">{{ $schoolName ?? config('app.name', 'SmartSchool') }}</div>
                 </div>
                 <button type="button" class="m-iconbtn" aria-label="Notifikasi" title="Notifikasi">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -71,8 +71,7 @@
             @yield('content')
 
             <div class="m-foot">
-                <div class="m-foot-tx">SmartSchool ERP · v2.4</div>
-                <div class="m-foot-sub">Data nyata dari database sekolah</div>
+                <div class="m-foot-tx">© {{ date('Y') }} {{ $schoolName ?? 'SmartSchool' }}</div>
             </div>
             <div class="m-bottompad"></div>
         </main>
