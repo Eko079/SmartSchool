@@ -3,10 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\Student;
+use App\Models\User;
 use Tests\TestCase;
 
 class StudentTableTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::first() ?? User::factory()->create());
+    }
+
     public function test_sorting_params_render(): void
     {
         foreach (['nis', 'name', 'class', 'status'] as $sort) {

@@ -19,7 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
 
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Siswa

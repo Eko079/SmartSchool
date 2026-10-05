@@ -6,10 +6,17 @@ use App\Models\ClassRoom;
 use App\Models\FeeCategory;
 use App\Models\Student;
 use App\Models\SchoolSetting;
+use App\Models\User;
 use Tests\TestCase;
 
 class AdminCrudTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::first() ?? User::factory()->create());
+    }
+
     public function test_can_create_and_delete_student(): void
     {
         $class = ClassRoom::first();
