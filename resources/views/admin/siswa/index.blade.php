@@ -3,7 +3,7 @@
 @section('breadcrumb', 'Master Data / Data Siswa')
 @section('page-title', 'Data Siswa')
 @section('page-subtitle')
-    Kelola data siswa tahun ajaran {{ $academicYear ?? '' }} — cari, filter, dan urutkan berdasarkan kolom tabel.
+    Kelola data siswa tahun ajaran {{ $academicYear ?? '' }}. Cari, filter, dan urutkan berdasarkan kolom tabel.
 @endsection
 
 @section('topbar-actions')
@@ -138,7 +138,7 @@
         <tr>
             <td colspan="6" class="py-6 text-center text-slate-400">
                 @if(request()->anyFilled(['q', 'class_id', 'status']))
-                    Tidak cocok dengan filter — <a href="{{ route('admin.siswa') }}" class="text-blue-600 hover:underline">tampilkan semua</a>.
+                    Tidak cocok dengan filter. <a href="{{ route('admin.siswa') }}" class="text-blue-600 hover:underline">Tampilkan semua</a>.
                 @else
                     Belum ada data siswa. Klik <strong>Tambah Siswa</strong> atau <strong>Import CSV</strong>.
                 @endif

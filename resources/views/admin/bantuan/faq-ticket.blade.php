@@ -13,19 +13,19 @@
                 $faqs = [
                     [
                         'q' => 'Bagaimana cara tambah siswa baru?',
-                        'a' => 'Masuk ke menu Data Siswa → klik tombol + Tambah Siswa → lengkapi NIS, Nama, Kelas, dan Wali → Simpan. Anda juga dapat menggunakan tombol Import CSV untuk menambahkan ratusan siswa sekaligus.',
+                        'a' => 'Masuk ke menu Data Siswa, klik tombol Tambah Siswa, lengkapi NIS, Nama, Kelas, dan Wali, lalu Simpan. Anda juga dapat menggunakan tombol Import CSV untuk menambahkan ratusan siswa sekaligus.',
                     ],
                     [
                         'q' => 'Bagaimana membuat Kategori Tagihan SPP baru?',
-                        'a' => 'Masuk ke menu Kategori Tagihan → klik Tambah Kategori → masukkan kode SPP, nominal dasar (misal Rp 850.000) → pilih tipe per bulan → simpan dan aktifkan.',
+                        'a' => 'Masuk ke menu Kategori Tagihan, klik Tambah Kategori, masukkan kode SPP dan nominal dasar (misal Rp 850.000), pilih tipe per bulan, lalu simpan dan aktifkan.',
                     ],
                     [
                         'q' => 'Billing gagal generate pada beberapa siswa?',
-                        'a' => 'Buka Riwayat Generate → periksa log error (biasanya karena nomor induk siswa sudah terbit tagihan di periode yang sama) → perbaiki data target → jalankan Generate Ulang.',
+                        'a' => 'Buka Riwayat Generate, periksa log error (biasanya karena nomor induk siswa sudah terbit tagihan di periode yang sama), perbaiki data target, lalu jalankan Generate Ulang.',
                     ],
                     [
                         'q' => 'Bagaimana cara mengunduh Laporan pembayaran?',
-                        'a' => 'Buka menu Laporan → filter periode bulan yang diinginkan (misal Sep 2026) → klik tombol Export PDF atau Excel di sudut kanan atas.',
+                        'a' => 'Buka menu Laporan, filter periode bulan yang diinginkan (misal Sep 2026), lalu klik tombol Export PDF atau Excel di sudut kanan atas.',
                     ],
                 ];
             @endphp

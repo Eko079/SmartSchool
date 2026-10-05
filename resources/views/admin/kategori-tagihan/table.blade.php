@@ -84,7 +84,7 @@
     <tr>
         <td colspan="6" class="py-6 text-center text-slate-400">
             @if(request()->anyFilled(['q', 'status']))
-                Tidak cocok dengan filter — <a href="{{ route('admin.kategori-tagihan') }}" class="text-blue-600 hover:underline">tampilkan semua</a>.
+                Tidak cocok dengan filter. <a href="{{ route('admin.kategori-tagihan') }}" class="text-blue-600 hover:underline">Tampilkan semua</a>.
             @else
                 Belum ada kategori tagihan. Klik <strong>Tambah Kategori</strong>.
             @endif

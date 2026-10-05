@@ -9,7 +9,7 @@
 
 @if(session('error'))
     <div class="ss-tip flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-medium text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200"
-        data-tip="Operasi dibatalkan — tidak ada data yang berubah" role="alert">
+        data-tip="Operasi dibatalkan. Data tidak berubah" role="alert">
         <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span>{{ session('error') }}</span>
     </div>

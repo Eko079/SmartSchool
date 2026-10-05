@@ -44,7 +44,7 @@
 
     {{-- Bell --}}
     <button title="Notifikasi" aria-label="Notifikasi"
-        class="ss-tip ss-tip-bottom flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-[14px] border border-[#E2E8F0] bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800" data-tip="Notifikasi — belum ada pesan baru">
+        class="ss-tip ss-tip-bottom flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-[14px] border border-[#E2E8F0] bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800" data-tip="Notifikasi">
         <svg class="w-5 h-5 text-[#475569] dark:text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
     </button>
 

@@ -46,7 +46,9 @@
         <a href="{{ url('/forgot-password') }}" class="font-semibold text-blue-600 hover:underline">Lupa kata sandi?</a>
     </div>
 
-    <button type="submit" class="ss-btn-primary">Masuk ke SmartSchool →</button>
+    <button type="submit" class="ss-btn-primary">Masuk ke SmartSchool
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
 </form>
 
 <div class="flex items-center gap-3">
@@ -62,6 +64,6 @@
 
 <p class="text-center text-xs text-slate-400 flex items-center justify-center gap-2">
     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-    Gagal 5x akun dikunci 15 menit • Belum punya akses? Hubungi Operator
+    <span>Gagal 5x akun dikunci 15 menit. Belum punya akses? Hubungi Operator.</span>
 </p>
 @endsection

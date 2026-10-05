@@ -63,7 +63,9 @@
             <h3 class="text-sm font-bold text-slate-800 dark:text-white">Panduan Siswa</h3>
             <p class="text-xs text-slate-500">Tambah, edit, impor CSV & kelola status siswa.</p>
         </div>
-        <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Data Siswa →</span>
+        <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Data Siswa
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
     </a>
 
     <a href="{{ route('admin.kategori-tagihan') }}" class="ss-card ss-tip flex flex-col justify-between gap-3 hover:border-blue-500 transition" data-tip="Atur nominal">
@@ -74,7 +76,9 @@
             <h3 class="text-sm font-bold text-slate-800 dark:text-white">Kategori Tagihan</h3>
             <p class="text-xs text-slate-500">Buat SPP, seragam, kegiatan & nominal default.</p>
         </div>
-        <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Kategori →</span>
+        <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Kategori
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
     </a>
 
     <a href="{{ route('admin.billing') }}" class="ss-card ss-tip flex flex-col justify-between gap-3 hover:border-blue-500 transition" data-tip="Generate massal">
@@ -85,6 +89,8 @@
             <h3 class="text-sm font-bold text-slate-800 dark:text-white">Billing & Laporan</h3>
             <p class="text-xs text-slate-500">Generate per kelas, cek bayar & unduh kas.</p>
         </div>
-        <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Billing →</span>
+        <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400">Buka Billing
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
     </a>
 </div>
