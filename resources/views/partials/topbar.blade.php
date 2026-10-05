@@ -59,11 +59,4 @@
     </div>
     </div>
 
-    {{-- Baris 2: tombol aksi halaman (Import/Tambah/dll) pindah ke bawah, full-width wrap --}}
-    @hasSection('topbar-actions')
-    <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
-        @yield('topbar-actions')
-    </div>
-    @endif
-
 </div>

@@ -3,24 +3,7 @@
 @section('breadcrumb', 'Laporan / Rekap Pembayaran')
 @section('page-title', 'Laporan Pembayaran')
 @section('page-subtitle')
-    Rekap lunas, tunggakan & arus kas TA {{ $academicYear ?? '' }}.
-@endsection
-
-@section('topbar-actions')
-<div class="flex items-center gap-2">
-    <button type="button" title="Cetak PDF" onclick="window.print()"
-        class="ss-tip ss-tip-bottom flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs"
-        data-tip="Cetak PDF">
-        <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Export PDF
-    </button>
-    <button type="button" title="Unduh Excel" id="btn-export-excel"
-        class="ss-tip ss-tip-bottom flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs"
-        data-tip="Unduh Excel">
-        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Excel
-    </button>
-</div>
+    Rekap lunas, tunggakan dan arus kas TA {{ $academicYear ?? '' }}.
 @endsection
 
 @section('content')
