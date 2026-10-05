@@ -103,6 +103,32 @@ class MobileController extends Controller
         return view('mobile.siswa', compact('students', 'stats', 'classes', 'academicYear', 'schoolName'));
     }
 
+    /** Kategori mobile: kartu kategori + statistik nyata. */
+    public function kategori(Request $request)
+    {
+        $query = FeeCategory::withCount('bills')
+            ->withSum('bills as total_collected', 'paid_amount');
+
+        if ($request->filled('q')) {
+            $q = $request->input('q');
+            $query->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('code', 'like', "%{$q}%");
+            });
+        }
+
+        $categories = $query->orderBy('id')->get();
+        $stats = [
+            'total' => FeeCategory::count(),
+            'aktif' => FeeCategory::where('is_active', true)->count(),
+            'bills' => \App\Models\Bill::count(),
+            'revenue' => (float) \App\Models\Bill::sum('paid_amount'),
+        ];
+        $schoolName = SchoolSetting::get('school_name', 'SmartSchool');
+
+        return view('mobile.kategori', compact('categories', 'stats', 'schoolName'));
+    }
+
     /** Tagihan mobile: kartu kategori + tagihan terbaru + riwayat batch. */
     public function tagihan(Request $request)
     {
@@ -185,24 +211,6 @@ class MobileController extends Controller
         return view('mobile.pengaturan', compact('settings', 'schoolName'));
     }
 
-    /** Simpan pengaturan dari popup mobile — kembali ke /m, bukan /admin. */
-    public function updateSettings(Request $request)
-    {
-        $validated = $request->validate([
-            'school_name' => 'nullable|string|max:255',
-            'academic_year' => 'nullable|string|max:20',
-            'active_semester' => 'nullable|in:Ganjil,Genap',
-            'school_phone' => 'nullable|string|max:30',
-            'school_email' => 'nullable|email|max:255',
-        ]);
-
-        foreach ($validated as $key => $value) {
-            SchoolSetting::set($key, $value ?? '');
-        }
-
-        return redirect()->route('m.pengaturan')->with('success', 'Pengaturan berhasil disimpan.');
-    }
-
     /** Bantuan mobile: FAQ + kontak dari pengaturan. */
     public function bantuan()
     {
@@ -212,53 +220,4 @@ class MobileController extends Controller
         return view('mobile.bantuan', compact('settings', 'schoolName'));
     }
 
-    /** JSON riwayat tagihan siswa (dipakai popup mobile, tetap di /m). */
-    public function studentBills(Student $student)
-    {
-        $rows = $student->bills()->with('feeCategory')->latest()->take(5)->get()
-            ->map(fn ($b) => [
-                'bill_code' => $b->bill_code,
-                'category' => $b->feeCategory->name ?? '-',
-                'amount' => number_format($b->amount, 0, ',', '.'),
-                'status' => $b->status,
-            ]);
-
-        return response()->json($rows);
-    }
-
-    /** Update siswa dari popup mobile — kembali ke /m, bukan /admin. */
-    public function updateStudent(Request $request, Student $student)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'nis' => 'required|string|max:20|unique:students,nis,' . $student->id,
-            'nisn' => 'nullable|string|max:20|unique:students,nisn,' . $student->id,
-            'class_id' => 'required|exists:classes,id',
-            'gender' => 'required|in:L,P',
-            'status' => 'required|in:aktif,cuti,lulus',
-            'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-        ], [
-            'nis.unique' => 'NIS sudah terdaftar, gunakan NIS lain.',
-            'nisn.unique' => 'NISN sudah terdaftar, gunakan NISN lain.',
-        ]);
-
-        $student->update($validated);
-
-        return redirect()->route('m.siswa')->with('success', 'Data siswa berhasil diperbarui.');
-    }
-
-    /** Hapus siswa dari mobile — tolak bila punya riwayat, kembali ke /m. */
-    public function destroyStudent(Student $student)
-    {
-        if ($student->bills()->exists() || $student->payments()->exists()) {
-            return redirect()->route('m.siswa')
-                ->with('error', "Siswa {$student->name} tidak dapat dihapus karena masih memiliki riwayat tagihan/pembayaran.");
-        }
-
-        $student->delete();
-
-        return redirect()->route('m.siswa')->with('success', 'Data siswa berhasil dihapus.');
-    }
 }

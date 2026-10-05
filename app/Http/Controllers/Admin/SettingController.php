@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SchoolSetting;
+use App\Support\Device;
 use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin/pengaturan).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->pengaturan();
+        }
+
         $settings = SchoolSetting::pluck('value', 'key')->toArray();
         $users = \App\Models\User::orderBy('name')->get();
 

@@ -37,29 +37,29 @@
 @endsection
 
 @section('content')
-    <form method="GET" action="{{ route('m.dashboard') }}" class="m-search">
+    <form method="GET" action="{{ route('admin.dashboard') }}" class="m-search">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" placeholder="Cari siswa, tagihan, INV" aria-label="Cari" oninput="document.querySelectorAll('[data-m-feed]').forEach(function(el){el.style.display = el.innerText.toLowerCase().includes(this.value.toLowerCase()) ? '' : 'none'}.bind(this))">
     </form>
 
     <div class="m-sec-head">
         <div class="m-sec-title">Menu Layanan</div>
-        <a class="m-see" href="{{ route('m.siswa') }}">Kelola</a>
+        <a class="m-see" href="{{ route('admin.siswa') }}">Kelola</a>
     </div>
     <div class="m-quick">
-        <a class="m-qa" href="{{ route('m.siswa') }}">
+        <a class="m-qa" href="{{ route('admin.siswa') }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
             Siswa
         </a>
-        <a class="m-qa" href="{{ route('m.tagihan') }}">
+        <a class="m-qa" href="{{ route('admin.billing') }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>
             Tagihan
         </a>
-        <a class="m-qa" href="{{ route('m.laporan') }}">
+        <a class="m-qa" href="{{ route('admin.laporan') }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
             Laporan
         </a>
-        <a class="m-qa" href="{{ route('m.bantuan') }}">
+        <a class="m-qa" href="{{ route('admin.bantuan') }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
             Bantuan
         </a>
@@ -69,7 +69,7 @@
         <div class="m-sec-head">
             <div class="m-sec-title">Pembayaran Terbaru</div>
             <span class="m-pill m-pill-ok">Live</span>
-            <a class="m-see" href="{{ route('m.laporan') }}">Lihat semua</a>
+            <a class="m-see" href="{{ route('admin.laporan') }}">Lihat semua</a>
         </div>
         @forelse($recent as $pay)
             <div class="m-feed" data-m-feed>

@@ -7,12 +7,19 @@ use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\Student;
 use App\Models\FeeCategory;
+use App\Support\Device;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin, tanpa /m).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->dashboard();
+        }
+
         Carbon::setLocale('id');
         $now = Carbon::now();
 

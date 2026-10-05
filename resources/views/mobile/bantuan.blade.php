@@ -35,9 +35,9 @@
     <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Panduan Cepat</div></div>
         <div class="m-actions">
-            <a class="m-btn" href="{{ route('m.siswa') }}">Siswa</a>
-            <a class="m-btn" href="{{ route('m.tagihan') }}">Billing</a>
-            <a class="m-btn" href="{{ route('m.laporan') }}">Laporan</a>
+            <a class="m-btn" href="{{ route('admin.siswa') }}">Siswa</a>
+            <a class="m-btn" href="{{ route('admin.billing') }}">Billing</a>
+            <a class="m-btn" href="{{ route('admin.laporan') }}">Laporan</a>
         </div>
     </div>
 

@@ -1,11 +1,11 @@
 {{-- Tabs mobile: Beranda / Data Siswa / Tagihan / Laporan / Lainnya --}}
 @php
     $mTabs = [
-        ['route' => 'm.dashboard', 'label' => 'Beranda'],
-        ['route' => 'm.siswa', 'label' => 'Data Siswa'],
-        ['route' => 'm.tagihan', 'label' => 'Tagihan'],
-        ['route' => 'm.laporan', 'label' => 'Laporan'],
-        ['route' => 'm.pengaturan', 'label' => 'Lainnya'],
+        ['route' => 'admin.dashboard', 'label' => 'Beranda'],
+        ['route' => 'admin.siswa', 'label' => 'Data Siswa'],
+        ['route' => 'admin.billing', 'label' => 'Tagihan'],
+        ['route' => 'admin.laporan', 'label' => 'Laporan'],
+        ['route' => 'admin.pengaturan', 'label' => 'Lainnya'],
     ];
 @endphp
 <div class="m-tabs" role="tablist" aria-label="Navigasi mobile">

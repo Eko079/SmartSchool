@@ -50,7 +50,7 @@
         <div class="m-actions"><button type="button" class="m-btn m-btn-primary" onclick="mOpenSettings()">Buka Pengaturan</button></div>
     </div>
 
-    {{-- Popup ubah pengaturan mobile — submit ke /m/pengaturan, tetap di /m --}}
+    {{-- Popup ubah pengaturan mobile — submit ke pengaturan, tetap di tampilan mobile --}}
     <div id="m-settings" class="m-modal hidden" role="dialog" aria-modal="true" aria-label="Ubah pengaturan">
         <div class="m-modal-card">
             <div class="m-modal-head">
@@ -59,7 +59,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form method="POST" action="{{ route('m.pengaturan.update') }}">
+            <form method="POST" action="{{ route('admin.pengaturan.update') }}">
                 @csrf
                 <label class="m-label">Nama Sekolah</label>
                 <input type="text" name="school_name" value="{{ $settings['school_name'] ?? '' }}" class="m-input">

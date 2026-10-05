@@ -91,12 +91,12 @@
             </div>
             @php
                 $mMenu = [
-                    ['route' => 'm.dashboard', 'label' => 'Beranda'],
-                    ['route' => 'm.siswa', 'label' => 'Data Siswa'],
-                    ['route' => 'm.tagihan', 'label' => 'Tagihan'],
-                    ['route' => 'm.laporan', 'label' => 'Laporan'],
-                    ['route' => 'm.pengaturan', 'label' => 'Pengaturan'],
-                    ['route' => 'm.bantuan', 'label' => 'Bantuan'],
+                    ['route' => 'admin.dashboard', 'label' => 'Beranda'],
+                    ['route' => 'admin.siswa', 'label' => 'Data Siswa'],
+                    ['route' => 'admin.billing', 'label' => 'Tagihan'],
+                    ['route' => 'admin.laporan', 'label' => 'Laporan'],
+                    ['route' => 'admin.pengaturan', 'label' => 'Pengaturan'],
+                    ['route' => 'admin.bantuan', 'label' => 'Bantuan'],
                 ];
             @endphp
             <nav class="m-drawer-nav">

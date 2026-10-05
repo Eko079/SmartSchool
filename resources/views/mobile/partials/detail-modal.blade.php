@@ -1,4 +1,4 @@
-{{-- Popup Detail Siswa mobile — tetap di /m, riwayat via JSON /m/siswa/{id}/bills --}}
+{{-- Popup Detail Siswa mobile — tetap di tampilan mobile, riwayat via JSON /admin/siswa/{id}/bills --}}
 <div id="m-detail" class="m-modal hidden" role="dialog" aria-modal="true" aria-label="Detail siswa">
     <div class="m-modal-card">
         <div class="m-modal-head">
@@ -45,7 +45,7 @@ function mOpenDetail(id, btn) {
     document.getElementById('m-d-edit').onclick = function () { mCloseDetail(); mOpenEdit(d.id, btn); };
     var box = document.getElementById('m-d-bills');
     box.innerHTML = '<div class="m-fdesc">Memuat riwayat…</div>';
-    fetch('/m/siswa/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
+    fetch('/admin/siswa/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
         .then(function (r) { return r.json(); })
         .then(function (rows) {
             if (!rows || !rows.length) { box.innerHTML = '<div class="m-fdesc">Siswa ini belum memiliki tagihan.</div>'; return; }

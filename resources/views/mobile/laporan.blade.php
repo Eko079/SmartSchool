@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('m.laporan') }}" class="m-search">
+    <form method="GET" action="{{ route('admin.laporan') }}" class="m-search">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari kode, INV, nama siswa" data-m-filter=".m-stu-card" aria-label="Cari laporan">
     </form>

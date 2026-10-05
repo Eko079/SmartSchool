@@ -1,4 +1,4 @@
-{{-- Popup Edit Siswa mobile — submit PUT ke /m/siswa/{id}, tetap di /m --}}
+{{-- Popup Edit Siswa mobile — submit PUT ke /admin/siswa/{id}, tetap di tampilan mobile --}}
 <div id="m-edit" class="m-modal hidden" role="dialog" aria-modal="true" aria-label="Ubah siswa">
     <div class="m-modal-card">
         <div class="m-modal-head">
@@ -56,7 +56,7 @@ function mOpenEdit(id, btn) {
     document.getElementById('m-e-wali').value = g('wali');
     document.getElementById('m-e-wa').value = g('wa');
     document.getElementById('m-e-alamat').value = g('alamat');
-    document.getElementById('m-e-form').action = '/m/siswa/' + (g('id') || id);
+    document.getElementById('m-e-form').action = '/admin/siswa/' + (g('id') || id);
     document.getElementById('m-edit').classList.remove('hidden');
 }
 function mCloseEdit() { document.getElementById('m-edit').classList.add('hidden'); }

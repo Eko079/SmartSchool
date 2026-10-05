@@ -30,12 +30,12 @@
 @endsection
 
 @section('content')
-    <form method="GET" action="{{ route('m.siswa') }}" class="m-search">
+    <form method="GET" action="{{ route('admin.siswa') }}" class="m-search">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari NIS, nama, WA wali" data-m-filter=".m-stu-card" aria-label="Cari siswa">
     </form>
 
-    <form method="GET" action="{{ route('m.siswa') }}" class="m-row2">
+    <form method="GET" action="{{ route('admin.siswa') }}" class="m-row2">
         <select name="class_id" class="m-select" onchange="this.form.submit()">
             <option value="">Semua Kelas</option>
             @foreach($classes as $c)
@@ -83,7 +83,7 @@
                     data-nisn="{{ $s->nisn ?? '' }}" data-gender="{{ $s->gender }}" data-status="{{ $s->status }}"
                     data-class-id="{{ $s->class_id }}" data-wali="{{ $s->guardian_name ?? '' }}"
                     data-wa="{{ $s->guardian_phone ?? '' }}" data-alamat="{{ $s->address ?? '' }}">Edit</button>
-                <form action="{{ route('m.siswa.destroy', $s->id) }}" method="POST" class="m-delform"
+                <form action="{{ route('admin.siswa.destroy', $s->id) }}" method="POST" class="m-delform"
                     onsubmit="return confirm('Hapus {{ addslashes($s->name) }} (NIS {{ $s->nis }})? Bila masih punya tagihan, penghapusan ditolak.');">
                     @csrf
                     @method('DELETE')

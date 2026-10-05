@@ -6,12 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\Payment;
 use App\Models\SchoolSetting;
+use App\Support\Device;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin/laporan).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->laporan($request);
+        }
+
         $query = Payment::with(['student.classRoom', 'bill.feeCategory']);
 
         // ---------- Ambil daftar opsi filter dari DB (bukan hardcode) ----------

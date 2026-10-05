@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ClassRoom;
 use App\Models\Student;
+use App\Support\Device;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
     public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin/siswa).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->siswa($request);
+        }
+
         $query = Student::with('classRoom');
 
         if ($request->filled('q')) {
