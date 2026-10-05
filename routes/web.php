@@ -60,9 +60,13 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 Route::prefix('m')->name('m.')->middleware('auth')->group(function () {
     Route::get('/', [MobileController::class, 'dashboard'])->name('dashboard');
     Route::get('/siswa', [MobileController::class, 'siswa'])->name('siswa');
+    Route::get('/siswa/{student}/bills', [MobileController::class, 'studentBills'])->name('siswa.bills');
+    Route::put('/siswa/{student}', [MobileController::class, 'updateStudent'])->name('siswa.update');
+    Route::delete('/siswa/{student}', [MobileController::class, 'destroyStudent'])->name('siswa.destroy');
     Route::get('/tagihan', [MobileController::class, 'tagihan'])->name('tagihan');
     Route::get('/laporan', [MobileController::class, 'laporan'])->name('laporan');
     Route::get('/pengaturan', [MobileController::class, 'pengaturan'])->name('pengaturan');
+    Route::post('/pengaturan', [MobileController::class, 'updateSettings'])->name('pengaturan.update');
     Route::get('/bantuan', [MobileController::class, 'bantuan'])->name('bantuan');
 });
 

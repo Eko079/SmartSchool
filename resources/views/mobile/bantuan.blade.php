@@ -43,7 +43,7 @@
 
     <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">FAQ Populer</div></div>
-        <div class="m-faq"><div class="m-stu-name">Cara tambah siswa baru?</div><div class="m-stu-sub">Buka Data Siswa di desktop, klik Tambah Siswa, isi NIS dan kelas.</div></div>
+        <div class="m-faq"><div class="m-stu-name">Cara tambah siswa baru?</div><div class="m-stu-sub">Hubungi admin untuk tambah via Data Siswa, atau minta akses desktop.</div></div>
         <div class="m-faq"><div class="m-stu-name">Tagihan gagal dibuat?</div><div class="m-stu-sub">Cek duplikat siswa + kategori + periode yang sama.</div></div>
         <div class="m-faq"><div class="m-stu-name">Laporan tidak muncul?</div><div class="m-stu-sub">Pastikan pembayaran berstatus sukses dan tanggal benar.</div></div>
     </div>
@@ -52,6 +52,6 @@
         <div class="m-sec-head"><div class="m-sec-title">Kontak</div></div>
         <div class="m-stu-sub">Telepon: {{ $settings['school_phone'] ?? '-' }}</div>
         <div class="m-stu-sub">Email: {{ $settings['school_email'] ?? '-' }}</div>
-        <div class="m-actions"><a class="m-btn m-btn-primary" href="{{ route('admin.bantuan') }}">Pusat Bantuan Desktop</a></div>
+        <div class="m-fdesc">Butuh aksi admin? Buka menu terkait di atas, semua tetap di tampilan mobile.</div>
     </div>
 @endsection

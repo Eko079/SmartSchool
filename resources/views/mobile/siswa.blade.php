@@ -73,8 +73,22 @@
                 @endif
             </div>
             <div class="m-actions">
-                <a class="m-btn" href="/admin/siswa/{{ $s->id }}/edit">Edit</a>
-                <a class="m-btn" href="/admin/siswa?class_id={{ $s->class_id }}">Kelas</a>
+                <button type="button" class="m-btn" onclick="mOpenDetail({{ $s->id }}, this)"
+                    data-id="{{ $s->id }}" data-name="{{ $s->name }}" data-nis="{{ $s->nis }}"
+                    data-nisn="{{ $s->nisn ?? '' }}" data-gender="{{ $s->gender }}" data-status="{{ $s->status }}"
+                    data-kelas="{{ $s->classRoom->name ?? '-' }}" data-wali="{{ $s->guardian_name ?? '' }}"
+                    data-wa="{{ $s->guardian_phone ?? '' }}" data-alamat="{{ $s->address ?? '' }}">Detail</button>
+                <button type="button" class="m-btn m-btn-primary" onclick="mOpenEdit({{ $s->id }}, this)"
+                    data-id="{{ $s->id }}" data-name="{{ $s->name }}" data-nis="{{ $s->nis }}"
+                    data-nisn="{{ $s->nisn ?? '' }}" data-gender="{{ $s->gender }}" data-status="{{ $s->status }}"
+                    data-class-id="{{ $s->class_id }}" data-wali="{{ $s->guardian_name ?? '' }}"
+                    data-wa="{{ $s->guardian_phone ?? '' }}" data-alamat="{{ $s->address ?? '' }}">Edit</button>
+                <form action="{{ route('m.siswa.destroy', $s->id) }}" method="POST" class="m-delform"
+                    onsubmit="return confirm('Hapus {{ addslashes($s->name) }} (NIS {{ $s->nis }})? Bila masih punya tagihan, penghapusan ditolak.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="m-btn m-btn-danger">Hapus</button>
+                </form>
             </div>
         </div>
     @empty
@@ -94,4 +108,7 @@
             </div>
         </div>
     @endif
+
+    @include('mobile.partials.detail-modal')
+    @include('mobile.partials.edit-modal')
 @endsection
