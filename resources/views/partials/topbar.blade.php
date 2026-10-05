@@ -1,30 +1,30 @@
-<div class="flex flex-wrap items-center gap-5 rounded-[16px] border border-[#E2E8F0] bg-white p-4 px-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+<div class="rounded-[16px] border border-[#E2E8F0] bg-white p-4 px-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    {{-- Baris 1: hamburger + judul + ikon (selalu muat, judul flex-1 min-w-0) --}}
+    <div class="flex items-center gap-3 sm:gap-5">
     {{-- Mobile hamburger --}}
     <button onclick="toggleSidebar()" title="Buka/tutup menu samping" aria-label="Buka/tutup menu samping"
-        class="ss-tip ss-tip-bottom lg:hidden p-2.5 -ml-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-200" data-tip="Buka/tutup menu samping">
+        class="ss-tip ss-tip-bottom lg:hidden p-2.5 -ml-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-200 shrink-0" data-tip="Buka/tutup menu samping">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
     </button>
 
     {{-- Title --}}
     <div class="flex-1 min-w-0">
         @hasSection('breadcrumb')
-            <div class="text-[13px] font-normal text-[#64748B] mb-1.5">@yield('breadcrumb')</div>
+            <div class="text-[13px] font-normal text-[#64748B] mb-1.5 truncate">@yield('breadcrumb')</div>
         @endif
         @if(request()->routeIs('admin.dashboard'))
             @php $sapaan = explode(' ', Auth::user()->name ?? 'Admin')[0]; @endphp
-            <h1 class="truncate text-[28px] font-bold leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">👋 Selamat Datang Kembali, {{ $sapaan }}!</h1>
+            <h1 class="truncate text-xl sm:text-[28px] font-bold leading-tight sm:leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">👋 Selamat Datang Kembali, {{ $sapaan }}!</h1>
         @else
-            <h1 class="truncate text-[28px] font-bold leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">@yield('page-title', 'Dashboard')</h1>
+            <h1 class="truncate text-xl sm:text-[28px] font-bold leading-tight sm:leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">@yield('page-title', 'Dashboard')</h1>
         @endif
         @hasSection('page-subtitle')
-            <p class="mt-1.5 text-sm font-normal text-[#64748B]">@yield('page-subtitle')</p>
+            <p class="mt-1.5 text-xs sm:text-sm font-normal text-[#64748B] line-clamp-2">@yield('page-subtitle')</p>
         @endif
     </div>
 
-    @hasSection('topbar-actions')
-        @yield('topbar-actions')
-    @endif
-
+    {{-- Ikon: toggle + bell + profil (nama disembunyikan di <md agar judul dapat ruang) --}}
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
     {{-- Theme toggle (hanya switch, single elemen) --}}
     <button type="button" onclick="toggleDark(this)"
         role="switch" aria-checked="false" aria-label="Mode gelap terang"
@@ -50,11 +50,20 @@
 
     {{-- Profile --}}
     <div title="Masuk sebagai {{ Auth::user()->name ?? 'Admin' }}"
-        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">
+        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-2 md:pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-base font-bold text-white">
             {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
         </div>
-        <span class="text-sm font-semibold text-[#0F172A] hidden sm:inline dark:text-white">{{ Auth::user()->name ?? 'Admin' }}</span>
+        <span class="text-sm font-semibold text-[#0F172A] hidden md:inline dark:text-white">{{ Auth::user()->name ?? 'Admin' }}</span>
     </div>
+    </div>
+    </div>
+
+    {{-- Baris 2: tombol aksi halaman (Import/Tambah/dll) pindah ke bawah, full-width wrap --}}
+    @hasSection('topbar-actions')
+    <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
+        @yield('topbar-actions')
+    </div>
+    @endif
 
 </div>

@@ -61,7 +61,7 @@ function openCategoryEdit(id, btn) {
     document.getElementById('edit-cat-amount').value = g('amount');
     document.getElementById('edit-cat-type').value = g('type') || 'bulanan';
     document.getElementById('edit-cat-desc').value = g('desc');
-    document.getElementById('edit-cat-form').action = '{{ url('/admin/kategori-tagihan') }}/' + (g('id') || id);
+    document.getElementById('edit-cat-form').action = '/admin/kategori-tagihan/' + (g('id') || id);
     document.getElementById('edit-category-modal').classList.remove('hidden');
 }
 function closeCategoryEdit() {

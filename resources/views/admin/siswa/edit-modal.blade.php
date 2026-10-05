@@ -101,7 +101,7 @@ function openEditModal(id, btn) {
     document.getElementById('edit-wa').value = g('wa');
     document.getElementById('edit-alamat').value = g('alamat');
 
-    document.getElementById('edit-form').action = '{{ url('/admin/siswa') }}/' + (g('id') || id);
+    document.getElementById('edit-form').action = '/admin/siswa/' + (g('id') || id);
     document.getElementById('edit-modal').classList.remove('hidden');
 }
 function closeEditModal() {

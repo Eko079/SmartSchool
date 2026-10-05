@@ -94,10 +94,10 @@ function openDetailModal(id, btn) {
         };
     }
 
-    // Riwayat tagihan nyata via endpoint JSON.
+    // Riwayat tagihan nyata via endpoint JSON (URL relatif agar ikut skema http/https halaman).
     var box = document.getElementById('modal-bills');
     box.innerHTML = '<p class="py-6 text-center text-xs text-slate-400">Memuat riwayat…</p>';
-    fetch('{{ url('/admin/siswa') }}/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
+    fetch('/admin/siswa/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
         .then(function (r) { return r.json(); })
         .then(function (rows) {
             if (!rows || !rows.length) {
