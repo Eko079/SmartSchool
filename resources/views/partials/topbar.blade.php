@@ -50,7 +50,7 @@
 
     {{-- Profile --}}
     <div title="Masuk sebagai {{ Auth::user()->name ?? 'Admin' }}"
-        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">>
+        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-base font-bold text-white">
             {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
         </div>
