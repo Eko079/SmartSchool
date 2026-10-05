@@ -5,12 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use App\Models\FeeCategory;
+use App\Support\Device;
 use Illuminate\Http\Request;
 
 class FeeCategoryController extends Controller
 {
     public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin/kategori-tagihan).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->kategori($request);
+        }
+
         $query = FeeCategory::withCount('bills')
             ->withSum('bills as total_collected', 'paid_amount');
 

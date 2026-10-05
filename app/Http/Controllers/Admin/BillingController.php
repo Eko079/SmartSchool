@@ -7,13 +7,19 @@ use App\Models\Bill;
 use App\Models\ClassRoom;
 use App\Models\FeeCategory;
 use App\Models\Student;
+use App\Support\Device;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class BillingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // HP => tampilan mobile otomatis (URL tetap /admin/billing).
+        if (Device::isPhone($request)) {
+            return app(MobileController::class)->tagihan($request);
+        }
+
         $categories = FeeCategory::where('is_active', true)->get();
         $classes = ClassRoom::withCount(['students' => function ($q) {
             $q->where('status', 'aktif');

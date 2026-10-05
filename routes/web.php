@@ -48,8 +48,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
     Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
 
-    // Bantuan (kirim settings agar kontak ikut data Pengaturan)
-    Route::get('/bantuan', function () {
+    // Bantuan (kirim settings agar kontak ikut data Pengaturan; HP => mobile otomatis)
+    Route::get('/bantuan', function (\Illuminate\Http\Request $request) {
+        if (\App\Support\Device::isPhone($request)) {
+            return app(\App\Http\Controllers\Admin\MobileController::class)->bantuan();
+        }
         $settings = \App\Models\SchoolSetting::pluck('value', 'key')->toArray();
         return view('admin.bantuan', compact('settings'));
     })->name('bantuan');
