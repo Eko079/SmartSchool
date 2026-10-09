@@ -22,6 +22,7 @@
                 ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan', 'icon' => 'tag'],
                 ['route' => 'admin.billing', 'label' => 'Billing Generator', 'icon' => 'receipt'],
                 ['route' => 'admin.laporan', 'label' => 'Laporan', 'icon' => 'file-text'],
+                ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'tag'],
             ];
         @endphp
         @foreach($menu as $item)

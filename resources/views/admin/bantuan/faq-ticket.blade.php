@@ -119,6 +119,25 @@
                     Kirim Tiket
                 </button>
             </form>
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-2">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold">Tiket Wali Masuk</h4>
+                    <a href="{{ route('admin.tiket') }}" class="text-[11px] font-semibold text-blue-600 hover:underline">Kelola →</a>
+                </div>
+                <div class="flex gap-2 text-[11px]">
+                    <span class="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 font-bold text-amber-700">{{ $ticketStats['open'] ?? 0 }} terbuka</span>
+                    <span class="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 font-bold text-blue-700">{{ $ticketStats['answered'] ?? 0 }} dijawab</span>
+                </div>
+                @forelse(($tickets ?? collect())->take(5) as $t)
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-[11px]">
+                    <div class="flex items-center justify-between gap-2"><span class="font-bold">{{ $t->ticket_number }}</span><x-ss-pill status="{{ $t->status === 'open' ? 'pending' : 'paid' }}" label="{{ ucfirst($t->status) }}" /></div>
+                    <div class="font-semibold mt-0.5">{{ $t->subject }}</div>
+                    <div class="text-slate-500 truncate">{{ $t->user->name ?? '-' }} • {{ $t->message }}</div>
+                </div>
+                @empty
+                <p class="text-[11px] text-slate-400">Belum ada tiket wali.</p>
+                @endforelse
+            </div>
             <script>
             (function () {
                 var form = document.getElementById('ticket-form');
