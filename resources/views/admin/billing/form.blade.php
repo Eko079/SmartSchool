@@ -113,6 +113,27 @@
     </div>
 </form>
 
+<form method="POST" action="{{ route('admin.billing.package') }}" class="ss-card space-y-3" onsubmit="return confirm('Generate 1 paket semester penuh untuk kelas terpilih? Duplikat dilewati otomatis.');">
+    @csrf
+    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div>
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white">Generate Paket 1 Semester (1-Klik)</h2>
+            <p class="text-[11px] text-slate-400">Semua kategori semesteran aktif sekaligus • nominal ikut kategori</p>
+        </div>
+        <span class="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-[10px] font-bold text-emerald-700">Paket</span>
+    </div>
+    <div class="grid grid-cols-2 gap-2 text-xs">
+        <select name="academic_year" class="ss-input !py-2">@php $cy = (int) date('Y'); @endphp @foreach([$cy - 1 . '/' . $cy, $cy . '/' . ($cy + 1)] as $ta)<option value="{{ $ta }}">{{ $ta }}</option>@endforeach</select>
+        <select name="semester" class="ss-input !py-2"><option value="ganjil">Ganjil</option><option value="genap">Genap</option></select>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        @foreach(($classes ?? collect()) as $cls)
+        <label class="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 p-2 text-[11px] cursor-pointer"><input type="checkbox" name="classes[]" value="{{ $cls->id }}" checked class="rounded text-blue-600"> {{ $cls->name }} ({{ $cls->students_count }})</label>
+        @endforeach
+    </div>
+    <button class="ss-btn-primary !py-2.5 text-xs">Generate Paket Semester</button>
+</form>
+
 <script>
 function billingCheckedCount() {
     var n = 0;

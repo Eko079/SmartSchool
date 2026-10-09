@@ -115,5 +115,63 @@ class BillingController extends Controller
 
         return redirect()->route('admin.billing')->with('success', "Berhasil men-generate {$createdCount} tagihan ({$skippedCount} dilewati karena sudah ada).");
     }
+
+    public function generatePackage(Request $request)
+    {
+        $validated = $request->validate([
+            'academic_year' => 'required|string|max:9',
+            'semester' => 'required|in:ganjil,genap',
+            'classes' => 'required|array|min:1',
+            'classes.*' => 'exists:classes,id',
+        ]);
+
+        $tag = $validated['semester'] === 'ganjil' ? 'GJL' : 'GNP';
+        $cats = FeeCategory::where('is_active', true)
+            ->where('type', 'semesteran')
+            ->where('code', 'like', '%-' . $tag)
+            ->get();
+
+        if ($cats->isEmpty()) {
+            return redirect()->route('admin.billing')->with('error', 'Tidak ada kategori semesteran aktif untuk semester ' . $validated['semester'] . '.');
+        }
+
+        $students = Student::whereIn('class_id', $validated['classes'])->where('status', 'aktif')->get();
+        $created = 0;
+        $skipped = 0;
+
+        foreach ($students as $student) {
+            foreach ($cats as $cat) {
+                $exists = Bill::where('student_id', $student->id)
+                    ->where('fee_category_id', $cat->id)
+                    ->where('academic_year', $validated['academic_year'])
+                    ->where('semester', $validated['semester'])
+                    ->exists();
+                if ($exists) {
+                    $skipped++;
+                    continue;
+                }
+
+                $year = $validated['semester'] === 'ganjil' ? (int) explode('/', $validated['academic_year'])[0] : (int) (explode('/', $validated['academic_year'])[1] ?? date('Y'));
+                $billCode = 'INV-' . $year . '-' . $tag . '-' . substr(strtoupper(preg_replace('/[^A-Z0-9]/', '', $cat->code)), 0, 3) . '-' . str_pad($student->id, 4, '0', STR_PAD_LEFT);
+
+                Bill::create([
+                    'bill_code' => $billCode,
+                    'student_id' => $student->id,
+                    'fee_category_id' => $cat->id,
+                    'period_month' => $validated['semester'] === 'ganjil' ? 7 : 1,
+                    'period_year' => $year,
+                    'academic_year' => $validated['academic_year'],
+                    'semester' => $validated['semester'],
+                    'amount' => $cat->default_amount,
+                    'paid_amount' => 0,
+                    'status' => 'unpaid',
+                    'due_date' => now()->addDays(14),
+                ]);
+                $created++;
+            }
+        }
+
+        return redirect()->route('admin.billing')->with('success', "Paket semester {$validated['semester']} {$validated['academic_year']}: {$created} dibuat, {$skipped} dilewati.");
+    }
 }
 
