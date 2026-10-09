@@ -16,9 +16,8 @@
                 <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required
                     class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:font-semibold file:text-blue-600">
                 <p class="mt-1.5 text-[11px] leading-relaxed text-slate-400">
-                    Kolom: <code>nis, nisn, nama, kelas, gender(L/P), status(aktif/nonaktif/lulus), wali, wa, alamat</code>.<br>
-                    Excel dibaca mulai <b>A3</b> ke bawah (baris 1 header, baris 2 contoh). CSV: baris pertama boleh header.<br>
-                    Setelah upload tampil preview OK / Duplikat / Error dulu, belum masuk database.
+                    Unduh template Excel lewat tombol <b>Template</b>, isi data mulai baris 3, lalu upload di sini.<br>
+                    Sistem memeriksa data dan menampilkan hasilnya sebelum disimpan.
                 </p>
             </div>
 

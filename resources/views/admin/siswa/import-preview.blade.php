@@ -2,7 +2,7 @@
 @section('title', 'Preview Import Siswa')
 @section('breadcrumb', 'Master Data / Siswa / Preview Import')
 @section('page-title', 'Preview Import Siswa')
-@section('page-subtitle', 'Periksa status tiap baris sebelum masuk database.')
+@section('page-subtitle', 'Periksa kembali data siswa sebelum disimpan.')
 
 @section('content')
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
