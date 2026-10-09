@@ -31,6 +31,13 @@ class DashboardController extends Controller
         $perCategory = (clone $bills)->with('feeCategory')->get()->groupBy(fn ($b) => $b->feeCategory->name ?? 'Lainnya')
             ->map(fn ($g) => (float) $g->sum('amount'));
 
+        $perSemester = (clone $bills)->get()->groupBy(function ($b) {
+            $ta = $b->academic_year ?? '-';
+            $sm = $b->semester ? ucfirst($b->semester) : 'Lainnya';
+
+            return $ta . ' • ' . $sm;
+        })->map(fn ($g) => ['total' => (float) $g->sum('amount'), 'count' => $g->count()])->sortKeysDesc();
+
         $latest = Bill::with('feeCategory')->where('student_id', $student->id)->latest()->take(6)->get();
         $events = $student->bills()->with('events')->latest()->take(1)->first()?->events()->latest()->take(5)->get() ?? [];
 
@@ -44,6 +51,7 @@ class DashboardController extends Controller
                 'nearest_due' => $nearest,
             ],
             'per_category' => $perCategory,
+            'per_semester' => $perSemester,
             'latest_bills' => $latest,
             'activities' => $events,
         ];

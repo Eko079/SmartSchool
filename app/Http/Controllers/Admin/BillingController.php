@@ -30,10 +30,10 @@ class BillingController extends Controller
             ->take(8)
             ->get();
 
-        // ---------- Riwayat batch nyata: kelompokkan tagihan per kategori+periode ----------
+        // ---------- Riwayat batch nyata: kelompokkan tagihan per kategori+periode+semester ----------
         $history = Bill::with('feeCategory')
-            ->selectRaw('fee_category_id, period_month, period_year, COUNT(*) as total, SUM(amount) as nominal, MAX(created_at) as dibuat')
-            ->groupBy('fee_category_id', 'period_month', 'period_year')
+            ->selectRaw('fee_category_id, period_month, period_year, academic_year, semester, COUNT(*) as total, SUM(amount) as nominal, MAX(created_at) as dibuat')
+            ->groupBy('fee_category_id', 'period_month', 'period_year', 'academic_year', 'semester')
             ->orderByDesc('dibuat')
             ->take(10)
             ->get();
@@ -53,6 +53,8 @@ class BillingController extends Controller
             'fee_category_id' => 'required|exists:fee_categories,id',
             'period_month' => 'required|integer|between:1,12',
             'period_year' => 'required|integer|min:2020|max:2035',
+            'academic_year' => 'nullable|string|max:9',
+            'semester' => 'nullable|in:ganjil,genap',
             'amount' => 'required|numeric|min:1',
             'due_date' => 'required|date',
             'classes' => 'required|array|min:1',
@@ -69,11 +71,17 @@ class BillingController extends Controller
 
         foreach ($students as $student) {
             // Cegah duplikat: 1 siswa + 1 kategori + 1 periode = 1 tagihan.
-            $exists = Bill::where('student_id', $student->id)
+            $dup = Bill::where('student_id', $student->id)
                 ->where('fee_category_id', $category->id)
                 ->where('period_month', $validated['period_month'])
-                ->where('period_year', $validated['period_year'])
-                ->exists();
+                ->where('period_year', $validated['period_year']);
+            if (! empty($validated['academic_year'])) {
+                $dup->where('academic_year', $validated['academic_year']);
+            }
+            if (! empty($validated['semester'])) {
+                $dup->where('semester', $validated['semester']);
+            }
+            $exists = $dup->exists();
 
             if ($exists) {
                 $skippedCount++;
@@ -94,6 +102,8 @@ class BillingController extends Controller
                 'fee_category_id' => $category->id,
                 'period_month' => $validated['period_month'],
                 'period_year' => $validated['period_year'],
+                'academic_year' => $validated['academic_year'] ?? null,
+                'semester' => $validated['semester'] ?? null,
                 'amount' => $validated['amount'],
                 'paid_amount' => 0,
                 'status' => 'unpaid',

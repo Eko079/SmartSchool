@@ -78,7 +78,7 @@ class FeeCategoryController extends Controller
         $validated = $request->validate([
             'code' => 'required|string|max:30|unique:fee_categories,code',
             'name' => 'required|string|max:255',
-            'type' => 'required|in:bulanan,sekali,bebas',
+            'type' => 'required|in:bulanan,sekali,bebas,semesteran',
             'default_amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:500',
         ]);
@@ -101,7 +101,7 @@ class FeeCategoryController extends Controller
         $validated = $request->validate([
             'code' => 'required|string|max:30|unique:fee_categories,code,' . $category->id,
             'name' => 'required|string|max:255',
-            'type' => 'required|in:bulanan,sekali,bebas',
+            'type' => 'required|in:bulanan,sekali,bebas,semesteran',
             'default_amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:500',
         ], [

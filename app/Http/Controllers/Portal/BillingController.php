@@ -48,6 +48,18 @@ class BillingController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('semester') && in_array($request->semester, ['ganjil', 'genap'], true)) {
+            $query->where('semester', $request->semester);
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->where('academic_year', $request->string('academic_year')->toString());
+        }
+
+        if ($request->filled('fee_category_id')) {
+            $query->where('fee_category_id', (int) $request->integer('fee_category_id'));
+        }
+
         $perPage = (int) $request->integer('per_page', 10);
         $perPage = $perPage > 0 && $perPage <= 50 ? $perPage : 10;
 
@@ -57,11 +69,16 @@ class BillingController extends Controller
             'paid' => (float) (clone $query)->where('status', 'paid')->sum('amount'),
         ];
 
+        $studentId = $this->student()->id;
+        $semesters = Bill::where('student_id', $studentId)->whereNotNull('semester')->distinct()->pluck('semester')->values();
+        $academicYears = Bill::where('student_id', $studentId)->whereNotNull('academic_year')->distinct()->orderByDesc('academic_year')->pluck('academic_year')->values();
+        $categories = \App\Models\FeeCategory::whereIn('id', Bill::where('student_id', $studentId)->distinct()->pluck('fee_category_id'))->orderBy('name')->get(['id', 'name']);
+
         if ($request->expectsJson() || ! view()->exists('portal.tagihan')) {
             return response()->json(['bills' => $bills, 'summary' => $summary]);
         }
 
-        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary'));
+        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories'));
     }
 
     public function show(Request $request, Bill $bill)

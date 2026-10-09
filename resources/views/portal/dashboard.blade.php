@@ -82,6 +82,29 @@
 
     <div class="ss-card space-y-3">
         <div>
+            <h2 class="text-sm font-bold text-slate-800 dark:text-white">Tagihan per Semester</h2>
+            <p class="text-xs text-slate-500">Ringkasan tahun ajaran aktif</p>
+        </div>
+        @if(($per_semester ?? collect())->isNotEmpty())
+        <div class="space-y-2">
+            @foreach($per_semester as $label => $row)
+            <div class="flex items-center gap-3 text-xs">
+                <span class="w-36 shrink-0 font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $label }}</span>
+                <div class="flex-1 h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                    <div class="h-full rounded-full bg-emerald-500" style="width: {{ max(4, round($row['total'] / max(1, $per_semester->max('total')) * 100)) }}%"></div>
+                </div>
+                <span class="w-24 shrink-0 text-right font-bold text-slate-800 dark:text-white">{{ $rp($row['total']) }}</span>
+                <span class="w-16 shrink-0 text-right text-slate-400">{{ $row['count'] }} tagihan</span>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <p class="text-xs text-slate-400">Belum ada data semester. Tagihan lama tanpa TA tampil di kategori.</p>
+        @endif
+    </div>
+
+    <div class="ss-card space-y-3">
+        <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Pembayaran per Kategori</h2>
             <p class="text-xs text-slate-500">Distribusi nominal tagihan ananda</p>
         </div>

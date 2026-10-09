@@ -237,3 +237,11 @@
 .m-bill:first-child { border-top: none; }
 .m-delform { flex: 1; display: flex; }
 .m-delform .m-btn { width: 100%; }
+
+/* Auth login: hero tetap atas, hanya kartu form yang center */
+.m-shell:has(.m-auth-main) { display: flex; flex-direction: column; justify-content: flex-start; min-height: 100vh; }
+.m-auth-hero { padding: 20px 18px 12px 18px !important; }
+.m-auth-main { margin-top: 0; position: relative; z-index: 5; padding-top: 12px !important; padding-bottom: 20px !important; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.m-auth-card { border-radius: 20px; box-shadow: 0 12px 32px #0f1e3333; padding: 18px 16px; margin: 0; }
+.m-auth-main .m-bottompad { display: none; }
+.m-auth-main .m-foot { padding: 8px 0 0 0; }

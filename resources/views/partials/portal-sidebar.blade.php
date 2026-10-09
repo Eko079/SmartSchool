@@ -17,7 +17,6 @@
                 ['route' => 'portal.tagihan', 'label' => 'Tagihan Saya', 'icon' => 'receipt'],
                 ['route' => 'portal.riwayat', 'label' => 'Riwayat Bayar', 'icon' => 'file-text'],
                 ['route' => 'portal.profil', 'label' => 'Profil Anak', 'icon' => 'users'],
-                ['route' => 'portal.bantuan', 'label' => 'Bantuan', 'icon' => 'tag'],
             ];
         @endphp
         @foreach($menu as $item)

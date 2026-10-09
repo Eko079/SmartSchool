@@ -27,6 +27,9 @@
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800">
                         <td class="py-3 px-3 font-semibold text-blue-600 dark:text-blue-400">
                             BAT-{{ $h->period_year }}-{{ str_pad($h->period_month, 2, '0', STR_PAD_LEFT) }}
+                            @if($h->academic_year || $h->semester)
+                            <div class="text-[10px] font-normal text-slate-400">{{ $h->academic_year ?? '-' }} • {{ $h->semester ? ucfirst($h->semester) : '-' }}</div>
+                            @endif
                         </td>
                         <td class="py-3 px-3">{{ $h->feeCategory->name ?? $h->feeCategory->code ?? '-' }}</td>
                         <td class="py-3 px-3">{{ $h->total }} siswa</td>

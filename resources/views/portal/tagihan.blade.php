@@ -21,6 +21,23 @@
     <div class="ss-card">
         <form method="GET" action="{{ route('portal.tagihan') }}" class="flex flex-wrap items-center gap-2">
             <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari invoice, kategori..." class="ss-input !w-auto flex-1 min-w-[200px]">
+            <select name="academic_year" class="ss-input !w-auto">
+                <option value="">Semua TA</option>
+                @foreach(($academicYears ?? collect()) as $ta)
+                <option value="{{ $ta }}" {{ request('academic_year') === $ta ? 'selected' : '' }}>{{ $ta }}</option>
+                @endforeach
+            </select>
+            <select name="semester" class="ss-input !w-auto">
+                <option value="">Semua Semester</option>
+                <option value="ganjil" {{ request('semester') === 'ganjil' ? 'selected' : '' }}>Ganjil</option>
+                <option value="genap" {{ request('semester') === 'genap' ? 'selected' : '' }}>Genap</option>
+            </select>
+            <select name="fee_category_id" class="ss-input !w-auto">
+                <option value="">Semua Kategori</option>
+                @foreach(($categories ?? collect()) as $cat)
+                <option value="{{ $cat->id }}" {{ (string) request('fee_category_id') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                @endforeach
+            </select>
             <select name="status" class="ss-input !w-auto">
                 @foreach(['all' => 'Semua Status', 'unpaid' => 'Belum Bayar', 'partial' => 'Sebagian', 'paid' => 'Lunas', 'overdue' => 'Menunggak'] as $val => $label)
                 <option value="{{ $val }}" {{ request('status', 'all') === $val ? 'selected' : '' }}>{{ $label }}</option>
@@ -36,6 +53,9 @@
             <div class="flex-1 min-w-[200px]">
                 <div class="text-xs font-bold text-slate-800 dark:text-white">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>
                 <div class="text-[11px] text-slate-400">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }} • {{ $rp($bill->amount) }}</div>
+                @if($bill->academic_year || $bill->semester)
+                <div class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">TA {{ $bill->academic_year ?? '-' }} • Semester {{ $bill->semester ? ucfirst($bill->semester) : '-' }}</div>
+                @endif
             </div>
             <x-ss-pill status="{{ $bill->status }}" label="{{ ucfirst($bill->status) }}" />
             <a href="{{ route('portal.tagihan.show', $bill->id) }}" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Detail</a>

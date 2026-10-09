@@ -36,6 +36,17 @@
 
     <form method="GET" action="{{ route('portal.tagihan') }}" class="m-card">
         <div class="m-actions">
+            <select name="academic_year" onchange="this.form.submit()" class="m-btn" aria-label="Filter tahun ajaran">
+                <option value="">Semua TA</option>
+                @foreach(($academicYears ?? collect()) as $ta)
+                <option value="{{ $ta }}" {{ request('academic_year') === $ta ? 'selected' : '' }}>{{ $ta }}</option>
+                @endforeach
+            </select>
+            <select name="semester" onchange="this.form.submit()" class="m-btn" aria-label="Filter semester">
+                <option value="">Semua Smt</option>
+                <option value="ganjil" {{ request('semester') === 'ganjil' ? 'selected' : '' }}>Ganjil</option>
+                <option value="genap" {{ request('semester') === 'genap' ? 'selected' : '' }}>Genap</option>
+            </select>
             <select name="status" onchange="this.form.submit()" class="m-btn" aria-label="Filter status">
                 @foreach(['all' => 'Semua', 'unpaid' => 'Belum bayar', 'partial' => 'Sebagian', 'paid' => 'Lunas', 'overdue' => 'Menunggak'] as $val => $label)
                 <option value="{{ $val }}" {{ request('status', 'all') === $val ? 'selected' : '' }}>{{ $label }}</option>
@@ -52,6 +63,9 @@
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>
                     <div class="m-stu-sub">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }} • Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+                    @if($bill->academic_year || $bill->semester)
+                    <div class="m-stu-sub">TA {{ $bill->academic_year ?? '-' }} • {{ $bill->semester ? ucfirst($bill->semester) : '-' }}</div>
+                    @endif
                 </div>
                 @if($bill->status === 'paid')<span class="m-pill m-pill-ok">Lunas</span>
                 @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>

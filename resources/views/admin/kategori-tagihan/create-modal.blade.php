@@ -28,7 +28,8 @@
             <div>
                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tipe Pembayaran</label>
                 <select name="type" class="ss-input text-xs !py-2">
-                    <option value="bulanan">Bulanan (SPP/Rutin)</option>
+                    <option value="bulanan">Bulanan (SPP/Rutin lintas semester)</option>
+                    <option value="semesteran">Semesteran (Paket per semester)</option>
                     <option value="sekali">Sekali Bayar (Insidental/Daftar Ulang)</option>
                     <option value="bebas">Bebas (Dapat dicicil/Gedung)</option>
                 </select>

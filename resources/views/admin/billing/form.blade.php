@@ -29,6 +29,26 @@
         @endif
     </div>
 
+    {{-- Tahun Ajaran & Semester --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">TAHUN AJARAN</label>
+            <select name="academic_year" class="ss-input text-xs !py-2">
+                @php $curY = (int) date('Y'); $curM = (int) date('n'); $defTA = $curM >= 7 ? $curY . '/' . ($curY + 1) : ($curY - 1) . '/' . $curY; @endphp
+                @foreach([$curY - 1 . '/' . $curY, $curY . '/' . ($curY + 1), ($curY + 1) . '/' . ($curY + 2)] as $ta)
+                    <option value="{{ $ta }}" {{ $ta === $defTA ? 'selected' : '' }}>{{ $ta }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">SEMESTER</label>
+            <select name="semester" class="ss-input text-xs !py-2">
+                <option value="ganjil" {{ (int) date('n') >= 7 ? 'selected' : '' }}>Ganjil (Jul–Des)</option>
+                <option value="genap" {{ (int) date('n') < 7 ? 'selected' : '' }}>Genap (Jan–Jun)</option>
+            </select>
+        </div>
+    </div>
+
     {{-- Periode & Tanggal Jatuh Tempo --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>

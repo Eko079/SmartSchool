@@ -22,6 +22,10 @@
                 <dd class="mt-1 font-semibold">{{ $bill->period_month }}/{{ $bill->period_year }}</dd>
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
+                <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tahun Ajaran</dt>
+                <dd class="mt-1 font-semibold">{{ $bill->academic_year ?? '-' }} • {{ $bill->semester ? ucfirst($bill->semester) : '-' }}</dd>
+            </div>
+            <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Nominal</dt>
                 <dd class="mt-1 font-semibold">{{ $rp($bill->amount) }}</dd>
             </div>

@@ -16,6 +16,8 @@ class Bill extends Model
         'fee_category_id',
         'period_month',
         'period_year',
+        'academic_year',
+        'semester',
         'amount',
         'paid_amount',
         'fine_amount',

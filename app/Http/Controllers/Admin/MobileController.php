@@ -148,8 +148,8 @@ class MobileController extends Controller
             ->withQueryString();
 
         $history = Bill::with('feeCategory')
-            ->selectRaw('fee_category_id, period_month, period_year, COUNT(*) as total, SUM(amount) as nominal, MAX(created_at) as dibuat')
-            ->groupBy('fee_category_id', 'period_month', 'period_year')
+            ->selectRaw('fee_category_id, period_month, period_year, academic_year, semester, COUNT(*) as total, SUM(amount) as nominal, MAX(created_at) as dibuat')
+            ->groupBy('fee_category_id', 'period_month', 'period_year', 'academic_year', 'semester')
             ->orderByDesc('dibuat')
             ->take(5)
             ->get();

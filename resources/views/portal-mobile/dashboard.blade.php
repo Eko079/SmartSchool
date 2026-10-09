@@ -90,6 +90,16 @@
     @endforelse
 
     <div class="m-card">
+        <div class="m-sec-head"><div class="m-sec-title">Per Semester</div></div>
+        @forelse(($per_semester ?? collect()) as $label => $row)
+            <div class="m-fdesc">{{ $label }} • Rp {{ number_format($row['total'], 0, ',', '.') }} • {{ $row['count'] }} tagihan</div>
+            <div class="m-seg"><div data-m-seg="{{ $per_semester->max('total') > 0 ? round($row['total'] / $per_semester->max('total') * 100, 1) : 0 }}" style="width: {{ $per_semester->max('total') > 0 ? round($row['total'] / $per_semester->max('total') * 100, 1) : 0 }}%"></div></div>
+        @empty
+            <div class="m-fdesc">Belum ada data semester.</div>
+        @endforelse
+    </div>
+
+    <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Per Kategori</div></div>
         @forelse($per_category as $name => $total)
             @php $pct = $per_category->sum() > 0 ? round($total / $per_category->sum() * 100, 1) : 0; @endphp

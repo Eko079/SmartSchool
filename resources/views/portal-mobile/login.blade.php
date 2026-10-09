@@ -13,7 +13,7 @@
 </head>
 <body class="m-body">
     <div class="m-shell" style="background:linear-gradient(-167deg, #0F1E33 7%, #1D4ED8 93%);min-height:100vh">
-        <div class="m-hero" style="padding-bottom:0">
+        <div class="m-hero m-auth-hero">
             <div class="m-glow m-glow-1"></div>
             <div class="m-glow m-glow-2"></div>
             <div class="m-toprow">
@@ -27,8 +27,8 @@
             <div class="m-rev-row"><div class="m-rev-value" style="font-size:24px">Selamat Datang Kembali</div></div>
             <div class="m-rev-sub">Masuk untuk lihat tagihan & riwayat ananda.</div>
         </div>
-        <main class="m-main">
-            <div class="m-card">
+        <main class="m-main m-auth-main">
+            <div class="m-card m-auth-card">
                 @if(session('status'))
                     <div class="m-fdesc" style="color:#15803D">{{ session('status') }}</div>
                 @endif
