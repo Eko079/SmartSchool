@@ -110,6 +110,31 @@ class ReportController extends Controller
             'total_success' => $totalSuccess,
         ];
 
+        if ($request->get('export') === 'csv') {
+            $rows = (clone $query)->orderByDesc('paid_at')->get();
+            $csv = "\xEF\xBB\xBFInvoice,Siswa,NIS,Kelas,Kategori,TA,Semester,Nominal,Tgl Bayar,Metode,Status\n";
+            foreach ($rows as $r) {
+                $csv .= sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                    '"' . str_replace('"', '""', $r->invoice_number) . '"',
+                    '"' . str_replace('"', '""', $r->student->name ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->student->nis ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->student->classRoom->name ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->bill->feeCategory->name ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->bill->academic_year ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->bill->semester ?? '-') . '"',
+                    $r->amount,
+                    '"' . ($r->paid_at?->format('Y-m-d H:i') ?? '-') . '"',
+                    '"' . str_replace('"', '""', $r->method_label) . '"',
+                    '"' . $r->status . '"'
+                );
+            }
+
+            return response($csv, 200, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="laporan-pembayaran.csv"',
+            ]);
+        }
+
         $academicYear = SchoolSetting::get('academic_year', date('Y') . '/' . (date('Y') + 1));
 
         return view('admin.laporan.index', compact('payments', 'stats', 'methods', 'statuses', 'trend', 'labels', 'donut', 'donutTotal', 'academicYear'));

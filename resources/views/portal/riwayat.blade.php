@@ -16,7 +16,7 @@
             </div>
             <x-ss-pill status="{{ $pay->status }}" label="{{ ucfirst($pay->status) }}" />
             <span class="text-xs font-bold">{{ $rp($pay->amount) }}</span>
-            <a href="{{ route('portal.kuitansi', $pay->id) }}" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Kuitansi</a>
+            <a href="{{ route('portal.kuitansi', $pay->id) }}" target="_blank" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Cetak</a>
         </div>
         @empty
         <p class="text-xs text-slate-400">Belum ada riwayat pembayaran.</p>

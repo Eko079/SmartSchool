@@ -163,7 +163,11 @@ class BillingController extends Controller
         $student = $this->student();
         abort_if(! $student || $payment->student_id !== $student->id, 403);
 
-        return response($receipts->receiptText($payment), 200, ['Content-Type' => 'text/plain']);
+        if ($request->get('format') === 'txt') {
+            return response($receipts->receiptText($payment), 200, ['Content-Type' => 'text/plain']);
+        }
+
+        return response($receipts->receiptHtml($payment), 200, ['Content-Type' => 'text/html']);
     }
 
     public function callback(Request $request, MidtransService $midtrans)

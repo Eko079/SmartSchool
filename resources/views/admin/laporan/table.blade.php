@@ -11,11 +11,11 @@
                     <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Export PDF
                 </button>
-                <button type="button" title="Unduh Excel" id="btn-export-excel"
+                <a title="Unduh Excel (semua hasil filter)" href="{{ route('admin.laporan', array_merge(request()->query(), ['export' => 'csv'])) }}"
                     class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Excel
-                </button>
+                </a>
             </div>
         </div>
         <form method="GET" action="{{ route('admin.laporan') }}" class="flex flex-wrap items-center justify-between gap-3 pt-3">
