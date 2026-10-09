@@ -88,7 +88,8 @@
 .m-crumb { color: var(--m-muted); font-size: 11px; font-weight: 500; }
 
 /* Tabs */
-.m-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.m-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
+.m-tabs::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .m-tab {
     flex-shrink: 0; background: var(--m-card); border: 1px solid var(--m-border);
     border-radius: 20px; padding: 7px 10px; font-size: 12px; font-weight: 500; color: var(--m-muted);
