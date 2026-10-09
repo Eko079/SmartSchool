@@ -3,6 +3,10 @@
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
+.env.*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -11,6 +15,11 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/.venv/
+/venv/
+__pycache__/
+*.pyc
+*.py[cod]
 /auth.json
 /node_modules
 /public/build
