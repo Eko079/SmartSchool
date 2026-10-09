@@ -40,10 +40,10 @@ class PortalTest extends TestCase
         $this->actingAs($wali, 'wali');
         $this->actingAs($wali);
 
-        $this->get(route('portal.dashboard'))->assertOk()->assertSee('Tagihan Terbaru');
-        $this->get(route('portal.tagihan'))->assertOk()->assertSee('Tagihan Saya');
+        $this->get(route('portal.dashboard'))->assertOk()->assertSee('Detail Tagihan');
+        $this->get(route('portal.tagihan'))->assertOk()->assertSee('Tagihan');
         $this->get(route('portal.riwayat'))->assertOk()->assertSee('Riwayat Pembayaran');
-        $this->get(route('portal.profil'))->assertOk()->assertSee('Profil Anak');
+        $this->get(route('portal.profil'))->assertOk()->assertSee('Profile');
         $this->get(route('portal.bantuan'))->assertOk()->assertSee('Pusat Bantuan');
         $this->get(route('portal.pengaturan'))->assertOk()->assertSee('Pengaturan Akun');
     }

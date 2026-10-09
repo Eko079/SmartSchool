@@ -1,8 +1,6 @@
 @extends('layouts.portal')
 @section('title', 'Detail Tagihan')
-@section('breadcrumb', 'Portal / Tagihan / ' . $bill->bill_code)
 @section('page-title', $bill->bill_code)
-@section('page-subtitle', ($bill->feeCategory->name ?? '-') . ' • jatuh tempo ' . ($bill->due_date?->format('d M Y') ?? '-'))
 
 @section('content')
     @php $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.'); @endphp
@@ -23,7 +21,7 @@
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tahun Ajaran</dt>
-                <dd class="mt-1 font-semibold">{{ $bill->academic_year ?? '-' }} • {{ $bill->semester ? ucfirst($bill->semester) : '-' }}</dd>
+                <dd class="mt-1 font-semibold">{{ $bill->display_year ?? '-' }}{{ $bill->semester ? ' • ' . ucfirst($bill->semester) : '' }}</dd>
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Nominal</dt>
@@ -62,7 +60,7 @@
                 <option value="bni_va">BNI Virtual Account</option>
                 <option value="qris">QRIS Dinamis</option>
             </select>
-            <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-700">Buat Pembayaran</button>
+            <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-700">Bayar</button>
         </form>
     </div>
     @endif
@@ -87,7 +85,7 @@
         @forelse($bill->payments as $pay)
         <div class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-xs">
             <span class="font-bold">{{ $pay->invoice_number }}</span>
-            <x-ss-pill status="{{ $pay->status }}" label="{{ ucfirst($pay->status) }}" />
+            <x-ss-pill status="{{ $pay->status }}" label="{{ $pay->status_label }}" />
             <span class="font-semibold">{{ $rp($pay->amount) }}</span>
             <a href="{{ route('portal.kuitansi', $pay->id) }}" class="text-blue-600 hover:underline font-semibold">Kuitansi</a>
         </div>

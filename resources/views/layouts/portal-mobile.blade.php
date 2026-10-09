@@ -88,9 +88,9 @@
             @php
                 $pmMenu = [
                     ['route' => 'portal.dashboard', 'label' => 'Beranda'],
-                    ['route' => 'portal.tagihan', 'label' => 'Tagihan Saya'],
-                    ['route' => 'portal.riwayat', 'label' => 'Riwayat Bayar'],
-                    ['route' => 'portal.profil', 'label' => 'Profil Anak'],
+                    ['route' => 'portal.tagihan', 'label' => 'Tagihan'],
+                    ['route' => 'portal.riwayat', 'label' => 'Riwayat Pembayaran'],
+                    ['route' => 'portal.profil', 'label' => 'Profile'],
                     ['route' => 'portal.pengaturan', 'label' => 'Pengaturan'],
                     ['route' => 'portal.bantuan', 'label' => 'Bantuan'],
                 ];

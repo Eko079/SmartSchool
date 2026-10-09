@@ -1,5 +1,9 @@
 <div class="rounded-[16px] border border-[#E2E8F0] bg-white p-4 px-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
     {{-- Baris 1: hamburger + judul + ikon (selalu muat, judul flex-1 min-w-0) --}}
+    @php
+        $topbarUser = Auth::guard('wali')->user() ?? Auth::user();
+        $topbarName = $topbarUser?->student->name ?? $topbarUser->name ?? 'Admin';
+    @endphp
     <div class="flex items-center gap-3 sm:gap-5">
     {{-- Mobile hamburger --}}
     <button onclick="toggleSidebar()" title="Buka/tutup menu samping" aria-label="Buka/tutup menu samping"
@@ -16,7 +20,7 @@
             @php $sapaan = explode(' ', Auth::user()->name ?? 'Admin')[0]; @endphp
             <h1 class="truncate text-xl sm:text-[28px] font-bold leading-tight sm:leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">👋 Selamat Datang Kembali, {{ $sapaan }}!</h1>
         @else
-            <h1 class="truncate text-xl sm:text-[28px] font-bold leading-tight sm:leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">@yield('page-title', 'Dashboard')</h1>
+            <h1 class="text-xl sm:text-[28px] font-bold leading-tight text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">@yield('page-title', 'Dashboard')</h1>
         @endif
         @hasSection('page-subtitle')
             <p class="mt-1.5 text-xs sm:text-sm font-normal text-[#64748B] line-clamp-2">@yield('page-subtitle')</p>
@@ -49,12 +53,12 @@
     </button>
 
     {{-- Profile --}}
-    <div title="Masuk sebagai {{ Auth::user()->name ?? 'Admin' }}"
+    <div title="Masuk sebagai {{ $topbarName }}"
         class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-2 md:pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-base font-bold text-white">
-            {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+            {{ strtoupper(substr($topbarName, 0, 1)) }}
         </div>
-        <span class="text-sm font-semibold text-[#0F172A] hidden md:inline dark:text-white">{{ Auth::user()->name ?? 'Admin' }}</span>
+        <span class="text-sm font-semibold text-[#0F172A] hidden md:inline dark:text-white">{{ $topbarName }}</span>
     </div>
     </div>
     </div>

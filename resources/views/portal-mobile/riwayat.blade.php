@@ -1,6 +1,6 @@
 @extends('layouts.portal-mobile')
-@section('title', 'Riwayat Bayar')
-@section('breadcrumb', 'Pembayaran / Riwayat')
+@section('title', 'Riwayat Pembayaran')
+@section('breadcrumb', 'Riwayat')
 
 @section('hero')
     <div class="m-rev-label">RIWAYAT • {{ $payments->total() }} TRANSAKSI</div>
@@ -29,21 +29,21 @@
 @section('content')
     <div class="m-search">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Cari invoice, kategori…" data-m-filter=".m-stu-card" aria-label="Cari riwayat">
+        <input type="text" placeholder="Cari tagihan, kategori…" data-m-filter=".m-stu-card" aria-label="Cari riwayat">
     </div>
 
-    <div class="m-sec-head"><div class="m-sec-title">Tagihan per Bulan</div><span class="m-see">{{ $payments->total() }} transaksi</span></div>
+    <div class="m-sec-head"><div class="m-sec-title">Riwayat Transaksi</div><span class="m-see">{{ $payments->total() }} transaksi</span></div>
     @forelse($payments as $pay)
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ $pay->invoice_number }} • {{ $pay->bill->feeCategory->name ?? '-' }}</div>
-                    <div class="m-stu-sub">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->method_label }}</div>
-                    <div class="m-stu-sub">Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
+                    <div class="m-stu-name">{{ $pay->bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $pay->invoice_number }} • {{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $pay->method_label }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
                 </div>
                 @if($pay->status === 'success')<span class="m-pill m-pill-ok">Lunas</span>
                 @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">Menunggu</span>
-                @else<span class="m-pill m-pill-err">{{ ucfirst($pay->status) }}</span>@endif
+                @else<span class="m-pill m-pill-err">{{ $pay->status_label }}</span>@endif
             </div>
             <div class="m-actions">
                 <a class="m-btn m-btn-primary" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>

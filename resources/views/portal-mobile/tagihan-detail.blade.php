@@ -51,7 +51,7 @@
                     <option value="bni_va">BNI VA</option>
                     <option value="qris">QRIS</option>
                 </select>
-                <button type="submit" class="m-btn m-btn-primary">Buat Pembayaran</button>
+                <button type="submit" class="m-btn m-btn-primary">Bayar</button>
             </div>
         </form>
     </div>
@@ -79,7 +79,7 @@
             <div class="m-feed">
                 <div class="m-fmid">
                     <div class="m-fname">{{ $pay->invoice_number }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
-                    <div class="m-fdesc">{{ $pay->method_label }} • {{ $pay->status }}</div>
+                    <div class="m-fdesc">{{ $pay->method_label }} • {{ $pay->status_label }}</div>
                 </div>
                 <a class="m-btn" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>
             </div>

@@ -10,7 +10,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'school_name' => 'SMK Negeri 1 SmartSchool Jakarta',
+            'school_name' => 'SMA JAYA',
             'npsn' => '20104589',
             'school_email' => 'info@smkn1smartschool.sch.id',
             'school_phone' => '(021) 7812-9900',

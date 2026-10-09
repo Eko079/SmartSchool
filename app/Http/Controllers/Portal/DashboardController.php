@@ -32,10 +32,10 @@ class DashboardController extends Controller
             ->map(fn ($g) => (float) $g->sum('amount'));
 
         $perSemester = (clone $bills)->get()->groupBy(function ($b) {
-            $ta = $b->academic_year ?? '-';
-            $sm = $b->semester ? ucfirst($b->semester) : 'Lainnya';
+            $ta = $b->academic_year;
+            $sm = $b->semester ? ucfirst($b->semester) : null;
 
-            return $ta . ' • ' . $sm;
+            return ($ta && $sm) ? $ta . ' • ' . $sm : ($ta ?? $sm ?? 'Lainnya');
         })->map(fn ($g) => ['total' => (float) $g->sum('amount'), 'count' => $g->count()])->sortKeysDesc();
 
         $latest = Bill::with('feeCategory')->where('student_id', $student->id)->latest()->take(6)->get();

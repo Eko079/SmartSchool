@@ -1,22 +1,27 @@
 @extends('layouts.portal')
-@section('title', 'Riwayat Bayar')
-@section('breadcrumb', 'Portal / Riwayat')
+@section('title', 'Riwayat Pembayaran')
 @section('page-title', 'Riwayat Pembayaran')
-@section('page-subtitle', 'Transaksi lunas • unduh kuitansi.')
 
 @section('content')
     @php $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.'); @endphp
 
     <div class="ss-card space-y-2">
+        <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold">Riwayat Pembayaran</h2>
+        </div>
         @forelse($payments as $pay)
-        <div class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
-            <div class="flex-1 min-w-[200px]">
-                <div class="text-xs font-bold">{{ $pay->invoice_number }} • {{ $pay->bill->feeCategory->name ?? '-' }}</div>
-                <div class="text-[11px] text-slate-400">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->method_label }}</div>
+        <div class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+            <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold truncate">{{ $pay->bill->feeCategory->name ?? '-' }}</div>
+                <div class="text-[11px] text-slate-400">{{ $pay->invoice_number }}</div>
             </div>
-            <x-ss-pill status="{{ $pay->status }}" label="{{ ucfirst($pay->status) }}" />
-            <span class="text-xs font-bold">{{ $rp($pay->amount) }}</span>
-            <a href="{{ route('portal.kuitansi', $pay->id) }}" target="_blank" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Cetak</a>
+            <div class="text-right shrink-0">
+                <div class="text-xs font-bold whitespace-nowrap">{{ $rp($pay->amount) }}</div>
+                <div class="text-[11px] text-slate-400 whitespace-nowrap">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
+                <div class="text-[11px] text-slate-400 whitespace-nowrap">{{ $pay->method_label }}</div>
+            </div>
+            <x-ss-pill status="{{ $pay->status }}" label="{{ $pay->status_label }}" />
+            <a href="{{ route('portal.kuitansi', $pay->id) }}" target="_blank" class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600 shrink-0">Cetak</a>
         </div>
         @empty
         <p class="text-xs text-slate-400">Belum ada riwayat pembayaran.</p>

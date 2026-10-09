@@ -5,7 +5,7 @@
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold">{{ strtoupper(substr($siteBrand['school_name'] ?? 'S', 0, 1)) }}</div>
         <div>
             <div class="text-base font-bold truncate">{{ $siteBrand['school_name'] ?? 'SmartSchool' }}</div>
-            <div class="text-[10px] text-slate-400">Portal Siswa</div>
+            <div class="text-[10px] text-slate-400">Portal Pembayaran Sekolah</div>
         </div>
     </div>
 
@@ -14,9 +14,9 @@
         @php
             $menu = [
                 ['route' => 'portal.dashboard', 'label' => 'Beranda', 'icon' => 'layout-dashboard'],
-                ['route' => 'portal.tagihan', 'label' => 'Tagihan Saya', 'icon' => 'receipt'],
-                ['route' => 'portal.riwayat', 'label' => 'Riwayat Bayar', 'icon' => 'file-text'],
-                ['route' => 'portal.profil', 'label' => 'Profil Anak', 'icon' => 'users'],
+                ['route' => 'portal.tagihan', 'label' => 'Tagihan', 'icon' => 'receipt'],
+                ['route' => 'portal.riwayat', 'label' => 'Riwayat Pembayaran', 'icon' => 'file-text'],
+                ['route' => 'portal.profil', 'label' => 'Profile', 'icon' => 'users'],
             ];
         @endphp
         @foreach($menu as $item)
@@ -46,13 +46,15 @@
     <div class="flex-1"></div>
 
     <div class="flex items-center gap-2.5 px-2 py-3 border-t border-white/10 mt-1">
-        @php $portalUser = Auth::guard('wali')->user() ?? Auth::user(); @endphp
+        @php
+            $portalUser = Auth::guard('wali')->user() ?? Auth::user();
+            $portalName = $portalUser?->student->name ?? $portalUser->name ?? 'Wali';
+        @endphp
         <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold">
-            {{ strtoupper(substr($portalUser->name ?? 'W', 0, 1)) }}
+            {{ strtoupper(substr($portalName, 0, 1)) }}
         </div>
         <div class="flex-1 min-w-0">
-            <div class="text-xs font-semibold truncate">{{ $portalUser->name ?? 'Wali' }}</div>
-            <div class="text-[10px] text-slate-400 truncate">{{ $portalUser->student->name ?? $portalUser->email ?? '-' }}</div>
+            <div class="text-xs font-semibold truncate">{{ $portalName }}</div>
         </div>
         <form method="POST" action="{{ route('portal.logout') }}">
             @csrf

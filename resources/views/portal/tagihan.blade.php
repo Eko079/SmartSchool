@@ -1,10 +1,6 @@
 @extends('layouts.portal')
-@section('title', 'Tagihan Saya')
-@section('breadcrumb', 'Portal / Tagihan')
-@section('page-title', 'Tagihan Saya')
-@section('page-subtitle')
-TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }} — hanya menampilkan semester terpilih.
-@endsection
+@section('title', 'Tagihan')
+@section('page-title', 'Tagihan')
 
 @section('content')
     @php
@@ -13,19 +9,19 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
     @endphp
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="ss-card">
+        <div class="ss-card !p-3">
             <div class="text-xs font-medium text-slate-500">Total Menunggu Dibayar</div>
-            <div class="text-2xl font-bold text-slate-800 dark:text-white" data-count-up="{{ (float) $summary['waiting'] }}" data-count-fmt="rp">{{ $rp($summary['waiting']) }}</div>
+            <div class="text-xl font-bold text-slate-800 dark:text-white" data-count-up="{{ (float) $summary['waiting'] }}" data-count-fmt="rp">{{ $rp($summary['waiting']) }}</div>
         </div>
-        <div class="ss-card">
+        <div class="ss-card !p-3">
             <div class="text-xs font-medium text-slate-500">Total Sudah Dibayar</div>
-            <div class="text-2xl font-bold text-emerald-600" data-count-up="{{ (float) $summary['paid'] }}" data-count-fmt="rp">{{ $rp($summary['paid']) }}</div>
+            <div class="text-xl font-bold text-emerald-600" data-count-up="{{ (float) $summary['paid'] }}" data-count-fmt="rp">{{ $rp($summary['paid']) }}</div>
         </div>
     </div>
 
     <div class="ss-card">
         <form method="GET" action="{{ route('portal.tagihan') }}" class="flex flex-wrap items-center gap-2">
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari invoice, kategori..." class="ss-input !w-auto flex-1 min-w-[200px]">
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari tagihan, kategori..." class="ss-input !w-auto flex-1 min-w-[200px]">
             <select name="academic_year" class="ss-input !w-auto" onchange="this.form.submit()">
                 @foreach(($academicYears ?? collect()) as $ta)
                 <option value="{{ $ta }}" {{ ($selYear ?? request('academic_year')) === $ta ? 'selected' : '' }}>{{ $ta }}</option>
@@ -42,18 +38,16 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             </select>
             <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-700">Cari</button>
         </form>
-        <p class="mt-2 text-[11px] text-slate-400">Menampilkan TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }} saja.</p>
     </div>
 
     <x-ss-table>
         <x-slot name="head">
             <th class="py-2.5 px-3">No</th>
-            <th class="py-2.5 px-3">Tagihan</th>
-            <th class="py-2.5 px-3">Jenis Pembayaran</th>
-            <th class="py-2.5 px-3">Jumlah Bayar</th>
-            <th class="py-2.5 px-3 text-center">Status Bayar</th>
-            <th class="py-2.5 px-3">Tanggal Bayar</th>
-            <th class="py-2.5 px-3">Tempat Bayar</th>
+            <th class="py-2.5 px-3">Kode</th>
+            <th class="py-2.5 px-3">Kategori</th>
+            <th class="py-2.5 px-3">Nominal</th>
+            <th class="py-2.5 px-3 text-center">Status</th>
+            <th class="py-2.5 px-3">Pembayaran</th>
             <th class="py-2.5 px-3 text-right">Aksi</th>
         </x-slot>
 
@@ -75,8 +69,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{{ $statusLabel }}</span>
                 @endif
             </td>
-            <td class="py-3 px-3 whitespace-nowrap">{{ $pay?->paid_at?->format('d M Y') ?? '-' }}</td>
-            <td class="py-3 px-3">{{ $methodLabel }}</td>
+            <td class="py-3 px-3 whitespace-nowrap">{{ $pay?->paid_at?->format('d M Y') ?? '-' }}<div class="text-[10px] font-medium text-slate-400">{{ $methodLabel }}</div></td>
             <td class="py-3 px-3 text-right whitespace-nowrap">
                 @if(! $isPaid)
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this)"
@@ -99,7 +92,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             </td>
         </tr>
         @empty
-        <tr><td colspan="8" class="py-6 text-center text-slate-400">Tidak ada tagihan pada TA {{ $selYear ?? '-' }} semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }}.</td></tr>
+        <tr><td colspan="7" class="py-6 text-center text-slate-400">Tidak ada tagihan pada TA {{ $selYear ?? '-' }} semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }}.</td></tr>
         @endforelse
 
         <x-slot name="pagination">{{ $bills->links() }}</x-slot>
@@ -110,16 +103,16 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
         <div class="ss-card w-full max-w-md space-y-4 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
-                    <h3 class="text-base font-bold text-slate-800 dark:text-white" id="pm-code">-</h3>
-                    <p class="text-xs text-slate-400" id="pm-jenis">-</p>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-white" id="pm-jenis">-</h3>
+                    <p class="text-xs text-slate-400" id="pm-code">-</p>
                 </div>
                 <button type="button" onclick="closePayModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">✕</button>
             </div>
             <dl class="grid grid-cols-2 gap-2 text-xs">
-                <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Jumlah</dt><dd class="font-bold" id="pm-amount">-</dd></div>
+                <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Nominal</dt><dd class="font-bold" id="pm-amount">-</dd></div>
                 <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Jatuh tempo</dt><dd class="font-bold" id="pm-due">-</dd></div>
                 <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Status</dt><dd class="font-bold" id="pm-status">-</dd></div>
-                <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Riwayat</dt><dd class="font-bold" id="pm-history">-</dd></div>
+                <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5"><dt class="text-[10px] font-bold uppercase text-slate-400">Dibayar</dt><dd class="font-bold" id="pm-history">-</dd></div>
             </dl>
             <div id="pm-paybox" class="space-y-2">
                 <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Silakan pilih metode pembayaran</p>
@@ -141,7 +134,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-3">
                 <button type="button" onclick="closePayModal()" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold">Tutup</button>
                 <a href="#" id="pm-detail-link" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Halaman Detail</a>
-                <button type="button" id="pm-submit" onclick="submitPayModal()" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">Buat Pembayaran</button>
+                <button type="button" id="pm-submit" onclick="submitPayModal()" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">Bayar</button>
             </div>
         </div>
     </div>
@@ -166,7 +159,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
         document.getElementById('pm-va-box').classList.add('hidden');
         if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
         var submit = document.getElementById('pm-submit');
-        submit.disabled = false; submit.textContent = 'Buat Pembayaran';
+        submit.disabled = false; submit.textContent = 'Bayar';
         var m = document.getElementById('pay-modal');
         m.classList.remove('hidden'); m.classList.add('flex');
     }
@@ -212,7 +205,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             document.getElementById('pm-va-box').classList.remove('hidden');
             startPayCountdown(j.transaction.expired_at);
             setTimeout(function () { location.reload(); }, 8000);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Buat Pembayaran'; });
+        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     </script>
 @endsection

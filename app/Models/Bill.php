@@ -70,4 +70,16 @@ class Bill extends Model
     {
         return self::statusLabel($this->status);
     }
+
+    public function getDisplayYearAttribute(): ?string
+    {
+        if ($this->academic_year) {
+            return $this->academic_year;
+        }
+        if (preg_match('/(\d{4}\s*\/\s*\d{4})/', $this->feeCategory?->name ?? '', $m)) {
+            return str_replace(' ', '', $m[1]);
+        }
+
+        return null;
+    }
 }

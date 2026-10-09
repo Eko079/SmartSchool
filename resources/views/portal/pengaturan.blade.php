@@ -1,17 +1,15 @@
 @extends('layouts.portal')
 @section('title', 'Pengaturan Akun')
-@section('breadcrumb', 'Portal / Pengaturan')
 @section('page-title', 'Pengaturan Akun')
-@section('page-subtitle', 'Profil, notifikasi WA & keamanan akun.')
 
 @section('content')
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="ss-card space-y-3">
+        <div class="ss-card space-y-3 flex flex-col">
             <div>
                 <h2 class="text-sm font-bold">Profil Wali</h2>
-                <p class="text-xs text-slate-400">Data tampil di invoice & kuitansi</p>
+                <p class="text-xs text-slate-400">Data ini akan digunakan untuk INVOICE & KUITANSI</p>
             </div>
-            <form method="POST" action="{{ route('portal.pengaturan.update') }}" class="space-y-3">
+            <form method="POST" action="{{ route('portal.pengaturan.update') }}" class="flex flex-col gap-3 flex-1">
                 @csrf
                 @method('PUT')
                 <div>
@@ -30,16 +28,19 @@
                     <input type="checkbox" name="notify_email" value="1" {{ old('notify_email', $user->notify_email) ? 'checked' : '' }} class="w-4 h-4 rounded border-slate-300 text-blue-600">
                     Kirim bukti bayar via email
                 </label>
-                <button type="submit" class="ss-btn-primary !py-2.5 !text-sm">Simpan Perubahan</button>
+                <button type="submit" class="ss-btn-primary py-2.5! text-sm! mt-auto">Simpan Perubahan</button>
             </form>
         </div>
 
-        <div class="ss-card space-y-3">
+        <div class="ss-card space-y-3 flex flex-col">
             <div>
                 <h2 class="text-sm font-bold">Sandi & Keamanan</h2>
-                <p class="text-xs text-slate-400">Min. 8 karakter • gagal 5x kunci 15 menit</p>
+                <ul class="text-xs text-slate-400 space-y-0.5">
+                    <li>Min. 8 karakter</li>
+                    <li>Gagal 5x kunci 15 menit</li>
+                </ul>
             </div>
-            <form method="POST" action="{{ route('portal.pengaturan.sandi') }}" class="space-y-3">
+            <form method="POST" action="{{ route('portal.pengaturan.sandi') }}" class="flex flex-col gap-3 flex-1">
                 @csrf
                 @method('PUT')
                 <div>
@@ -54,13 +55,8 @@
                     <label class="block text-xs font-semibold mb-1.5">Ulangi Sandi Baru</label>
                     <input type="password" name="password_confirmation" class="ss-input" required>
                 </div>
-                <button type="submit" class="ss-btn-outline !w-full !py-2.5 !text-sm">Perbarui Sandi</button>
+                <button type="submit" class="ss-btn-primary py-2.5! text-sm! mt-auto">Perbarui Sandi</button>
             </form>
-            <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 text-xs space-y-1">
-                <div class="font-semibold">Anak tertaut</div>
-                <div>{{ $user->student->name ?? '-' }} • NIS {{ $user->student->nis ?? '-' }}</div>
-                <div class="text-slate-400">{{ $user->student->classRoom->name ?? '-' }} • {{ $user->email }}</div>
-            </div>
         </div>
     </div>
 @endsection

@@ -49,7 +49,8 @@ class BillingController extends Controller
         }
 
         if ($request->filled('academic_year')) {
-            $query->where('academic_year', $request->string('academic_year')->toString());
+            $taFilter = $request->string('academic_year')->toString();
+            $query->where(fn ($w) => $w->where('academic_year', $taFilter)->orWhereNull('academic_year'));
         }
 
         if ($request->filled('fee_category_id')) {
@@ -65,7 +66,7 @@ class BillingController extends Controller
         if (! in_array($selSemester, ['ganjil', 'genap'], true)) {
             $selSemester = $activeSemester;
         }
-        $query->where('semester', $selSemester);
+        $query->where(fn ($w) => $w->where('semester', $selSemester)->orWhereNull('semester'));
 
         // Default TA ikut Pengaturan, fallback TA terbaru siswa.
         $selYear = $request->filled('academic_year') ? $request->string('academic_year')->toString() : null;
@@ -73,7 +74,7 @@ class BillingController extends Controller
             $selYear = \App\Models\SchoolSetting::get('academic_year')
                 ?: Bill::where('student_id', $this->student()->id)->whereNotNull('academic_year')->orderByDesc('academic_year')->value('academic_year');
             if ($selYear) {
-                $query->where('academic_year', $selYear);
+                $query->where(fn ($w) => $w->where('academic_year', $selYear)->orWhereNull('academic_year'));
             }
         }
 

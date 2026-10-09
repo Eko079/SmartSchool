@@ -1,6 +1,6 @@
 @extends('layouts.portal-mobile')
-@section('title', 'Tagihan Saya')
-@section('breadcrumb', 'Tagihan / Tagihan Saya')
+@section('title', 'Tagihan')
+@section('breadcrumb', 'Tagihan')
 
 @section('hero')
     <div class="m-rev-label">TOTAL MENUNGGU • {{ number_format($bills->total(), 0, ',', '.') }} TAGIHAN</div>
@@ -32,7 +32,7 @@
     @php $payOf = fn($b) => $b->payments ? $b->payments->sortByDesc('paid_at')->first() : null; @endphp
     <form method="GET" action="{{ route('portal.tagihan') }}" class="m-search">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari invoice, SPP, LAB…" data-m-filter=".m-stu-card" aria-label="Cari tagihan">
+        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari tagihan, SPP…" data-m-filter=".m-stu-card" aria-label="Cari tagihan">
     </form>
 
     <form method="GET" action="{{ route('portal.tagihan') }}" class="m-card">
@@ -62,12 +62,13 @@
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ ($bills->firstItem() ?? 1) + $i }}. {{ $bill->bill_code }}</div>
-                    <div class="m-stu-sub">{{ $bill->feeCategory->name ?? '-' }} • Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
-                    <div class="m-stu-sub">{{ $statusLabel }} • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
+                    <div class="m-stu-name">{{ $bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $bill->bill_code }} • jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>
+                    <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
                 </div>
                 @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
-                @else<span class="m-pill m-pill-warn">Belum bayar</span>@endif
+                @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
+                @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
             </div>
             <div class="m-actions">
                 <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"
@@ -116,7 +117,7 @@
         </div>
         <div class="m-actions">
             <a href="#" id="pm-detail-link" class="m-btn">Halaman Detail</a>
-            <button type="button" id="pm-submit" class="m-btn m-btn-primary" onclick="submitPayModal()">Buat Pembayaran</button>
+            <button type="button" id="pm-submit" class="m-btn m-btn-primary" onclick="submitPayModal()">Bayar</button>
         </div>
     </div>
 
@@ -140,7 +141,7 @@
         document.getElementById('pm-va-box').style.display = 'none';
         if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
         var submit = document.getElementById('pm-submit');
-        submit.disabled = false; submit.textContent = 'Buat Pembayaran';
+        submit.disabled = false; submit.textContent = 'Bayar';
         document.getElementById('pay-modal').classList.remove('hidden');
     }
     function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); if (pmTimer) { clearInterval(pmTimer); pmTimer = null; } }
@@ -173,7 +174,7 @@
                 document.getElementById('pm-expiry').textContent = 'berlaku ' + Math.floor(left / 3600000) + 'j ' + Math.floor(left % 3600000 / 60000) + 'm';
             }, 1000);
             setTimeout(function () { location.reload(); }, 8000);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Buat Pembayaran'; });
+        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     </script>
 @endsection

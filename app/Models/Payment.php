@@ -67,4 +67,14 @@ class Payment extends Model
     {
         return self::methodLabel($this->payment_method);
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match (strtolower((string) $this->status)) {
+            'success' => 'LUNAS',
+            'pending' => 'MENUNGGU',
+            'failed' => 'GAGAL',
+            default => strtoupper((string) $this->status),
+        };
+    }
 }
