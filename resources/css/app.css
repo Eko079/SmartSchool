@@ -275,3 +275,8 @@ html.theme-anim *::after {
     html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: none !important; }
     .theme-toggle .knob, .theme-toggle .knob svg { transition: none; animation: none; }
 }
+
+/* Kontras hover di dark mode: tombol terang saat hover jangan jadi putih */
+.dark .hover\:bg-slate-50:hover { background-color: #334155 !important; }
+.dark .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+.dark .hover\:bg-white:hover { background-color: #334155 !important; }
