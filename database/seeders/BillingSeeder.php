@@ -14,7 +14,7 @@ class BillingSeeder extends Seeder
     public function run(): void
     {
         $categoriesData = [
-            ['code' => 'SPP-2026', 'name' => 'SPP Bulanan 2026/2027', 'type' => 'bulanan', 'default_amount' => 850000, 'description' => 'Iuran pembinaan pendidikan rutin setiap bulan'],
+            ['code' => 'SPP', 'name' => 'SPP Bulanan', 'type' => 'bulanan', 'default_amount' => 850000, 'description' => 'Iuran pembinaan pendidikan rutin setiap bulan'],
             ['code' => 'SRG-01', 'name' => 'Biaya Seragam Sekolah', 'type' => 'sekali', 'default_amount' => 1200000, 'description' => 'Paket 4 setel seragam resmi, olahraga & batik'],
             ['code' => 'GDG-01', 'name' => 'Uang Gedung & Sarpras', 'type' => 'bebas', 'default_amount' => 2500000, 'description' => 'Pemeliharaan fasilitas lab komputer dan pendingin ruangan'],
             ['code' => 'KEG-01', 'name' => 'Kegiatan & Ujian Semester', 'type' => 'bulanan', 'default_amount' => 450000, 'description' => 'Dana praktikum, PTS & PAS berbasis CBT'],
@@ -26,7 +26,7 @@ class BillingSeeder extends Seeder
         }
 
         $students = Student::all();
-        $spp = $categories['SPP-2026'];
+        $spp = $categories['SPP'];
         $methods = ['Tunai / Kasir', 'VA BCA', 'VA BNI', 'QRIS'];
 
         foreach ($students as $idx => $st) {

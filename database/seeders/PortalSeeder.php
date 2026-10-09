@@ -59,7 +59,7 @@ class PortalSeeder extends Seeder
         }
 
         // 3. Bills multi-periode untuk 3 siswa pertama (simulasi desain: 6-7 tagihan)
-        $spp = FeeCategory::where('code', 'SPP-2026')->first();
+        $spp = FeeCategory::whereIn('code', ['SPP', 'SPP-2026'])->first();
         $extraPeriods = [
             ['month' => 8, 'year' => 2026, 'category' => $lab, 'amount' => 750000, 'status' => 'paid'],
             ['month' => 7, 'year' => 2026, 'category' => $spp, 'amount' => 1200000, 'status' => 'unpaid'],
