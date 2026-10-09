@@ -38,6 +38,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     })->name('siswa.template');
     Route::post('/siswa', [StudentController::class, 'store'])->name('siswa.store');
     Route::post('/siswa/import', [StudentController::class, 'import'])->name('siswa.import');
+    Route::post('/siswa/import/confirm', [StudentController::class, 'importConfirm'])->name('siswa.import.confirm');
     Route::get('/siswa/{student}/bills', [StudentController::class, 'bills'])->name('siswa.bills');
     Route::get('/siswa/{student}/edit', [StudentController::class, 'edit'])->name('siswa.edit');
     Route::put('/siswa/{student}', [StudentController::class, 'update'])->name('siswa.update');
