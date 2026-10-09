@@ -59,18 +59,19 @@ class BillingController extends Controller
         $perPage = (int) $request->integer('per_page', 25);
         $perPage = $perPage > 0 && $perPage <= 50 ? $perPage : 25;
 
-        // Halaman ini selalu per semester terpilih: default semester aktif.
-        $activeSemester = ((int) now()->month >= 7) ? 'ganjil' : 'genap';
+        // Halaman ini selalu per semester terpilih: default ikut Pengaturan admin.
+        $activeSemester = strtolower((string) \App\Models\SchoolSetting::get('active_semester', 'Ganjil')) === 'genap' ? 'genap' : 'ganjil';
         $selSemester = $request->filled('semester') ? $request->semester : $activeSemester;
         if (! in_array($selSemester, ['ganjil', 'genap'], true)) {
             $selSemester = $activeSemester;
         }
         $query->where('semester', $selSemester);
 
-        // Default TA terbaru bila tidak dipilih.
+        // Default TA ikut Pengaturan, fallback TA terbaru siswa.
         $selYear = $request->filled('academic_year') ? $request->string('academic_year')->toString() : null;
         if (! $selYear) {
-            $selYear = Bill::where('student_id', $this->student()->id)->whereNotNull('academic_year')->orderByDesc('academic_year')->value('academic_year');
+            $selYear = \App\Models\SchoolSetting::get('academic_year')
+                ?: Bill::where('student_id', $this->student()->id)->whereNotNull('academic_year')->orderByDesc('academic_year')->value('academic_year');
             if ($selYear) {
                 $query->where('academic_year', $selYear);
             }
