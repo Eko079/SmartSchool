@@ -28,7 +28,7 @@ class BillingController extends Controller
         $student = $this->student();
         abort_if(! $student, 422, 'Siswa tidak tertaut ke akun wali.');
 
-        return Bill::with(['feeCategory', 'student.classRoom'])->where('student_id', $student->id);
+        return Bill::with(['feeCategory', 'student.classRoom', 'payments'])->where('student_id', $student->id);
     }
 
     public function index(Request $request)
@@ -48,10 +48,6 @@ class BillingController extends Controller
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('semester') && in_array($request->semester, ['ganjil', 'genap'], true)) {
-            $query->where('semester', $request->semester);
-        }
-
         if ($request->filled('academic_year')) {
             $query->where('academic_year', $request->string('academic_year')->toString());
         }
@@ -60,10 +56,27 @@ class BillingController extends Controller
             $query->where('fee_category_id', (int) $request->integer('fee_category_id'));
         }
 
-        $perPage = (int) $request->integer('per_page', 10);
-        $perPage = $perPage > 0 && $perPage <= 50 ? $perPage : 10;
+        $perPage = (int) $request->integer('per_page', 25);
+        $perPage = $perPage > 0 && $perPage <= 50 ? $perPage : 25;
 
-        $bills = $query->orderByDesc('due_date')->paginate($perPage)->withQueryString();
+        // Halaman ini selalu per semester terpilih: default semester aktif.
+        $activeSemester = ((int) now()->month >= 7) ? 'ganjil' : 'genap';
+        $selSemester = $request->filled('semester') ? $request->semester : $activeSemester;
+        if (! in_array($selSemester, ['ganjil', 'genap'], true)) {
+            $selSemester = $activeSemester;
+        }
+        $query->where('semester', $selSemester);
+
+        // Default TA terbaru bila tidak dipilih.
+        $selYear = $request->filled('academic_year') ? $request->string('academic_year')->toString() : null;
+        if (! $selYear) {
+            $selYear = Bill::where('student_id', $this->student()->id)->whereNotNull('academic_year')->orderByDesc('academic_year')->value('academic_year');
+            if ($selYear) {
+                $query->where('academic_year', $selYear);
+            }
+        }
+
+        $bills = $query->orderBy('fee_category_id')->orderBy('due_date')->paginate($perPage)->withQueryString();
         $summary = [
             'waiting' => (float) (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue'])->sum('amount'),
             'paid' => (float) (clone $query)->where('status', 'paid')->sum('amount'),
@@ -78,7 +91,7 @@ class BillingController extends Controller
             return response()->json(['bills' => $bills, 'summary' => $summary]);
         }
 
-        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories'));
+        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear'));
     }
 
     public function show(Request $request, Bill $bill)
