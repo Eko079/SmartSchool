@@ -67,7 +67,7 @@ class StudentController extends Controller
         $stats = [
             'total' => Student::count(),
             'aktif' => Student::where('status', 'aktif')->count(),
-            'cuti' => Student::where('status', 'cuti')->count(),
+            'nonaktif' => Student::where('status', 'nonaktif')->count(),
             'lulus' => Student::where('status', 'lulus')->count(),
         ];
 
@@ -86,7 +86,7 @@ class StudentController extends Controller
             'nisn' => 'nullable|string|max:20|unique:students,nisn',
             'class_id' => 'required|exists:classes,id',
             'gender' => 'required|in:L,P',
-            'status' => 'required|in:aktif,cuti,lulus',
+            'status' => 'required|in:aktif,nonaktif,lulus',
             'guardian_name' => 'nullable|string|max:255',
             'guardian_phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
@@ -165,13 +165,16 @@ class StudentController extends Controller
 
             $gender = strtoupper(trim($row[4] ?? 'L'));
             $status = strtolower(trim($row[5] ?? 'aktif'));
+            if ($status === 'cuti') {
+                $status = 'nonaktif';
+            }
             Student::create([
                 'nis' => $nis,
                 'nisn' => trim($row[1] ?? '') ?: null,
                 'name' => $name,
                 'class_id' => $classes[$kelasName],
                 'gender' => in_array($gender, ['L', 'P'], true) ? $gender : 'L',
-                'status' => in_array($status, ['aktif', 'cuti', 'lulus'], true) ? $status : 'aktif',
+                'status' => in_array($status, ['aktif', 'nonaktif', 'lulus'], true) ? $status : 'aktif',
                 'guardian_name' => trim($row[6] ?? '') ?: null,
                 'guardian_phone' => trim($row[7] ?? '') ?: null,
                 'address' => trim($row[8] ?? '') ?: null,
@@ -204,7 +207,7 @@ class StudentController extends Controller
             'nisn' => 'nullable|string|max:20|unique:students,nisn,' . $student->id,
             'class_id' => 'required|exists:classes,id',
             'gender' => 'required|in:L,P',
-            'status' => 'required|in:aktif,cuti,lulus',
+            'status' => 'required|in:aktif,nonaktif,lulus',
             'guardian_name' => 'nullable|string|max:255',
             'guardian_phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',

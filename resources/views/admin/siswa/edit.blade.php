@@ -54,7 +54,7 @@
         <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status</label>
             <select name="status" class="ss-input text-xs !py-2">
-                @foreach(['aktif', 'cuti', 'lulus'] as $s)
+                @foreach(['aktif', 'nonaktif', 'lulus'] as $s)
                     <option value="{{ $s }}" {{ old('status', $student->status) == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
                 @endforeach
             </select>

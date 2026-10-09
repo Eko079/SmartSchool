@@ -9,10 +9,10 @@
         <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-count-up="{{ $stats['aktif'] ?? 0 }}" data-count-fmt="int">{{ $stats['aktif'] ?? 0 }}</div>
         <span class="text-[11px] text-slate-400">Status belajar aktif</span>
     </div>
-    <div class="ss-card ss-tip flex flex-col justify-between gap-2 shadow-xs" data-tip="Sedang cuti">
-        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Siswa Cuti</span>
-        <div class="text-2xl font-bold text-amber-600 dark:text-amber-400" data-count-up="{{ $stats['cuti'] ?? 0 }}" data-count-fmt="int">{{ $stats['cuti'] ?? 0 }}</div>
-        <span class="text-[11px] text-slate-400">Perlu konfirmasi berkala</span>
+    <div class="ss-card ss-tip flex flex-col justify-between gap-2 shadow-xs" data-tip="Tidak aktif sementara">
+        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Siswa Nonaktif</span>
+        <div class="text-2xl font-bold text-amber-600 dark:text-amber-400" data-count-up="{{ $stats['nonaktif'] ?? 0 }}" data-count-fmt="int">{{ $stats['nonaktif'] ?? 0 }}</div>
+        <span class="text-[11px] text-slate-400">Tidak mengikuti KBM</span>
     </div>
     <div class="ss-card ss-tip flex flex-col justify-between gap-2 shadow-xs" data-tip="Sudah lulus">
         <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Alumni / Lulus</span>

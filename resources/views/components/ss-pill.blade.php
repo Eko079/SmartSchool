@@ -1,4 +1,4 @@
-{{-- Pill status global: aktif/cuti/lulus, lunas/menunggu, dsb.
+{{-- Pill status global: aktif/nonaktif/lulus, lunas/menunggu, dsb.
   Contoh: <x-ss-pill status="aktif" />  /  <x-ss-pill status="paid" label="Lunas" />
 --}}
 @props(['status', 'label' => null])
@@ -8,7 +8,6 @@
     $map = [
         // Status siswa / kategori
         'aktif' => 'pill-success', 'lulus' => 'pill-success', 'active' => 'pill-success',
-        'cuti' => 'pill-warning',
         'nonaktif' => 'pill-danger', 'inactive' => 'pill-danger',
         // Status tagihan / pembayaran
         'paid' => 'pill-success', 'lunas' => 'pill-success', 'success' => 'pill-success', 'selesai' => 'pill-success',

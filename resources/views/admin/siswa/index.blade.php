@@ -55,7 +55,7 @@
                         class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
                         <option value="">Semua Status</option>
                         <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="cuti" {{ request('status') == 'cuti' ? 'selected' : '' }}>Cuti</option>
+                        <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                         <option value="lulus" {{ request('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
                     </select>
                     <select name="per_page" onchange="this.form.submit()" title="Jumlah baris per halaman"

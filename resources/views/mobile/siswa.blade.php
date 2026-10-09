@@ -25,7 +25,7 @@
     <div class="m-kpi-card">
         <div class="m-kpi-val" data-m-count="{{ $stats['nonaktif'] }}" data-m-fmt="int">{{ number_format($stats['nonaktif'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Nonaktif</div>
-        <div class="m-kpi-sub">Cuti / lulus</div>
+        <div class="m-kpi-sub">Nonaktif / lulus</div>
     </div>
 @endsection
 
@@ -45,7 +45,7 @@
         <select name="status" class="m-select" onchange="this.form.submit()">
             <option value="">Semua Status</option>
             <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-            <option value="cuti" {{ request('status') == 'cuti' ? 'selected' : '' }}>Cuti</option>
+            <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
             <option value="lulus" {{ request('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
         </select>
     </form>
@@ -66,8 +66,8 @@
                 </div>
                 @if($s->status === 'aktif')
                     <span class="m-pill m-pill-ok">Aktif</span>
-                @elseif($s->status === 'cuti')
-                    <span class="m-pill m-pill-warn">Cuti</span>
+                @elseif($s->status === 'nonaktif')
+                    <span class="m-pill m-pill-err">Nonaktif</span>
                 @else
                     <span class="m-pill m-pill-info">{{ ucfirst($s->status) }}</span>
                 @endif

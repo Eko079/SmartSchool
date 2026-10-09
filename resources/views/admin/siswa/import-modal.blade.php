@@ -16,7 +16,7 @@
                 <input type="file" name="file" accept=".csv,.txt" required
                     class="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:font-semibold file:text-blue-600">
                 <p class="mt-1.5 text-[11px] leading-relaxed text-slate-400">
-                    Kolom berurutan: <code>nis, nisn, nama, kelas, gender(L/P), status(aktif/cuti/lulus), wali, wa, alamat</code>.
+                    Kolom berurutan: <code>nis, nisn, nama, kelas, gender(L/P), status(aktif/nonaktif/lulus), wali, wa, alamat</code>.
                     Baris pertama boleh header. Nama kelas harus sama persis dengan data kelas.
                 </p>
             </div>

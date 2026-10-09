@@ -25,7 +25,7 @@
             <div class="m-row2" style="margin-top:8px">
                 <div><label class="m-label">Kelas</label><select name="class_id" id="m-e-class" class="m-select" required>@foreach($classes ?? [] as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach</select></div>
                 <div><label class="m-label">Gender</label><select name="gender" id="m-e-gender" class="m-select"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
-                <div><label class="m-label">Status</label><select name="status" id="m-e-status" class="m-select"><option value="aktif">Aktif</option><option value="cuti">Cuti</option><option value="lulus">Lulus</option></select></div>
+                <div><label class="m-label">Status</label><select name="status" id="m-e-status" class="m-select"><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option><option value="lulus">Lulus</option></select></div>
             </div>
             <div class="m-row2" style="margin-top:8px">
                 <div><label class="m-label">Nama Wali</label><input type="text" name="guardian_name" id="m-e-wali" class="m-input"></div>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nisn', 20)->nullable()->unique();
             $table->string('name');
             $table->enum('gender', ['L', 'P'])->default('L');
-            $table->enum('status', ['aktif', 'cuti', 'lulus'])->default('aktif');
+            $table->enum('status', ['aktif', 'nonaktif', 'lulus'])->default('aktif');
             $table->string('guardian_name')->nullable();
             $table->string('guardian_phone', 20)->nullable();
             $table->text('address')->nullable();

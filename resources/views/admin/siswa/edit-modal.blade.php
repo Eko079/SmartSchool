@@ -52,7 +52,7 @@
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status</label>
                     <select name="status" id="edit-status" class="ss-input text-xs !py-2">
                         <option value="aktif">Aktif</option>
-                        <option value="cuti">Cuti</option>
+                        <option value="nonaktif">Nonaktif</option>
                         <option value="lulus">Lulus</option>
                     </select>
                 </div>
