@@ -17,6 +17,11 @@
                     <p class="text-xs text-slate-400">Kelola NIS, kelas dan status</p>
                 </div>
                 <div class="flex items-center gap-2">
+                    <a href="{{ route('admin.siswa.template') }}" title="Download template Excel"
+                        class="flex items-center gap-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 px-3 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900 shadow-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Template
+                    </a>
                     <button type="button" title="Impor CSV"
                         onclick="document.getElementById('import-modal').classList.remove('hidden')"
                         class="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 shadow-xs">

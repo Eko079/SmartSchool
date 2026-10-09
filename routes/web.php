@@ -30,6 +30,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Siswa
     Route::get('/siswa', [StudentController::class, 'index'])->name('siswa');
+    Route::get('/siswa/template', function () {
+        $path = public_path('templates/template_import_siswa.xlsx');
+        abort_if(! file_exists($path), 404, 'Template belum tersedia.');
+
+        return response()->download($path, 'template_import_siswa.xlsx');
+    })->name('siswa.template');
     Route::post('/siswa', [StudentController::class, 'store'])->name('siswa.store');
     Route::post('/siswa/import', [StudentController::class, 'import'])->name('siswa.import');
     Route::get('/siswa/{student}/bills', [StudentController::class, 'bills'])->name('siswa.bills');
