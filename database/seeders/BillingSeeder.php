@@ -62,18 +62,22 @@ class BillingSeeder extends Seeder
             );
 
             if ($paidAmount > 0) {
-                Payment::updateOrCreate(
-                    ['invoice_number' => 'PAY-202609' . str_pad($idx + 1, 3, '0', STR_PAD_LEFT)],
-                    [
-                        'bill_id' => $bill->id,
-                        'student_id' => $st->id,
-                        'amount' => $paidAmount,
-                        'payment_method' => $methods[$idx % count($methods)],
-                        'status' => 'success',
-                        'paid_at' => Carbon::create(2026, 9, rand(1, 10), rand(8, 16), rand(10, 59)),
-                        'note' => 'Pembayaran SPP Bulan September 2026',
-                    ]
-                );
+                $existingPay = Payment::where('bill_id', $bill->id)->where('status', 'success')->first();
+                $payAttrs = [
+                    'bill_id' => $bill->id,
+                    'student_id' => $st->id,
+                    'amount' => $paidAmount,
+                    'payment_method' => $methods[$idx % count($methods)],
+                    'status' => 'success',
+                    'paid_at' => Carbon::create(2026, 9, rand(1, 10), rand(8, 16), rand(10, 59)),
+                    'note' => 'Pembayaran SPP Bulan September 2026',
+                ];
+                if ($existingPay) {
+                    $existingPay->fill($payAttrs)->save();
+                } else {
+                    $payAttrs['invoice_number'] = Payment::nextInvoiceNumber($spp->code);
+                    Payment::create($payAttrs);
+                }
             }
         }
     }

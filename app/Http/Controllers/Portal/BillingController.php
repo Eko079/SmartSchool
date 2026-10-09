@@ -181,22 +181,28 @@ class BillingController extends Controller
 
         if (in_array($status, ['settlement', 'capture'])) {
             $amount = (float) ($payload['gross_amount'] ?? $bill->amount);
-            $payment = Payment::updateOrCreate(
-                ['invoice_number' => 'PAY-' . $payload['order_id']],
-                [
-                    'bill_id' => $bill->id,
-                    'student_id' => $bill->student_id,
-                    'amount' => $amount,
-                    'payment_method' => $payload['payment_type'] ?? 'midtrans',
-                    'gateway' => 'midtrans',
-                    'transaction_id' => $payload['transaction_id'] ?? null,
-                    'va_number' => $bill->va_number,
-                    'settlement_at' => now(),
-                    'callback_payload' => $payload,
-                    'status' => 'success',
-                    'paid_at' => now(),
-                ]
-            );
+            $bill->loadMissing('feeCategory');
+            $existing = Payment::where('bill_id', $bill->id)->where('status', 'success')->first();
+            $attrs = [
+                'bill_id' => $bill->id,
+                'student_id' => $bill->student_id,
+                'amount' => $amount,
+                'payment_method' => $payload['payment_type'] ?? 'midtrans',
+                'gateway' => 'midtrans',
+                'transaction_id' => $payload['transaction_id'] ?? null,
+                'va_number' => $bill->va_number,
+                'settlement_at' => now(),
+                'callback_payload' => $payload,
+                'status' => 'success',
+                'paid_at' => now(),
+            ];
+            if ($existing) {
+                $existing->fill($attrs)->save();
+                $payment = $existing->fresh();
+            } else {
+                $attrs['invoice_number'] = Payment::nextInvoiceNumber($bill->feeCategory->code ?? null);
+                $payment = Payment::create($attrs);
+            }
             $bill->forceFill([
                 'paid_amount' => $bill->amount,
                 'status' => 'paid',

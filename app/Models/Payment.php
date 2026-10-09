@@ -77,4 +77,33 @@ class Payment extends Model
             default => strtoupper((string) $this->status),
         };
     }
+
+    public static function prefixForCategory(?string $code): string
+    {
+        $code = strtoupper(trim((string) $code));
+        if (str_starts_with($code, 'PSAJ')) {
+            return 'PSJ';
+        }
+        $alnum = preg_replace('/[^A-Z0-9]/', '', $code);
+
+        return substr(str_pad($alnum, 3, 'X'), 0, 3);
+    }
+
+    public static function nextInvoiceNumber(?string $categoryCode = null): string
+    {
+        $prefix = self::prefixForCategory($categoryCode);
+        $max = 0;
+        foreach (self::where('invoice_number', 'like', 'KW-%')->pluck('invoice_number') as $inv) {
+            if (preg_match('/KW-[A-Z0-9]{3}-(\d+)$/', $inv, $m)) {
+                $max = max($max, (int) $m[1]);
+            }
+        }
+        $next = $max > 0 ? $max + 1 : (int) (self::max('id') ?? 0) + 1;
+        do {
+            $candidate = sprintf('KW-%s-%04d', $prefix, $next);
+            $next++;
+        } while (self::where('invoice_number', $candidate)->exists());
+
+        return $candidate;
+    }
 }
