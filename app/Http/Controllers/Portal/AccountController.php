@@ -62,7 +62,7 @@ class AccountController extends Controller
             return back()->withErrors(['current_password' => 'Kata sandi lama salah.']);
         }
 
-        $user->forceFill(['password' => $validated['password']])->save();
+        $user->forceFill(['password' => Hash::make($validated['password'])])->save();
 
         return back()->with('status', 'Kata sandi diperbarui.');
     }

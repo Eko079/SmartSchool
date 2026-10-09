@@ -151,7 +151,7 @@ class AuthController extends Controller
             return back()->withErrors(['identifier' => 'Akun wali tidak ditemukan.']);
         }
 
-        $user->forceFill(['password' => $validated['password']])->save();
+        $user->forceFill(['password' => Hash::make($validated['password'])])->save();
 
         return redirect()->route('portal.login')->with('status', 'Kata sandi baru tersimpan. Silakan masuk.');
     }
