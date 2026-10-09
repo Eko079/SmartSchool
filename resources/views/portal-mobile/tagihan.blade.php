@@ -58,13 +58,13 @@
 
     <div class="m-sec-head"><div class="m-sec-title">Tagihan {{ isset($selSemester) ? ucfirst($selSemester) : '' }}</div><span class="m-see">{{ $bills->total() }} data ›</span></div>
     @forelse($bills as $i => $bill)
-        @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; @endphp
+        @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ ($bills->firstItem() ?? 1) + $i }}. {{ $bill->bill_code }}</div>
                     <div class="m-stu-sub">{{ $bill->feeCategory->name ?? '-' }} • Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
-                    <div class="m-stu-sub">{{ $isPaid ? 'LUNAS' : 'BELUM BAYAR' }} • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $pay->payment_method ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $statusLabel }} • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
                 </div>
                 @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
                 @else<span class="m-pill m-pill-warn">Belum bayar</span>@endif
@@ -75,9 +75,9 @@
                     data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
                     data-amount="Rp {{ number_format($bill->amount, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
-                    data-status="{{ $isPaid ? 'LUNAS' : 'BELUM BAYAR' }}"
+                    data-status="{{ $statusLabel }}"
                     data-tanggal="{{ $pay?->paid_at?->format('d M Y H:i') ?? '-' }}"
-                    data-tempat="{{ $pay->payment_method ?? '-' }}">Detail</button>
+                    data-tempat="{{ $methodLabel }}">Detail</button>
                 @if(! $isPaid)
                 <button type="button" class="m-btn m-btn-primary" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"

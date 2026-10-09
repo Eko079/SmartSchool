@@ -55,4 +55,19 @@ class Bill extends Model
     {
         return $this->hasMany(BillEvent::class, 'bill_id');
     }
+
+    public static function statusLabel(string $status): string
+    {
+        return match ($status) {
+            'paid' => 'LUNAS',
+            'partial' => 'SEBAGIAN',
+            'overdue' => 'MENUNGGAK',
+            default => 'BELUM BAYAR',
+        };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return self::statusLabel($this->status);
+    }
 }

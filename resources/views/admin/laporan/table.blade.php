@@ -80,7 +80,7 @@
             Rp {{ number_format($in->amount, 0, ',', '.') }}
         </td>
         <td class="py-3 px-3 text-slate-500">{{ $in->paid_at ? $in->paid_at->format('d M Y H:i') : '-' }}</td>
-        <td class="py-3 px-3 text-slate-500">{{ $in->payment_method }}</td>
+        <td class="py-3 px-3 text-slate-500">{{ $in->method_label }}</td>
         <td class="py-3 px-3 text-center">
             <x-ss-pill :status="$in->status" />
         </td>
@@ -92,7 +92,7 @@
                 data-cat="{{ $in->bill->feeCategory->name ?? '-' }}"
                 data-nom="Rp {{ number_format($in->amount, 0, ',', '.') }}"
                 data-status="{{ $in->status }}"
-                data-method="{{ $in->payment_method }}"
+                data-method="{{ $in->method_label }}"
                 data-date="{{ $in->paid_at ? $in->paid_at->format('d M Y H:i') : '-' }}"
                 class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:bg-slate-50">Detail</button>
         </td>

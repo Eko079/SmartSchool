@@ -12,7 +12,7 @@
         <div class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
             <div class="flex-1 min-w-[200px]">
                 <div class="text-xs font-bold">{{ $pay->invoice_number }} • {{ $pay->bill->feeCategory->name ?? '-' }}</div>
-                <div class="text-[11px] text-slate-400">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->payment_method }}</div>
+                <div class="text-[11px] text-slate-400">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->method_label }}</div>
             </div>
             <x-ss-pill status="{{ $pay->status }}" label="{{ ucfirst($pay->status) }}" />
             <span class="text-xs font-bold">{{ $rp($pay->amount) }}</span>

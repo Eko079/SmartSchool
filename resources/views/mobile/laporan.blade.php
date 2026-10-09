@@ -56,7 +56,7 @@
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $p->invoice_number }}</div>
-                    <div class="m-stu-sub">{{ $p->student->name ?? '-' }} · {{ $p->payment_method ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $p->student->name ?? '-' }} · {{ $p->method_label ?? '-' }}</div>
                     <div class="m-stu-sub">{{ $p->paid_at?->format('d M Y H:i') ?? '-' }}</div>
                 </div>
                 <div class="m-famt">Rp {{ number_format($p->amount, 0, ',', '.') }}</div>

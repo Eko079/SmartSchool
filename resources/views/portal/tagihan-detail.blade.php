@@ -9,7 +9,7 @@
 
     <div class="ss-card space-y-3">
         <div class="flex flex-wrap items-center gap-3">
-            <x-ss-pill status="{{ $bill->status }}" label="{{ ucfirst($bill->status) }}" />
+            <x-ss-pill status="{{ $bill->status }}" label="{{ $bill->status_label }}" />
             <span class="text-xs text-slate-400">Order {{ $bill->order_id ?? '-' }}</span>
         </div>
         <dl class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">

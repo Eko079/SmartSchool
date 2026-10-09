@@ -37,7 +37,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="py-3 px-3 text-center text-slate-500">{{ $p->payment_method }}</td>
+                    <td class="py-3 px-3 text-center text-slate-500">{{ $p->method_label }}</td>
                     <td class="py-3 px-3 text-center">
                         <span class="pill pill-success">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>

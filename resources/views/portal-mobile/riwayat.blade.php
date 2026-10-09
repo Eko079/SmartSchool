@@ -38,7 +38,7 @@
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $pay->invoice_number }} • {{ $pay->bill->feeCategory->name ?? '-' }}</div>
-                    <div class="m-stu-sub">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->payment_method }}</div>
+                    <div class="m-stu-sub">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }} • {{ $pay->method_label }}</div>
                     <div class="m-stu-sub">Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
                 </div>
                 @if($pay->status === 'success')<span class="m-pill m-pill-ok">Lunas</span>

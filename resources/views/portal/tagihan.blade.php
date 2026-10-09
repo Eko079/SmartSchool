@@ -58,7 +58,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
         </x-slot>
 
         @forelse($bills as $i => $bill)
-        @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; @endphp
+        @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition">
             <td class="py-3 px-3 text-slate-400">{{ ($bills->firstItem() ?? 1) + $i }}</td>
             <td class="py-3 px-3 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $bill->bill_code }}</td>
@@ -66,13 +66,17 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->amount) }}</td>
             <td class="py-3 px-3 text-center">
                 @if($isPaid)
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>LUNAS</span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{{ $statusLabel }}</span>
+                @elseif($bill->status === 'partial')
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:text-blue-300"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>{{ $statusLabel }}</span>
+                @elseif($bill->status === 'overdue')
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 dark:bg-rose-950 border border-rose-200 dark:border-rose-800 px-2.5 py-1 text-[10px] font-bold text-rose-700 dark:text-rose-300"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>{{ $statusLabel }}</span>
                 @else
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>BELUM BAYAR</span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 px-2.5 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{{ $statusLabel }}</span>
                 @endif
             </td>
             <td class="py-3 px-3 whitespace-nowrap">{{ $pay?->paid_at?->format('d M Y') ?? '-' }}</td>
-            <td class="py-3 px-3">{{ $pay->payment_method ?? '-' }}</td>
+            <td class="py-3 px-3">{{ $methodLabel }}</td>
             <td class="py-3 px-3 text-right whitespace-nowrap">
                 @if(! $isPaid)
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this)"
@@ -80,7 +84,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
                     data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
                     data-amount="{{ $rp($bill->amount) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
-                    data-status="{{ $isPaid ? 'LUNAS' : 'BELUM BAYAR' }}"
+                    data-status="{{ $statusLabel }}"
                     class="rounded-lg bg-blue-600 px-3 py-2 text-[11px] font-semibold text-white hover:bg-blue-700">Bayar</button>
                 @endif
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this, true)"
@@ -88,9 +92,9 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
                     data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
                     data-amount="{{ $rp($bill->amount) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
-                    data-status="{{ $isPaid ? 'LUNAS' : 'BELUM BAYAR' }}"
+                    data-status="{{ $statusLabel }}"
                     data-tanggal="{{ $pay?->paid_at?->format('d M Y H:i') ?? '-' }}"
-                    data-tempat="{{ $pay->payment_method ?? '-' }}"
+                    data-tempat="{{ $methodLabel }}"
                     class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-[11px] font-semibold hover:border-blue-500 hover:text-blue-600">Detail</button>
             </td>
         </tr>

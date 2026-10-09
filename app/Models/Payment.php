@@ -44,4 +44,27 @@ class Payment extends Model
     {
         return $this->belongsTo(Student::class, 'student_id');
     }
+
+    public static function methodLabel(?string $method): string
+    {
+        if (! $method) {
+            return '-';
+        }
+        $map = [
+            'bca_va' => 'BCA Virtual Account',
+            'bni_va' => 'BNI Virtual Account',
+            'qris' => 'QRIS Dinamis',
+            'bank_transfer' => 'Transfer Bank',
+            'echannel' => 'Mandiri Bill',
+            'cstore' => 'Gerai Retail',
+            'midtrans' => 'Midtrans',
+        ];
+
+        return $map[strtolower(trim($method))] ?? $method;
+    }
+
+    public function getMethodLabelAttribute(): string
+    {
+        return self::methodLabel($this->payment_method);
+    }
 }

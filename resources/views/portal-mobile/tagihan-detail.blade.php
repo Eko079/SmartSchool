@@ -79,7 +79,7 @@
             <div class="m-feed">
                 <div class="m-fmid">
                     <div class="m-fname">{{ $pay->invoice_number }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
-                    <div class="m-fdesc">{{ $pay->payment_method }} • {{ $pay->status }}</div>
+                    <div class="m-fdesc">{{ $pay->method_label }} • {{ $pay->status }}</div>
                 </div>
                 <a class="m-btn" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>
             </div>
