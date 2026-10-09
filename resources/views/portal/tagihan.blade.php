@@ -129,6 +129,14 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
                     <label class="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-center text-xs font-semibold has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950"><input type="radio" name="pm_method" value="qris" class="sr-only"><div>QRIS</div></label>
                 </div>
                 <p class="hidden text-xs text-emerald-600 font-semibold" id="pm-result"></p>
+                <div id="pm-va-box" class="hidden rounded-xl bg-[#0F1E33] p-3 text-white">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-blue-300">Nomor bayar • <span id="pm-expiry"></span></div>
+                    <div class="mt-1 flex items-center justify-between gap-2">
+                        <span class="text-lg font-bold tracking-wider" id="pm-va"></span>
+                        <button type="button" onclick="copyPayVa()" class="rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-semibold hover:bg-blue-700">Salin</button>
+                    </div>
+                    <div class="text-[11px] text-blue-200" id="pm-order"></div>
+                </div>
             </div>
             <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-3">
                 <button type="button" onclick="closePayModal()" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold">Tutup</button>
@@ -140,6 +148,7 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
 
     <script>
     var pmBillId = null;
+    var pmTimer = null;
     function openPayModal(id, btn, detailOnly) {
         pmBillId = id;
         var g = function (k) { return btn ? (btn.getAttribute('data-' + k) || '-') : '-'; };
@@ -154,15 +163,40 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
         document.getElementById('pm-paybox').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-submit').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-result').classList.add('hidden');
+        document.getElementById('pm-va-box').classList.add('hidden');
+        if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
+        var submit = document.getElementById('pm-submit');
+        submit.disabled = false; submit.textContent = 'Buat Pembayaran';
         var m = document.getElementById('pay-modal');
         m.classList.remove('hidden'); m.classList.add('flex');
     }
     function closePayModal() {
         var m = document.getElementById('pay-modal');
         m.classList.add('hidden'); m.classList.remove('flex');
+        if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
     }
     document.getElementById('pay-modal').addEventListener('click', function (e) { if (e.target === this) closePayModal(); });
+    function copyPayVa() {
+        var t = document.getElementById('pm-va').textContent || '';
+        if (navigator.clipboard) { navigator.clipboard.writeText(t); }
+    }
+    function startPayCountdown(expiredAt) {
+        var el = document.getElementById('pm-expiry');
+        if (!expiredAt) { el.textContent = ''; return; }
+        var end = new Date(expiredAt).getTime();
+        if (pmTimer) clearInterval(pmTimer);
+        var tick = function () {
+            var left = end - Date.now();
+            if (left <= 0) { el.textContent = 'kedaluwarsa'; clearInterval(pmTimer); return; }
+            var h = Math.floor(left / 3600000), m = Math.floor(left % 3600000 / 60000), s = Math.floor(left % 60000 / 1000);
+            el.textContent = 'berlaku ' + h + 'j ' + m + 'm ' + s + 'd';
+        };
+        tick(); pmTimer = setInterval(tick, 1000);
+    }
     function submitPayModal() {
+        var submit = document.getElementById('pm-submit');
+        if (submit.disabled) return;
+        submit.disabled = true; submit.textContent = 'Memproses...';
         var checked = document.querySelector('input[name="pm_method"]:checked');
         var method = checked ? checked.value : 'bca_va';
         fetch('/tagihan/' + pmBillId + '/bayar', {
@@ -171,10 +205,14 @@ TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemes
             body: JSON.stringify({ method: method })
         }).then(function (r) { return r.json(); }).then(function (j) {
             var el = document.getElementById('pm-result');
-            el.textContent = 'VA: ' + (j.transaction.va_number || '-') + ' • Order: ' + (j.transaction.order_id || '-');
+            el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.classList.remove('hidden');
-            setTimeout(function () { location.reload(); }, 1200);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); });
+            document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+            document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
+            document.getElementById('pm-va-box').classList.remove('hidden');
+            startPayCountdown(j.transaction.expired_at);
+            setTimeout(function () { location.reload(); }, 8000);
+        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Buat Pembayaran'; });
     }
     </script>
 @endsection

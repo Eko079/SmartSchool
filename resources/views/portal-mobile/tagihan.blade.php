@@ -105,6 +105,14 @@
                 <label class="m-btn"><input type="radio" name="pm_method" value="qris"> QRIS</label>
             </div>
             <div class="m-fdesc" id="pm-result" style="display:none"></div>
+            <div class="m-card" id="pm-va-box" style="display:none">
+                <div class="m-sec-title">Nomor bayar • <span id="pm-expiry"></span></div>
+                <div class="m-stu-name" id="pm-va">-</div>
+                <div class="m-actions">
+                    <button type="button" class="m-btn" onclick="copyPayVa()">Salin</button>
+                    <span class="m-fdesc" id="pm-order"></span>
+                </div>
+            </div>
         </div>
         <div class="m-actions">
             <a href="#" id="pm-detail-link" class="m-btn">Halaman Detail</a>
@@ -114,6 +122,7 @@
 
     <script>
     var pmBillId = null;
+    var pmTimer = null;
     function openPayModal(id, btn, detailOnly) {
         pmBillId = id;
         var g = function (k) { return btn ? (btn.getAttribute('data-' + k) || '-') : '-'; };
@@ -128,10 +137,21 @@
         document.getElementById('pm-paybox').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-submit').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-result').style.display = 'none';
+        document.getElementById('pm-va-box').style.display = 'none';
+        if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
+        var submit = document.getElementById('pm-submit');
+        submit.disabled = false; submit.textContent = 'Buat Pembayaran';
         document.getElementById('pay-modal').classList.remove('hidden');
     }
-    function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); }
+    function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); if (pmTimer) { clearInterval(pmTimer); pmTimer = null; } }
+    function copyPayVa() {
+        var t = document.getElementById('pm-va').textContent || '';
+        if (navigator.clipboard) { navigator.clipboard.writeText(t); }
+    }
     function submitPayModal() {
+        var submit = document.getElementById('pm-submit');
+        if (submit.disabled) return;
+        submit.disabled = true; submit.textContent = 'Memproses...';
         var checked = document.querySelector('input[name="pm_method"]:checked');
         var method = checked ? checked.value : 'bca_va';
         fetch('/tagihan/' + pmBillId + '/bayar', {
@@ -140,10 +160,20 @@
             body: JSON.stringify({ method: method })
         }).then(function (r) { return r.json(); }).then(function (j) {
             var el = document.getElementById('pm-result');
-            el.textContent = 'VA: ' + (j.transaction.va_number || '-') + ' • Order: ' + (j.transaction.order_id || '-');
+            el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.style.display = '';
-            setTimeout(function () { location.reload(); }, 1200);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); });
+            document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+            document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
+            document.getElementById('pm-va-box').style.display = '';
+            var end = new Date(j.transaction.expired_at).getTime();
+            if (pmTimer) clearInterval(pmTimer);
+            pmTimer = setInterval(function () {
+                var left = end - Date.now();
+                if (left <= 0) { document.getElementById('pm-expiry').textContent = 'kedaluwarsa'; clearInterval(pmTimer); return; }
+                document.getElementById('pm-expiry').textContent = 'berlaku ' + Math.floor(left / 3600000) + 'j ' + Math.floor(left % 3600000 / 60000) + 'm';
+            }, 1000);
+            setTimeout(function () { location.reload(); }, 8000);
+        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Buat Pembayaran'; });
     }
     </script>
 @endsection
