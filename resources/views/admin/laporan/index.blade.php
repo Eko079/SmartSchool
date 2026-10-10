@@ -1,7 +1,7 @@
 @extends('layouts.admin')
-@section('title', 'Laporan Pembayaran')
-@section('breadcrumb', 'Laporan / Rekap Pembayaran')
-@section('page-title', 'Laporan Pembayaran')
+@section('title', 'Laporan')
+@section('breadcrumb', 'Transaksi / Laporan')
+@section('page-title', 'Laporan')
 @section('page-subtitle')
     Rekap lunas, tunggakan dan arus kas TA {{ $academicYear ?? '' }}.
 @endsection

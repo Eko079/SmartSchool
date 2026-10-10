@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Preview Import Siswa')
-@section('breadcrumb', 'Master Data / Siswa / Preview Import')
+@section('breadcrumb', 'Master Data / Data Siswa / Preview Import')
 @section('page-title', 'Preview Import Siswa')
 @section('page-subtitle', 'Periksa kembali data siswa sebelum disimpan.')
 

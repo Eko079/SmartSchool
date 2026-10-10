@@ -11,6 +11,6 @@
 <div class="m-tabs" role="tablist" aria-label="Navigasi mobile">
     @foreach($mTabs as $t)
         <a href="{{ Route::has($t['route']) ? route($t['route']) : '#' }}"
-           class="m-tab {{ request()->routeIs($t['route']) ? 'active' : '' }}">{{ $t['label'] }}</a>
+           class="m-tab {{ request()->routeIs($t['route'] . '*') ? 'active' : '' }}">{{ $t['label'] }}</a>
     @endforeach
 </div>

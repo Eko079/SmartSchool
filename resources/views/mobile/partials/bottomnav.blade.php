@@ -11,7 +11,7 @@
 <nav class="m-bottomnav" aria-label="Navigasi bawah">
     @foreach($mNav as $n)
         <a href="{{ Route::has($n['route']) ? route($n['route']) : '#' }}"
-           class="m-bnav-item {{ request()->routeIs($n['route']) ? 'active' : '' }}">
+           class="m-bnav-item {{ request()->routeIs($n['route'] . '*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $n['icon'] }}"/></svg>
             <span>{{ $n['label'] }}</span>
         </a>

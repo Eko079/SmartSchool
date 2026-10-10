@@ -1,6 +1,6 @@
 @extends('layouts.mobile')
 @section('title', 'Bantuan')
-@section('breadcrumb', 'Lainnya / Bantuan')
+@section('breadcrumb', 'Lainnya / Pusat Bantuan')
 
 @section('hero')
     <div class="m-rev-label">PUSAT BANTUAN</div>

@@ -1,6 +1,6 @@
 @extends('layouts.mobile')
 @section('title', 'Kategori')
-@section('breadcrumb', 'Master Data / Kategori')
+@section('breadcrumb', 'Master Data / Kategori Tagihan')
 
 @php use App\Http\Controllers\Admin\DashboardController; @endphp
 

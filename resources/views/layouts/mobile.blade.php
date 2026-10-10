@@ -93,16 +93,18 @@
                 $mMenu = [
                     ['route' => 'admin.dashboard', 'label' => 'Beranda'],
                     ['route' => 'admin.siswa', 'label' => 'Data Siswa'],
-                    ['route' => 'admin.billing', 'label' => 'Tagihan'],
+                    ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan'],
+                    ['route' => 'admin.billing', 'label' => 'Billing Generator'],
                     ['route' => 'admin.laporan', 'label' => 'Laporan'],
+                    ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan'],
                     ['route' => 'admin.pengaturan', 'label' => 'Pengaturan'],
-                    ['route' => 'admin.bantuan', 'label' => 'Bantuan'],
+                    ['route' => 'admin.bantuan', 'label' => 'Pusat Bantuan'],
                 ];
             @endphp
             <nav class="m-drawer-nav">
                 @foreach($mMenu as $it)
                     <a href="{{ Route::has($it['route']) ? route($it['route']) : '#' }}"
-                       class="m-drawer-link {{ request()->routeIs($it['route']) ? 'active' : '' }}">{{ $it['label'] }}</a>
+                       class="m-drawer-link {{ request()->routeIs($it['route'] . '*') ? 'active' : '' }}">{{ $it['label'] }}</a>
                 @endforeach
             </nav>
             <form method="POST" action="{{ route('logout') }}" class="m-drawer-foot">

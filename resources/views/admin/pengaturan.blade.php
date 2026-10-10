@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Pengaturan')
-@section('breadcrumb', 'Pengaturan / Umum')
+@section('breadcrumb', 'Lainnya / Pengaturan')
 @section('page-title', 'Pengaturan')
 @section('page-subtitle', 'Profil sekolah, tahun ajaran dan pembayaran.')
 

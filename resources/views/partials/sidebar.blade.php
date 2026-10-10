@@ -16,19 +16,51 @@
     <div class="text-[11px] font-semibold text-slate-500 mt-2 mb-1 px-3">MENU UTAMA</div>
     <nav class="flex flex-col gap-1">
         @php
-            $menu = [
+            $menuUtama = [
                 ['route' => 'admin.dashboard', 'label' => 'Beranda', 'icon' => 'layout-dashboard'],
+            ];
+            $menuMaster = [
                 ['route' => 'admin.siswa', 'label' => 'Data Siswa', 'icon' => 'users'],
                 ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan', 'icon' => 'tag'],
+            ];
+            $menuTransaksi = [
                 ['route' => 'admin.billing', 'label' => 'Billing Generator', 'icon' => 'receipt'],
                 ['route' => 'admin.laporan', 'label' => 'Laporan', 'icon' => 'file-text'],
-                ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'tag'],
+            ];
+            $menuLainnya = [
+                ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'life-buoy'],
+                ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
+                ['route' => 'admin.bantuan', 'label' => 'Pusat Bantuan', 'icon' => 'life-buoy'],
             ];
         @endphp
-        @foreach($menu as $item)
+        @foreach($menuUtama as $item)
             <a href="{{ route($item['route']) }}"
                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
-                      {{ request()->routeIs($item['route']) ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                      {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                @include('partials.icons.' . $item['icon'])
+                {{ $item['label'] }}
+            </a>
+        @endforeach
+    </nav>
+
+    <div class="text-[11px] font-semibold text-slate-500 mt-4 mb-1 px-3">MASTER DATA</div>
+    <nav class="flex flex-col gap-1">
+        @foreach($menuMaster as $item)
+            <a href="{{ route($item['route']) }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
+                      {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                @include('partials.icons.' . $item['icon'])
+                {{ $item['label'] }}
+            </a>
+        @endforeach
+    </nav>
+
+    <div class="text-[11px] font-semibold text-slate-500 mt-4 mb-1 px-3">TRANSAKSI</div>
+    <nav class="flex flex-col gap-1">
+        @foreach($menuTransaksi as $item)
+            <a href="{{ route($item['route']) }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
+                      {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
                 @include('partials.icons.' . $item['icon'])
                 {{ $item['label'] }}
             </a>
@@ -38,20 +70,17 @@
     {{-- Lainnya --}}
     <div class="text-[11px] font-semibold text-slate-500 mt-4 mb-1 px-3">LAINNYA</div>
     <nav class="flex flex-col gap-1">
-        <a href="{{ route('admin.pengaturan') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-300 hover:bg-white/10 {{ request()->routeIs('admin.pengaturan') ? 'bg-blue-600 font-semibold text-white' : '' }}">
-            @include('partials.icons.settings')
-            Pengaturan
-        </a>
+        @foreach($menuLainnya as $item)
+            <a href="{{ route($item['route']) }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
+                      {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                @include('partials.icons.' . $item['icon'])
+                {{ $item['label'] }}
+            </a>
+        @endforeach
     </nav>
 
-    {{-- Help card — tepat di bawah Pengaturan, jarak ikut gap-2 parent (sama kayak menu) --}}
-    <div class="rounded-xl bg-[#1E3A5F] p-4 space-y-2">
-        <div class="text-sm font-semibold">Butuh bantuan?</div>
-        <div class="text-xs text-slate-400">Panduan kelola siswa & tagihan.</div>
-        <a href="{{ route('admin.bantuan') }}" class="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2.5 text-xs font-semibold hover:bg-blue-700 transition">Pusat Bantuan</a>
-    </div>
-
-    {{-- Spacer (dorong profil ke bawah, help card tetap dekat Pengaturan) --}}
+    {{-- Spacer (dorong profil ke bawah) --}}
     <div class="flex-1"></div>
 
     {{-- User --}}

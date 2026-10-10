@@ -58,7 +58,7 @@ class ExampleTest extends TestCase
         $this->actingAs(User::first() ?? User::factory()->create());
         $response = $this->get(route('admin.laporan'));
         $response->assertStatus(200);
-        $response->assertSee('Laporan Pembayaran');
+        $response->assertSee('Laporan');
     }
 
 
