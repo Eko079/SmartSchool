@@ -1,6 +1,5 @@
 @extends('layouts.mobile')
 @section('title', 'Tagihan')
-@section('breadcrumb', 'Transaksi / Billing Generator')
 
 @php use App\Http\Controllers\Admin\DashboardController; @endphp
 

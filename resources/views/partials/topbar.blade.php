@@ -13,9 +13,6 @@
 
     {{-- Title --}}
     <div class="flex-1 min-w-0">
-        @hasSection('breadcrumb')
-            <div class="text-[13px] font-normal text-[#64748B] mb-1.5 truncate">@yield('breadcrumb')</div>
-        @endif
         @if(request()->routeIs('admin.dashboard'))
             @php $sapaan = explode(' ', Auth::user()->name ?? 'Admin')[0]; @endphp
             <h1 class="truncate text-xl sm:text-[28px] font-bold leading-tight sm:leading-none text-[#0F172A] dark:text-white" style="font-family: Inter, system-ui, sans-serif;">👋 Selamat Datang Kembali, {{ $sapaan }}!</h1>

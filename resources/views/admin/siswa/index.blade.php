@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Data Siswa')
-@section('breadcrumb', 'Master Data / Data Siswa')
 @section('page-title', 'Data Siswa')
 @section('page-subtitle')
     Kelola data siswa tahun ajaran {{ $academicYear ?? '' }}. Cari, filter, dan urutkan berdasarkan kolom tabel.

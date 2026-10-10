@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Ubah Siswa')
-@section('breadcrumb', 'Master Data / Data Siswa / Ubah')
 @section('page-title', 'Ubah Data Siswa')
 @section('page-subtitle', 'Perbarui identitas, kelas, dan kontak wali siswa.')
 

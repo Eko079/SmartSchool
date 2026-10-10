@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Tagihan')
-@section('breadcrumb', 'Tagihan')
 
 @section('hero')
     <div class="m-rev-label">TOTAL MENUNGGU • {{ number_format($bills->total(), 0, ',', '.') }} TAGIHAN</div>

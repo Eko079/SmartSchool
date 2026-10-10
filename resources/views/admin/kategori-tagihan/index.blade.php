@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Kategori Tagihan')
-@section('breadcrumb', 'Master Data / Kategori Tagihan')
 @section('page-title', 'Kategori Tagihan')
 @section('page-subtitle', 'Parameter nominal dasar billing generator.')
 

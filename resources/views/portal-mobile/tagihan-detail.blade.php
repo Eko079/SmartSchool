@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Detail Tagihan')
-@section('breadcrumb', 'Tagihan / ' . $bill->bill_code)
 
 @section('hero')
     <div class="m-rev-label">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>

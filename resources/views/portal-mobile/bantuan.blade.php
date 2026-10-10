@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Bantuan')
-@section('breadcrumb', 'Lainnya / Bantuan')
 
 @section('hero')
     <div class="m-rev-label">PUSAT BANTUAN</div>

@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Laporan')
-@section('breadcrumb', 'Transaksi / Laporan')
 @section('page-title', 'Laporan')
 @section('page-subtitle')
     Rekap lunas, tunggakan dan arus kas TA {{ $academicYear ?? '' }}.

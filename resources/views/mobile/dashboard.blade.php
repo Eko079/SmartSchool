@@ -1,6 +1,5 @@
 @extends('layouts.mobile')
 @section('title', 'Beranda')
-@section('breadcrumb', 'Beranda')
 
 @php
     use App\Http\Controllers\Admin\DashboardController;

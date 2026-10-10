@@ -1,6 +1,5 @@
 @extends('layouts.mobile')
 @section('title', 'Data Siswa')
-@section('breadcrumb', 'Master Data / Data Siswa')
 
 @section('hero')
     <div class="m-rev-label">DATA SISWA · TA {{ $academicYear }}</div>

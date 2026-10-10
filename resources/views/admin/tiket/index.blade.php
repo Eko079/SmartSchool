@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Tiket Bantuan')
-@section('breadcrumb', 'Lainnya / Tiket Bantuan')
 @section('page-title', 'Tiket Bantuan')
 @section('page-subtitle', 'Balas, tutup, dan buka kembali tiket wali.')
 

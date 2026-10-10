@@ -1,6 +1,5 @@
 @extends('layouts.admin')
 @section('title', 'Billing Generator')
-@section('breadcrumb', 'Transaksi / Billing Generator')
 @section('page-title', 'Billing Generator')
 @section('page-subtitle', 'Generate tagihan massal per kelas.')
 

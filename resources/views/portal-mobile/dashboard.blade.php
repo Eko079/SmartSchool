@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Beranda')
-@section('breadcrumb', 'Beranda / Dashboard')
 
 @php
     $rpShort = function ($v) {

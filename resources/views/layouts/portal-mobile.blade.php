@@ -59,10 +59,6 @@
         </header>
 
         <main class="m-main">
-            @hasSection('breadcrumb')
-                <div class="m-crumb">@yield('breadcrumb')</div>
-            @endif
-
             @include('portal-mobile.partials.tabs')
             @include('mobile.partials.flash')
 

@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Riwayat Pembayaran')
-@section('breadcrumb', 'Riwayat')
 
 @section('hero')
     <div class="m-rev-label">RIWAYAT • {{ $payments->total() }} TRANSAKSI</div>

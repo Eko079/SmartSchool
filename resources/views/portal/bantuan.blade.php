@@ -1,6 +1,5 @@
 @extends('layouts.portal')
 @section('title', 'Bantuan')
-@section('breadcrumb', 'Portal / Bantuan')
 @section('page-title', 'Pusat Bantuan')
 @section('page-subtitle', 'Cara bayar, kuitansi & kontak bendahara.')
 

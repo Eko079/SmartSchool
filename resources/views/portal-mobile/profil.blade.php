@@ -1,6 +1,5 @@
 @extends('layouts.portal-mobile')
 @section('title', 'Profile')
-@section('breadcrumb', 'Profile')
 
 @section('hero')
     <div class="m-rev-label">NIS {{ $student->nis }} • {{ $student->classRoom->name ?? '-' }}</div>

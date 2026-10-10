@@ -1,6 +1,5 @@
 @extends('layouts.mobile')
 @section('title', 'Tiket Bantuan')
-@section('breadcrumb', 'Lainnya / Tiket Bantuan')
 
 @section('hero')
     <div class="m-rev-label">TIKET WALI MASUK</div>
