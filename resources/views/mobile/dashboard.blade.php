@@ -59,9 +59,9 @@
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
             Laporan
         </a>
-        <a class="m-qa" href="{{ route('admin.bantuan') }}">
+        <a class="m-qa" href="{{ route('admin.tiket') }}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-            Bantuan
+            Tiket
         </a>
     </div>
 

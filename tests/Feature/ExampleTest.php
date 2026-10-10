@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
 
     public function test_guest_is_redirected_to_login(): void
     {
-        foreach (['admin.dashboard', 'admin.siswa', 'admin.kategori-tagihan', 'admin.billing', 'admin.laporan', 'admin.pengaturan', 'admin.bantuan'] as $route) {
+        foreach (['admin.dashboard', 'admin.siswa', 'admin.kategori-tagihan', 'admin.billing', 'admin.laporan', 'admin.pengaturan', 'admin.tiket'] as $route) {
             $this->get(route($route))->assertRedirect(route('login'));
         }
     }
@@ -68,14 +68,6 @@ class ExampleTest extends TestCase
         $response = $this->get(route('admin.pengaturan'));
         $response->assertStatus(200);
         $response->assertSee('Pengaturan');
-    }
-
-    public function test_admin_bantuan_renders(): void
-    {
-        $this->actingAs(User::first() ?? User::factory()->create());
-        $response = $this->get(route('admin.bantuan'));
-        $response->assertStatus(200);
-        $response->assertSee('Pusat Bantuan');
     }
 
 

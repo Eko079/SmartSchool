@@ -30,7 +30,6 @@
             $menuLainnya = [
                 ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'life-buoy'],
                 ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
-                ['route' => 'admin.bantuan', 'label' => 'Pusat Bantuan', 'icon' => 'life-buoy'],
             ];
         @endphp
         @foreach($menuUtama as $item)

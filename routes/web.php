@@ -62,21 +62,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
     Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
 
-    // Bantuan (kirim settings agar kontak ikut data Pengaturan; HP => mobile otomatis)
-    Route::get('/bantuan', function (\Illuminate\Http\Request $request) {
-        if (\App\Support\Device::isPhone($request)) {
-            return app(\App\Http\Controllers\Admin\MobileController::class)->bantuan();
-        }
-        $settings = \App\Models\SchoolSetting::pluck('value', 'key')->toArray();
-        $tickets = \App\Models\HelpTicket::with(['user.student', 'replies'])->latest()->take(20)->get();
-        $ticketStats = [
-            'open' => \App\Models\HelpTicket::where('status', 'open')->count(),
-            'answered' => \App\Models\HelpTicket::where('status', 'answered')->count(),
-            'closed' => \App\Models\HelpTicket::where('status', 'closed')->count(),
-        ];
-        return view('admin.bantuan', compact('settings', 'tickets', 'ticketStats'));
-    })->name('bantuan');
-
     // Tiket bantuan wali
     Route::get('/tiket', [\App\Http\Controllers\Admin\TicketController::class, 'index'])->name('tiket');
     Route::post('/tiket/{ticket}/balas', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('tiket.reply');

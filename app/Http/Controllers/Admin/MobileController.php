@@ -211,13 +211,4 @@ class MobileController extends Controller
         return view('mobile.pengaturan', compact('settings', 'schoolName'));
     }
 
-    /** Bantuan mobile: FAQ + kontak dari pengaturan. */
-    public function bantuan()
-    {
-        $settings = SchoolSetting::pluck('value', 'key')->toArray();
-        $schoolName = $settings['school_name'] ?? 'SmartSchool';
-
-        return view('mobile.bantuan', compact('settings', 'schoolName'));
-    }
-
 }

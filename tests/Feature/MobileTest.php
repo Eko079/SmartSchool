@@ -16,7 +16,7 @@ class MobileTest extends TestCase
     public function test_mobile_guest_redirects_to_login(): void
     {
         $this->post(route('logout'));
-        foreach (['admin.dashboard', 'admin.siswa', 'admin.billing', 'admin.laporan', 'admin.pengaturan', 'admin.bantuan', 'admin.kategori-tagihan'] as $route) {
+        foreach (['admin.dashboard', 'admin.siswa', 'admin.billing', 'admin.laporan', 'admin.pengaturan', 'admin.tiket', 'admin.kategori-tagihan'] as $route) {
             $this->get(route($route))->assertRedirect(route('login'));
         }
     }
@@ -29,7 +29,7 @@ class MobileTest extends TestCase
             'admin.billing' => 'Tagihan Terbaru',
             'admin.laporan' => 'Pembayaran',
             'admin.pengaturan' => 'Profil Sekolah',
-            'admin.bantuan' => 'FAQ Populer',
+            'admin.tiket' => 'Tiket Bantuan',
             'admin.kategori-tagihan' => 'KATEGORI',
         ];
 

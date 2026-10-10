@@ -98,7 +98,6 @@
                     ['route' => 'admin.laporan', 'label' => 'Laporan'],
                     ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan'],
                     ['route' => 'admin.pengaturan', 'label' => 'Pengaturan'],
-                    ['route' => 'admin.bantuan', 'label' => 'Pusat Bantuan'],
                 ];
             @endphp
             <nav class="m-drawer-nav">
