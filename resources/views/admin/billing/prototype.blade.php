@@ -6,8 +6,6 @@
 @section('content')
 @php
     $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.');
-    $grouped = ($categories ?? collect())->groupBy('type');
-    $typeLabel = ['bulanan' => 'Rutin Bulanan', 'semesteran' => 'Paket Semester', 'sekali' => 'Sekali Bayar', 'bebas' => 'Bebas / Cicil'];
 @endphp
 
 {{-- Mode + ringkasan atas --}}
@@ -42,36 +40,54 @@
     </div>
 </div>
 
-{{-- Kategori --}}
+{{-- Kategori: tabel pilihan satu baris, bukan kartu satu-satu --}}
 <div class="ss-card space-y-3">
     <div class="flex flex-wrap items-center justify-between gap-2">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">2. Pilih Kategori</h2>
-            <p class="text-xs text-slate-400">Dikelompokkan per tipe. Klik kartu untuk pilih.</p>
+            <p class="text-xs text-slate-400">Klik satu baris untuk pilih. Cari atau saring per tipe.</p>
         </div>
-        <input type="text" id="pt-cat-search" placeholder="Cari kode / nama..." class="ss-input !w-auto text-xs !py-2">
+        <div class="flex flex-wrap items-center gap-2">
+            <select id="pt-type-filter" class="ss-input !w-auto text-xs !py-2" onchange="ptFilterCat()">
+                <option value="">Semua tipe</option>
+                <option value="bulanan">Rutin Bulanan</option>
+                <option value="semesteran">Paket Semester</option>
+                <option value="sekali">Sekali Bayar</option>
+                <option value="bebas">Bebas / Cicil</option>
+            </select>
+            <input type="text" id="pt-cat-search" placeholder="Cari kode / nama..." class="ss-input !w-auto text-xs !py-2" oninput="ptFilterCat()">
+        </div>
     </div>
-    <div id="pt-cat-groups" class="space-y-4">
-        @foreach($grouped as $type => $cats)
-        <div data-pt-group="{{ $type }}">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">{{ $typeLabel[$type] ?? $type }} ({{ $cats->count() }})</div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                @foreach($cats as $cat)
-                <button type="button" data-pt-cat data-code="{{ $cat->code }}" data-name="{{ $cat->name }}" data-amount="{{ (int) $cat->default_amount }}" data-type="{{ $cat->type }}"
-                    onclick="ptPickCat(this)"
-                    class="rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-left hover:border-blue-500 transition">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-sm font-bold">{{ $cat->code }}</span>
-                        <span class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500">{{ $cat->type }}</span>
-                    </div>
-                    <div class="text-[11px] text-slate-500 truncate">{{ $cat->name }}</div>
-                    <div class="text-xs font-bold text-slate-800 dark:text-white mt-1">{{ $rp($cat->default_amount) }}</div>
-                </button>
+    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <table class="w-full min-w-[640px] text-left text-xs">
+            <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 text-[10px] uppercase tracking-wider">
+                    <th class="py-2.5 px-3 w-10 text-center">Pilih</th>
+                    <th class="py-2.5 px-3">Kode</th>
+                    <th class="py-2.5 px-3">Nama Tagihan</th>
+                    <th class="py-2.5 px-3">Tipe</th>
+                    <th class="py-2.5 px-3 text-right">Nominal</th>
+                </tr>
+            </thead>
+            <tbody id="pt-cat-body">
+                @foreach(($categories ?? collect()) as $idx => $cat)
+                <tr data-pt-code="{{ strtolower($cat->code) }}" data-pt-name="{{ strtolower($cat->name) }}" data-pt-type="{{ $cat->type }}"
+                    onclick="ptPickRow(this)" class="cursor-pointer border-t border-slate-100 dark:border-slate-800 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 transition">
+                    <td class="py-2.5 px-3 text-center">
+                        <input type="radio" name="pt_cat" value="{{ $cat->id }}" {{ $idx === 0 ? 'checked' : '' }}
+                            data-code="{{ $cat->code }}" data-name="{{ $cat->name }}" data-amount="{{ (int) $cat->default_amount }}"
+                            onclick="event.stopPropagation(); ptPickRadio(this)">
+                    </td>
+                    <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white whitespace-nowrap">{{ $cat->code }}</td>
+                    <td class="py-2.5 px-3 text-slate-600 dark:text-slate-300">{{ $cat->name }}</td>
+                    <td class="py-2.5 px-3"><span class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500">{{ $cat->type }}</span></td>
+                    <td class="py-2.5 px-3 text-right font-bold whitespace-nowrap">{{ $rp($cat->default_amount) }}</td>
+                </tr>
                 @endforeach
-            </div>
-        </div>
-        @endforeach
+            </tbody>
+        </table>
     </div>
+    <p class="text-[11px] text-slate-400" id="pt-cat-count">-</p>
 </div>
 
 {{-- Periode + target --}}
@@ -157,19 +173,34 @@ function ptMode(m){
     document.getElementById('pt-package-box').classList.toggle('hidden', m!=='package');
     ptRecalc();
 }
-function ptPickCat(btn){
-    document.querySelectorAll('[data-pt-cat]').forEach(function(b){ b.classList.remove('!border-blue-600','!bg-blue-50'); });
-    btn.classList.add('!border-blue-600','!bg-blue-50');
-    ptCat = { code: btn.dataset.code, name: btn.dataset.name, amount: parseInt(btn.dataset.amount||'0',10) };
+function ptApplyCat(code, name, amount){
+    ptCat = { code: code, name: name, amount: parseInt(amount||'0',10) };
     document.getElementById('pt-amount').value = ptCat.amount;
     ptRecalc();
 }
-document.getElementById('pt-cat-search').addEventListener('input', function(){
-    var q = this.value.toLowerCase();
-    document.querySelectorAll('[data-pt-cat]').forEach(function(b){
-        b.style.display = ((b.dataset.code+' '+b.dataset.name).toLowerCase().includes(q)) ? '' : 'none';
+function ptPickRow(tr){
+    var radio = tr.querySelector('input[type=radio]');
+    if(radio){ radio.checked = true; ptPickRadio(radio); }
+}
+function ptPickRadio(radio){
+    document.querySelectorAll('#pt-cat-body tr').forEach(function(tr){ tr.classList.remove('!bg-blue-50'); });
+    var tr = radio.closest('tr');
+    if(tr) tr.classList.add('!bg-blue-50');
+    ptApplyCat(radio.dataset.code, radio.dataset.name, radio.dataset.amount);
+}
+function ptFilterCat(){
+    var q = document.getElementById('pt-cat-search').value.toLowerCase();
+    var t = document.getElementById('pt-type-filter').value;
+    var visible = 0;
+    document.querySelectorAll('#pt-cat-body tr').forEach(function(tr){
+        var hitQ = ((tr.dataset.ptCode||'')+' '+(tr.dataset.ptName||'')).includes(q);
+        var hitT = !t || (tr.dataset.ptType||'') === t;
+        var show = hitQ && hitT;
+        tr.style.display = show ? '' : 'none';
+        if(show) visible++;
     });
-});
+    document.getElementById('pt-cat-count').textContent = visible + ' kategori ditampilkan';
+}
 function ptFilterClass(){
     var q = document.getElementById('pt-class-search').value.toLowerCase();
     document.querySelectorAll('#pt-class-body tr').forEach(function(tr){
@@ -204,13 +235,13 @@ function ptRecalc(){
 }
 (function(){
     var chips = document.getElementById('pt-package-chips');
-    var sum = 0, n = 0;
     @foreach(($categories ?? collect())->where('type','semesteran') as $cat)
         chips.innerHTML += '<span class="rounded-full bg-white dark:bg-slate-800 border px-2.5 py-1 font-semibold">{{ $cat->code }} · Rp {{ number_format($cat->default_amount,0,',','.') }}</span>';
     @endforeach
     document.getElementById('pt-package-total').textContent = '{{ ($categories ?? collect())->where('type','semesteran')->count() }} kategori semesteran';
-    var first = document.querySelector('[data-pt-cat]');
-    if(first) ptPickCat(first);
+    var first = document.querySelector('#pt-cat-body input[type=radio]');
+    if(first){ first.checked = true; ptPickRadio(first); }
+    ptFilterCat();
     ptRecalc();
 })();
 </script>
