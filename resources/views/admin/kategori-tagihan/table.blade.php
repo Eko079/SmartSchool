@@ -76,11 +76,11 @@
                     data-amount="{{ (int) $cat->default_amount }}"
                     data-type="{{ $cat->type }}"
                     data-desc="{{ $cat->description ?? '' }}"
-                    class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50">Edit</button>
+                    class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Edit</button>
                 <form action="{{ route('admin.kategori-tagihan.toggle', $cat->id) }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" title="{{ $cat->is_active ? 'Nonaktifkan' : 'Aktifkan' }} {{ $cat->name }}"
-                        class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50">
+                        class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                         {{ $cat->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                     </button>
                 </form>

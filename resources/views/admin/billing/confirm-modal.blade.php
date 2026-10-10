@@ -21,7 +21,7 @@
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-            <button type="button" onclick="closeConfirmModal()" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50">Batal</button>
+            <button type="button" onclick="closeConfirmModal()" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Batal</button>
             <button type="button" onclick="document.getElementById('billing-form').submit()" class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Ya, Generate Tagihan</button>
         </div>
     </div>

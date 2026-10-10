@@ -52,9 +52,9 @@
             <td class="py-3 px-3 text-center"><x-ss-pill status="{{ $t->status === 'open' ? 'pending' : ($t->status === 'closed' ? 'paid' : 'aktif') }}" label="{{ ucfirst($t->status) }}" /></td>
             <td class="py-3 px-3 text-right whitespace-nowrap">
                 @if($t->status !== 'closed')
-                <form method="POST" action="{{ route('admin.tiket.close', $t->id) }}" class="inline">@csrf<button class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold hover:bg-slate-50">Tutup</button></form>
+                <form method="POST" action="{{ route('admin.tiket.close', $t->id) }}" class="inline">@csrf<button class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition">Tutup</button></form>
                 @else
-                <form method="POST" action="{{ route('admin.tiket.reopen', $t->id) }}" class="inline">@csrf<button class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold hover:bg-slate-50">Buka</button></form>
+                <form method="POST" action="{{ route('admin.tiket.reopen', $t->id) }}" class="inline">@csrf<button class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition">Buka</button></form>
                 @endif
             </td>
         </tr>

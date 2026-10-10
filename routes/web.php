@@ -52,6 +52,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Billing Generator
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
+    Route::get('/billing/prototype', [BillingController::class, 'prototype'])->name('billing.prototype');
     Route::post('/billing/generate', [BillingController::class, 'generate'])->name('billing.generate');
     Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package');
 
