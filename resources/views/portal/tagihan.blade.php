@@ -186,10 +186,21 @@
             </dl>
             <div id="pm-paybox" class="space-y-2">
                 <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Silakan pilih metode pembayaran</p>
+                @php
+                    $gw = $gateways ?? ['bca_va' => true, 'bni_va' => true, 'qris' => true];
+                    $gwLabels = ['bca_va' => 'BCA VA', 'bni_va' => 'BNI VA', 'qris' => 'QRIS'];
+                    $gwFirst = true;
+                @endphp
                 <div class="grid grid-cols-3 gap-2" id="pm-methods">
-                    <label class="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-center text-xs font-semibold has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950"><input type="radio" name="pm_method" value="bca_va" class="sr-only" checked><div>BCA VA</div></label>
-                    <label class="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-center text-xs font-semibold has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950"><input type="radio" name="pm_method" value="bni_va" class="sr-only"><div>BNI VA</div></label>
-                    <label class="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-center text-xs font-semibold has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950"><input type="radio" name="pm_method" value="qris" class="sr-only"><div>QRIS</div></label>
+                    @foreach($gwLabels as $val => $label)
+                        @if(! empty($gw[$val]))
+                        <label class="cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 p-2.5 text-center text-xs font-semibold has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950"><input type="radio" name="pm_method" value="{{ $val }}" class="sr-only" {{ $gwFirst ? 'checked' : '' }}><div>{{ $label }}</div></label>
+                        @php $gwFirst = false; @endphp
+                        @endif
+                    @endforeach
+                    @if($gwFirst)
+                    <p class="col-span-3 text-xs text-amber-600 font-semibold">Pembayaran online sedang nonaktif, hubungi bendahara.</p>
+                    @endif
                 </div>
                 <p class="hidden text-xs text-emerald-600 font-semibold" id="pm-result"></p>
                 <div id="pm-va-box" class="hidden rounded-xl bg-[#0F1E33] p-3 text-white">
@@ -198,6 +209,7 @@
                         <span class="text-lg font-bold tracking-wider" id="pm-va"></span>
                         <button type="button" onclick="copyPayVa()" class="rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-semibold hover:bg-blue-700">Salin</button>
                     </div>
+                    <img id="pm-qr" class="hidden mx-auto rounded-lg bg-white p-2" width="180" height="180" alt="Kode QRIS">
                     <div class="text-[11px] text-blue-200" id="pm-order"></div>
                 </div>
             </div>
@@ -266,15 +278,25 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
             body: JSON.stringify({ method: method })
-        }).then(function (r) { return r.json(); }).then(function (j) {
+        }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); }).then(function (res) {
+            if (!res.ok) { ssAlert(res.body.message || 'Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; return; }
+            var j = res.body;
             var el = document.getElementById('pm-result');
             el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.classList.remove('hidden');
-            document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+            var qrImg = document.getElementById('pm-qr');
+            if (j.transaction.qr_string) {
+                document.getElementById('pm-va').textContent = 'Pindai kode QR di bawah';
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(j.transaction.qr_string);
+                qrImg.classList.remove('hidden');
+            } else {
+                document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+                qrImg.classList.add('hidden');
+            }
             document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
             document.getElementById('pm-va-box').classList.remove('hidden');
             startPayCountdown(j.transaction.expired_at);
-            setTimeout(function () { location.reload(); }, 8000);
+            setTimeout(function () { location.reload(); }, 12000);
         }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     </script>

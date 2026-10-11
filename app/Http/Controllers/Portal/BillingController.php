@@ -162,7 +162,14 @@ class BillingController extends Controller
             $otherBills = $otherQuery->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->take(10)->get();
         }
 
-        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear', 'semesterOptions', 'selKey', 'otherBills', 'otherTotal', 'isArchived'));
+        // Channel aktif dari Pengaturan (modal bayar hanya tampilkan yang aktif).
+        $gateways = [
+            'bca_va' => (string) \App\Models\SchoolSetting::get('gateway_bca_va', '1') === '1',
+            'bni_va' => (string) \App\Models\SchoolSetting::get('gateway_bni_va', '1') === '1',
+            'qris' => (string) \App\Models\SchoolSetting::get('gateway_qris', '1') === '1',
+        ];
+
+        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear', 'semesterOptions', 'selKey', 'otherBills', 'otherTotal', 'isArchived', 'gateways'));
     }
 
     public function show(Request $request, Bill $bill)
@@ -177,7 +184,13 @@ class BillingController extends Controller
             return response()->json(['bill' => $bill]);
         }
 
-        return $this->portalView($request, 'portal.tagihan-detail', 'portal-mobile.tagihan-detail', compact('bill', 'isArchived'));
+        $gateways = [
+            'bca_va' => (string) \App\Models\SchoolSetting::get('gateway_bca_va', '1') === '1',
+            'bni_va' => (string) \App\Models\SchoolSetting::get('gateway_bni_va', '1') === '1',
+            'qris' => (string) \App\Models\SchoolSetting::get('gateway_qris', '1') === '1',
+        ];
+
+        return $this->portalView($request, 'portal.tagihan-detail', 'portal-mobile.tagihan-detail', compact('bill', 'isArchived', 'gateways'));
     }
 
     public function pay(Request $request, Bill $bill, MidtransService $midtrans, WaService $wa)
@@ -190,12 +203,20 @@ class BillingController extends Controller
         abort_if(! $student || $bill->student_id !== $student->id, 403);
         abort_if(($student->status ?? 'aktif') !== 'aktif', 422, 'Akun arsip: pembayaran dinonaktifkan, hubungi operator.');
         abort_if($bill->status === 'paid', 422, 'Tagihan sudah lunas.');
+        abort_unless($midtrans->isMethodEnabled($validated['method']), 422, 'Metode pembayaran ini sedang nonaktif.');
 
-        $trx = $midtrans->createTransaction($bill, $validated['method']);
+        try {
+            $trx = $midtrans->createTransaction($bill, $validated['method']);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'Gagal membuat pembayaran: ' . $e->getMessage()], 422);
+        }
+        $isQris = $validated['method'] === 'qris';
         $bill->forceFill([
             'order_id' => $trx['order_id'],
-            'va_number' => $trx['va_number'],
-            'qris_payload' => $validated['method'] === 'qris' ? $trx['va_number'] : null,
+            'va_number' => $isQris ? null : ($trx['va_number'] ?? null),
+            'qris_payload' => $isQris ? ($trx['qr_string'] ?? null) : null,
             'expired_at' => $trx['expired_at'],
         ])->save();
 
@@ -280,47 +301,12 @@ class BillingController extends Controller
         $payload = $request->all();
         abort_unless($midtrans->verifyCallback($payload), 422, 'Callback tidak valid.');
 
-        $bill = Bill::where('order_id', $payload['order_id'])->firstOrFail();
+        $bill = $this->findBillForOrder($payload['order_id'] ?? '');
+        abort_if(! $bill, 404, 'Tagihan tidak ditemukan.');
         $status = $payload['transaction_status'] ?? '';
 
         if (in_array($status, ['settlement', 'capture'])) {
-            // Segarkan denda terkini lalu lunasi total pokok + denda.
-            $calc = Bill::calcFine($bill->due_date);
-            $bill->forceFill(['fine_amount' => $calc['fine']])->save();
-            $bill->refresh();
-            $totalDue = $bill->total_due;
-            $amount = (float) ($payload['gross_amount'] ?? $totalDue);
-            // Jangan catat kurang dari total wajib (pokok + denda).
-            $amount = max($amount, $totalDue);
-            $bill->loadMissing('feeCategory');
-            $existing = Payment::where('bill_id', $bill->id)->where('status', 'success')->first();
-            $attrs = [
-                'bill_id' => $bill->id,
-                'student_id' => $bill->student_id,
-                'amount' => $amount,
-                'payment_method' => $payload['payment_type'] ?? 'midtrans',
-                'gateway' => 'midtrans',
-                'transaction_id' => $payload['transaction_id'] ?? null,
-                'va_number' => $bill->va_number,
-                'settlement_at' => now(),
-                'callback_payload' => $payload,
-                'status' => 'success',
-                'paid_at' => now(),
-            ];
-            if ($existing) {
-                $existing->fill($attrs)->save();
-                $payment = $existing->fresh();
-            } else {
-                $attrs['invoice_number'] = Payment::nextInvoiceNumber($bill->feeCategory->code ?? null);
-                $payment = Payment::create($attrs);
-            }
-            $bill->forceFill([
-                'paid_amount' => $bill->amount,
-                'fine_amount' => $calc['fine'],
-                'status' => 'paid',
-            ])->save();
-
-            BillEvent::create(['bill_id' => $bill->id, 'event' => 'settlement', 'message' => 'Settlement otomatis order ' . $payload['order_id'] . ' total Rp ' . number_format($amount, 0, ',', '.') . ' (pokok + denda)']);
+            $payment = $this->settleBillFromPayload($bill, $payload);
 
             return response()->json(['message' => 'OK', 'payment_id' => $payment->id]);
         }
@@ -332,5 +318,96 @@ class BillingController extends Controller
         }
 
         return response()->json(['message' => 'Status diabaikan.']);
+    }
+
+    /** Cek status langsung ke Midtrans; lunasi otomatis bila ternyata sudah dibayar. */
+    public function checkStatus(Request $request, Bill $bill, MidtransService $midtrans)
+    {
+        $student = $this->student();
+        abort_if(! $student || $bill->student_id !== $student->id, 403);
+        abort_if(! $bill->order_id, 422, 'Belum ada transaksi berjalan untuk tagihan ini.');
+
+        try {
+            $remote = $midtrans->transactionStatus($bill->order_id);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        $status = $remote['transaction_status'] ?? 'unknown';
+        if (in_array($status, ['settlement', 'capture']) && $bill->status !== 'paid') {
+            $this->settleBillFromPayload($bill, $remote);
+
+            return response()->json(['settled' => true, 'status' => $status]);
+        }
+
+        return response()->json(['settled' => $bill->status === 'paid', 'status' => $status]);
+    }
+
+    /** Cari tagihan via order_id persis, fallback ke bill_code (order lama setelah klik Bayar ulang). */
+    protected function findBillForOrder(string $orderId): ?Bill
+    {
+        $bill = Bill::where('order_id', $orderId)->first();
+        if ($bill || ! str_starts_with($orderId, 'SS-')) {
+            return $bill;
+        }
+        // Suffix percobaan (-2, -3, …) dikupas satu per satu; kode tagihan sendiri
+        // boleh mengandung angka (mis. INV-…-0001) sehingga coba utuh dulu.
+        $rem = substr($orderId, 3);
+        while ($rem !== '') {
+            $bill = Bill::where('bill_code', $rem)->first();
+            if ($bill) {
+                return $bill;
+            }
+            $next = preg_replace('/-\d+$/', '', $rem);
+            if ($next === $rem) {
+                break; // tak ada suffix angka lagi
+            }
+            $rem = $next;
+        }
+
+        return null;
+    }
+
+    /** Lunasi total pokok + denda dari payload Midtrans (dipakai callback & cek status). */
+    protected function settleBillFromPayload(Bill $bill, array $payload): Payment
+    {
+        // Segarkan denda terkini lalu lunasi total pokok + denda.
+        $calc = Bill::calcFine($bill->due_date);
+        $bill->forceFill(['fine_amount' => $calc['fine']])->save();
+        $bill->refresh();
+        $totalDue = $bill->total_due;
+        $amount = (float) ($payload['gross_amount'] ?? $totalDue);
+        // Jangan catat kurang dari total wajib (pokok + denda).
+        $amount = max($amount, $totalDue);
+        $bill->loadMissing('feeCategory');
+        $existing = Payment::where('bill_id', $bill->id)->where('status', 'success')->first();
+        $attrs = [
+            'bill_id' => $bill->id,
+            'student_id' => $bill->student_id,
+            'amount' => $amount,
+            'payment_method' => $payload['payment_type'] ?? 'midtrans',
+            'gateway' => 'midtrans',
+            'transaction_id' => $payload['transaction_id'] ?? null,
+            'va_number' => $bill->va_number,
+            'settlement_at' => now(),
+            'callback_payload' => $payload,
+            'status' => 'success',
+            'paid_at' => now(),
+        ];
+        if ($existing) {
+            $existing->fill($attrs)->save();
+            $payment = $existing->fresh();
+        } else {
+            $attrs['invoice_number'] = Payment::nextInvoiceNumber($bill->feeCategory->code ?? null);
+            $payment = Payment::create($attrs);
+        }
+        $bill->forceFill([
+            'paid_amount' => $bill->amount,
+            'fine_amount' => $calc['fine'],
+            'status' => 'paid',
+        ])->save();
+
+        BillEvent::create(['bill_id' => $bill->id, 'event' => 'settlement', 'message' => 'Settlement otomatis order ' . ($payload['order_id'] ?? '-') . ' total Rp ' . number_format($amount, 0, ',', '.') . ' (pokok + denda)']);
+
+        return $payment;
     }
 }

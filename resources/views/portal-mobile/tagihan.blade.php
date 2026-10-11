@@ -135,15 +135,27 @@
         <div class="m-fdesc" id="pm-history">-</div>
         <div id="pm-paybox">
             <div class="m-sec-title">Silakan pilih metode pembayaran</div>
+            @php
+                $gw = $gateways ?? ['bca_va' => true, 'bni_va' => true, 'qris' => true];
+                $gwLabels = ['bca_va' => 'BCA VA', 'bni_va' => 'BNI VA', 'qris' => 'QRIS'];
+                $gwFirst = true;
+            @endphp
             <div class="m-actions">
-                <label class="m-btn"><input type="radio" name="pm_method" value="bca_va" checked> BCA VA</label>
-                <label class="m-btn"><input type="radio" name="pm_method" value="bni_va"> BNI VA</label>
-                <label class="m-btn"><input type="radio" name="pm_method" value="qris"> QRIS</label>
+                @foreach($gwLabels as $val => $label)
+                    @if(! empty($gw[$val]))
+                    <label class="m-btn"><input type="radio" name="pm_method" value="{{ $val }}" {{ $gwFirst ? 'checked' : '' }}> {{ $label }}</label>
+                    @php $gwFirst = false; @endphp
+                    @endif
+                @endforeach
+                @if($gwFirst)
+                <div class="m-fdesc">Pembayaran online sedang nonaktif, hubungi bendahara.</div>
+                @endif
             </div>
             <div class="m-fdesc" id="pm-result" style="display:none"></div>
             <div class="m-card" id="pm-va-box" style="display:none">
                 <div class="m-sec-title">Nomor bayar • <span id="pm-expiry"></span></div>
                 <div class="m-stu-name" id="pm-va">-</div>
+                <img id="pm-qr" style="display:none;margin:8px auto;border-radius:8px;background:#fff;padding:8px" width="180" height="180" alt="Kode QRIS">
                 <div class="m-actions">
                     <button type="button" class="m-btn" onclick="copyPayVa()">Salin</button>
                     <span class="m-fdesc" id="pm-order"></span>
@@ -194,11 +206,21 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
             body: JSON.stringify({ method: method })
-        }).then(function (r) { return r.json(); }).then(function (j) {
+        }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); }).then(function (res) {
+            if (!res.ok) { ssAlert(res.body.message || 'Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; return; }
+            var j = res.body;
             var el = document.getElementById('pm-result');
             el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.style.display = '';
-            document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+            var qrImg = document.getElementById('pm-qr');
+            if (j.transaction.qr_string) {
+                document.getElementById('pm-va').textContent = 'Pindai kode QR di bawah';
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(j.transaction.qr_string);
+                qrImg.style.display = 'block';
+            } else {
+                document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
+                qrImg.style.display = 'none';
+            }
             document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
             document.getElementById('pm-va-box').style.display = '';
             var end = new Date(j.transaction.expired_at).getTime();
