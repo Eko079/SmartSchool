@@ -89,7 +89,7 @@
             title="{{ $st->name }} • NIS {{ $st->nis }} • {{ $st->classRoom->name ?? 'tanpa kelas' }}">
             <td class="py-3 px-3 font-semibold text-blue-600 dark:text-blue-400">{{ $st->nis }}</td>
             <td class="py-3 px-3">
-                <div class="font-medium text-slate-800 dark:text-white">{{ $st->name }}</div>
+                <div class="font-medium text-slate-800 dark:text-white">{{ $st->name }}@if(in_array($st->id, $noBillIds ?? []))<span class="ml-1.5 inline-block h-2 w-2 rounded-full bg-amber-400 align-middle" title="Belum punya tagihan semester ini — buka Detail untuk membuatkan"></span>@endif</div>
                 <div class="text-[11px] text-slate-400">NISN: {{ $st->nisn ?? '-' }} • {{ $st->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</div>
             </td>
             <td class="py-3 px-3">
@@ -163,6 +163,17 @@
     @include('admin.siswa.create-modal')
     @include('admin.siswa.edit-modal')
     @include('admin.siswa.import-modal')
+
+    <script>
+    // Habis tambah siswa tanpa tagihan → buka popup detailnya otomatis.
+    (function () {
+        var id = new URLSearchParams(window.location.search).get('open_detail');
+        if (!id) return;
+        var btn = document.querySelector('button[onclick^="openDetailModal(' + id + '"]');
+        if (btn && typeof openDetailModal === 'function') openDetailModal(id, btn);
+        history.replaceState(null, '', window.location.pathname);
+    })();
+    </script>
 
     {{-- Live search: ketik langsung filter, hapus langsung kembali semua.
       Sembunyikan pagination saat memfilter agar tidak membingungkan

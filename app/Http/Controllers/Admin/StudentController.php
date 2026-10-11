@@ -75,7 +75,18 @@ class StudentController extends Controller
 
         $academicYear = \App\Models\SchoolSetting::get('academic_year', date('Y') . '/' . (date('Y') + 1));
 
-        return view('admin.siswa.index', compact('students', 'stats', 'classes', 'academicYear'));
+        // Penanda baris tanpa tagihan semester berjalan (1 query, bukan N+1).
+        $noBillIds = [];
+        $activeSemester = strtolower((string) \App\Models\SchoolSetting::get('active_semester', 'Ganjil')) === 'genap' ? 'genap' : 'ganjil';
+        if ($academicYear) {
+            $pageIds = $students->pluck('id')->all();
+            $withBills = \App\Models\Bill::whereIn('student_id', $pageIds)
+                ->where('academic_year', $academicYear)->where('semester', $activeSemester)
+                ->distinct()->pluck('student_id')->all();
+            $noBillIds = array_values(array_diff($pageIds, $withBills));
+        }
+
+        return view('admin.siswa.index', compact('students', 'stats', 'classes', 'academicYear', 'noBillIds'));
     }
 
     public function store(Request $request)
@@ -107,7 +118,12 @@ class StudentController extends Controller
 
         Student::create($validated);
 
-        $redirect = redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil ditambahkan.');
+        $student = Student::where('nis', $validated['nis'])->first();
+        $params = [];
+        if ($student && ($student->status ?? 'aktif') === 'aktif' && ! empty($this->missingBills($student))) {
+            $params['open_detail'] = $student->id;
+        }
+        $redirect = redirect()->route('admin.siswa', $params)->with('success', 'Data siswa berhasil ditambahkan.');
         if (Student::entryMismatch((int) $validated['entry_year'], $room->grade ?? null)) {
             $redirect->with('warning', 'Tahun masuk ' . $validated['entry_year'] . ' tidak biasa untuk kelas ' . ($room->name ?? '-') . ' — periksa kembali bila bukan siswa mengulang atau pindahan.');
         }
