@@ -5,7 +5,7 @@
 @section('content')
     <div class="ss-card space-y-4 shadow-xs">
         <form method="GET" action="{{ route('admin.kasir') }}" class="flex flex-wrap items-center gap-2">
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari NIS / nama siswa..."
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari NIS / nama / nomor tagihan..."
                 class="ss-input text-xs !py-2 flex-1 min-w-[200px] max-w-sm">
             <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">Cari</button>
         </form>
@@ -42,6 +42,7 @@
                                 <tr class="text-left text-slate-400 border-b border-slate-200 dark:border-slate-800">
                                     <th class="py-2.5 px-3 w-8"><input type="checkbox" id="kasir-check-all" class="rounded text-blue-600" checked></th>
                                     <th class="py-2.5 px-3">Tagihan</th>
+                                    <th class="py-2.5 px-3">No. Tagihan</th>
                                     <th class="py-2.5 px-3 text-right">Pokok</th>
                                     <th class="py-2.5 px-3 text-right">Denda</th>
                                     <th class="py-2.5 px-3 text-right">Total</th>
@@ -55,6 +56,7 @@
                                         <div class="font-medium text-slate-800 dark:text-white">{{ $b->display_name }}</div>
                                         <div class="text-[11px] text-slate-400">Jatuh tempo {{ $b->due_date ? \Carbon\Carbon::parse($b->due_date)->format('d/m/Y') : '-' }}</div>
                                     </td>
+                                    <td class="py-3 px-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $b->bill_code ?? '-' }}</td>
                                     <td class="py-3 px-3 text-right text-slate-600 dark:text-slate-300">Rp {{ number_format($b->amount - $b->paid_amount, 0, ',', '.') }}</td>
                                     <td class="py-3 px-3 text-right {{ $b->fresh_fine > 0 ? 'text-rose-500 font-semibold' : 'text-slate-400' }}">Rp {{ number_format($b->fresh_fine, 0, ',', '.') }}</td>
                                     <td class="py-3 px-3 text-right font-bold text-slate-800 dark:text-white">Rp {{ number_format($b->fresh_total, 0, ',', '.') }}</td>
@@ -77,6 +79,10 @@
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Uang diterima (Rp)</label>
                                 <input type="number" name="cash" id="kasir-cash" min="0" class="ss-input text-xs !py-2" placeholder="Contoh: 1000000" oninput="kasirTick()">
                             </div>
+                            <div id="kasir-ref-row" style="display:none">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">No. referensi / nama pengirim <span class="text-rose-500">*</span></label>
+                                <input type="text" name="ref" id="kasir-ref" maxlength="100" class="ss-input text-xs !py-2" placeholder="Contoh: TRF-88213 / Budi (BCA)">
+                            </div>
                         </div>
                         <div class="space-y-1.5 text-xs">
                             <div class="flex justify-between text-slate-500 dark:text-slate-400"><span><span id="kasir-count">0</span> tagihan dipilih</span></div>
@@ -92,6 +98,7 @@
                 function kasirMethod() {
                     var tunai = document.querySelector('input[name="method"]:checked').value === 'tunai';
                     document.getElementById('kasir-cash-row').style.display = tunai ? '' : 'none';
+                    document.getElementById('kasir-ref-row').style.display = tunai ? 'none' : '';
                     document.getElementById('kasir-change-row').style.display = tunai ? '' : 'none';
                     kasirTick();
                 }
@@ -123,12 +130,18 @@
                     });
                     if (!n) { e.preventDefault(); ssAlert('Centang dulu tagihannya.'); return; }
                     var method = document.querySelector('input[name="method"]:checked').value;
+                    var ref = ((document.getElementById('kasir-ref') || {}).value || '').trim();
                     if (method === 'tunai') {
                         var cash = parseInt((document.getElementById('kasir-cash') || {}).value || '0', 10);
                         if (!cash || cash < total) { e.preventDefault(); ssAlert('Uang diterima kurang dari total (' + kasirFmt(total) + ').'); return; }
+                    } else {
+                        if (!ref) { e.preventDefault(); ssAlert('Isi dulu no. referensi / nama pengirim transfer.'); return; }
                     }
                     e.preventDefault();
-                    ssConfirm('Terima ' + (method === 'tunai' ? kasirFmt(parseInt(document.getElementById('kasir-cash').value || '0', 10)) : kasirFmt(total) + ' via transfer') + ' untuk ' + n + ' tagihan ' + '({{ addslashes($student->name) }})?', 'Bayar').then(function (ok) {
+                    var bayarText = method === 'tunai'
+                        ? kasirFmt(parseInt(document.getElementById('kasir-cash').value || '0', 10))
+                        : kasirFmt(total) + ' via transfer (ref: ' + ref + ')';
+                    ssConfirm('Terima ' + bayarText + ' untuk ' + n + ' tagihan ' + '({{ addslashes($student->name) }})?', 'Bayar').then(function (ok) {
                         if (ok) document.getElementById('kasir-form').submit();
                     });
                 });

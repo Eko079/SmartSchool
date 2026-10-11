@@ -15,7 +15,8 @@
                 <tr class="border-b border-slate-100 dark:border-slate-800">
                     <td class="py-2.5 pr-2">
                         <div class="font-medium text-slate-800 dark:text-white">{{ $p->bill->display_name ?? $p->bill_id }}</div>
-                        <div class="text-[11px] text-slate-400">{{ $p->invoice_number }} • {{ $p->payment_method }}</div>
+                        <div class="text-[11px] text-slate-400">{{ $p->bill->bill_code ?? '' }} • {{ $p->invoice_number }} • {{ $p->payment_method }}</div>
+                        @if($p->note)<div class="text-[11px] text-slate-400">{{ $p->note }}</div>@endif
                     </td>
                     <td class="py-2.5 pl-2 text-right font-bold text-slate-800 dark:text-white whitespace-nowrap">Rp {{ number_format($p->amount, 0, ',', '.') }}</td>
                 </tr>

@@ -25,6 +25,11 @@ class KasirController extends Controller
                         ->orWhere('nisn', 'like', "%{$q}%");
                 })
                 ->orderBy('name')->take(10)->get();
+            // Tidak ketemu siswa? Coba cocokkan nomor tagihan (INV-...).
+            if ($students->isEmpty()) {
+                $sids = Bill::where('bill_code', 'like', "%{$q}%")->pluck('student_id')->unique()->take(10);
+                $students = Student::with('classRoom')->whereIn('id', $sids)->orderBy('name')->get();
+            }
         }
 
         $student = null;
@@ -57,6 +62,7 @@ class KasirController extends Controller
             'bill_ids.*' => 'integer',
             'method' => 'required|in:tunai,transfer',
             'cash' => 'nullable|numeric|min:0',
+            'ref' => 'required_if:method,transfer|nullable|string|max:100',
         ]);
         $student = Student::findOrFail($validated['student_id']);
         $kasir = auth()->user()->name ?? 'Kasir';
@@ -98,7 +104,7 @@ class KasirController extends Controller
                     'settlement_at' => now(),
                     'status' => 'success',
                     'paid_at' => now(),
-                    'note' => 'Kasir (' . $validated['method'] . ') oleh ' . $kasir,
+                    'note' => 'Kasir (' . $validated['method'] . ') oleh ' . $kasir . ($validated['method'] === 'transfer' && ! empty($validated['ref']) ? '; ref: ' . $validated['ref'] : ''),
                 ]);
                 $bill->forceFill([
                     'paid_amount' => $bill->amount,
