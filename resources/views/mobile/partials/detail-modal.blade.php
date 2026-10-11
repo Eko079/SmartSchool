@@ -47,8 +47,10 @@ function mOpenDetail(id, btn) {
     box.innerHTML = '<div class="m-fdesc">Memuat riwayat…</div>';
     fetch('/admin/siswa/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
         .then(function (r) { return r.json(); })
-        .then(function (rows) {
-            if (!rows || !rows.length) { box.innerHTML = '<div class="m-fdesc">Siswa ini belum memiliki tagihan.</div>'; return; }
+        .then(function (data) {
+            var rows = (data && data.rows) ? data.rows : (Array.isArray(data) ? data : []);
+            var missing = (data && data.missing) ? data.missing : [];
+            if (!rows.length && !missing.length) { box.innerHTML = '<div class="m-fdesc">Siswa ini belum memiliki tagihan.</div>'; return; }
             var html = '';
             rows.forEach(function (b) {
                 var pill = b.status === 'paid' ? 'm-pill-ok' : (b.status === 'overdue' ? 'm-pill-err' : 'm-pill-warn');
@@ -56,10 +58,28 @@ function mOpenDetail(id, btn) {
                 html += '<div class="m-bill"><div><div class="m-stu-name">' + b.bill_code + '</div><div class="m-stu-sub">' + b.category + ' · Rp ' + b.amount + '</div></div><span class="m-pill ' + pill + '">' + lbl + '</span></div>';
             });
             box.innerHTML = html;
+            if (missing.length) {
+                var items = missing.map(function (m) { return m.name + ' Rp ' + m.amount; }).join(', ');
+                box.innerHTML += '<div class="m-card" style="margin-top:8px"><div class="m-fdesc">Belum punya: ' + items + '</div>'
+                    + '<div class="m-actions" style="margin-top:8px"><button type="button" class="m-btn m-btn-primary" style="flex:1" onclick="mGenerateBills(' + d.id + ', this)" data-items="' + items.replace(/"/g, '&quot;') + '">Buatkan Tagihan</button></div></div>';
+            }
         })
         .catch(function () { box.innerHTML = '<div class="m-fdesc">Gagal memuat riwayat tagihan.</div>'; });
     document.getElementById('m-detail').classList.remove('hidden');
 }
 function mCloseDetail() { document.getElementById('m-detail').classList.add('hidden'); }
+function mGenerateBills(id, btn) {
+    var items = btn ? (btn.getAttribute('data-items') || '') : '';
+    if (!confirm('Buatkan tagihan berikut?\n' + items)) return;
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = '/admin/siswa/' + id + '/generate';
+    var t = document.createElement('input');
+    t.type = 'hidden'; t.name = '_token';
+    t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
+    f.appendChild(t);
+    document.body.appendChild(f);
+    f.submit();
+}
 document.getElementById('m-detail').addEventListener('click', function (e) { if (e.target === this) mCloseDetail(); });
 </script>

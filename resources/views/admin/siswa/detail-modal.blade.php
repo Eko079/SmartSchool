@@ -99,8 +99,10 @@ function openDetailModal(id, btn) {
     box.innerHTML = '<p class="py-6 text-center text-xs text-slate-400">Memuat riwayat…</p>';
     fetch('/admin/siswa/' + d.id + '/bills', { headers: { 'Accept': 'application/json' } })
         .then(function (r) { return r.json(); })
-        .then(function (rows) {
-            if (!rows || !rows.length) {
+        .then(function (data) {
+            var rows = (data && data.rows) ? data.rows : (Array.isArray(data) ? data : []);
+            var missing = (data && data.missing) ? data.missing : [];
+            if (!rows.length && !missing.length) {
                 box.innerHTML = '<p class="py-6 text-center text-xs text-slate-400">Siswa ini belum memiliki tagihan.</p>';
                 return;
             }
@@ -119,6 +121,14 @@ function openDetailModal(id, btn) {
                     + '<td class="py-2.5 px-3 text-center">' + pill(b.status) + '</td></tr>';
             });
             box.innerHTML = html + '</tbody></table>';
+            if (missing.length) {
+                var items = missing.map(function (m) { return m.name + ' Rp ' + m.amount; }).join(', ');
+                var total = missing.reduce(function (n, m) { return n + parseInt((m.amount || '0').replace(/\D/g, ''), 10); }, 0);
+                box.innerHTML += '<div class="flex flex-wrap items-center justify-between gap-2 p-3 bg-amber-50 dark:bg-amber-950 border-t border-amber-200 dark:border-amber-800 text-xs">'
+                    + '<span class="text-amber-800 dark:text-amber-200">Belum punya: ' + items + '</span>'
+                    + '<button type="button" onclick="generateStudentBills(' + d.id + ', this)" data-items="' + items.replace(/"/g, '&quot;') + '" data-total="' + total.toLocaleString('id-ID') + '"'
+                    + ' class="rounded-lg bg-blue-600 px-3 py-2 font-semibold text-white hover:bg-blue-700">Buatkan Tagihan</button></div>';
+            }
         })
         .catch(function () {
             box.innerHTML = '<p class="py-6 text-center text-xs text-rose-500">Gagal memuat riwayat tagihan.</p>';
@@ -128,5 +138,19 @@ function openDetailModal(id, btn) {
 }
 function closeDetailModal() {
     document.getElementById('detail-modal').classList.add('hidden');
+}
+function generateStudentBills(id, btn) {
+    var items = btn ? (btn.getAttribute('data-items') || '') : '';
+    var total = btn ? (btn.getAttribute('data-total') || '') : '';
+    if (!confirm('Buatkan tagihan berikut?\n' + items + '\nTotal Rp ' + total)) return;
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = '/admin/siswa/' + id + '/generate';
+    var t = document.createElement('input');
+    t.type = 'hidden'; t.name = '_token';
+    t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
+    f.appendChild(t);
+    document.body.appendChild(f);
+    f.submit();
 }
 </script>

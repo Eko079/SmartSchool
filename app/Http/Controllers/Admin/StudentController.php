@@ -90,6 +90,7 @@ class StudentController extends Controller
             'guardian_name' => 'nullable|string|max:255',
             'guardian_phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'entry_year' => 'nullable|integer|min:2000|max:' . (date('Y') + 1),
         ], [
             'nis.unique' => 'NIS sudah terdaftar, gunakan NIS lain.',
             'nisn.unique' => 'NISN sudah terdaftar, gunakan NISN lain.',
@@ -100,9 +101,18 @@ class StudentController extends Controller
             return back()->withErrors(["class_id" => "Kelas {$room->name} penuh (kuota {$room->capacity})."])->withInput();
         }
 
+        if (empty($validated['entry_year'])) {
+            $validated['entry_year'] = Student::expectedEntryYear($room->grade ?? null) ?? (int) date('Y');
+        }
+
         Student::create($validated);
 
-        return redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil ditambahkan.');
+        $redirect = redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil ditambahkan.');
+        if (Student::entryMismatch((int) $validated['entry_year'], $room->grade ?? null)) {
+            $redirect->with('warning', 'Tahun masuk ' . $validated['entry_year'] . ' tidak biasa untuk kelas ' . ($room->name ?? '-') . ' — periksa kembali bila bukan siswa mengulang atau pindahan.');
+        }
+
+        return $redirect;
     }
 
     public function bills(Student $student)
@@ -115,7 +125,94 @@ class StudentController extends Controller
                 'status' => $b->status,
             ]);
 
-        return response()->json($rows);
+        return response()->json(['rows' => $rows, 'missing' => $this->missingBills($student)]);
+    }
+
+    /** Tagihan paket semester berjalan yang belum dimiliki siswa ini. */
+    protected function missingBills(Student $student): array
+    {
+        $ta = \App\Models\SchoolSetting::get('academic_year');
+        $semester = strtolower((string) \App\Models\SchoolSetting::get('active_semester', 'Ganjil')) === 'genap' ? 'genap' : 'ganjil';
+        if (! $ta) {
+            return [];
+        }
+        $student->loadMissing('classRoom');
+        $major = $student->classRoom->major ?? null;
+        $grade = $student->classRoom->grade ?? null;
+        $entry = $student->entry_year ? (int) $student->entry_year : null;
+        $have = $student->bills()->where('academic_year', $ta)->where('semester', $semester)->pluck('fee_category_id')->all();
+        $out = [];
+        $cats = \App\Models\FeeCategory::where('is_active', true)
+            ->whereIn('type', ['semesteran', 'sekali'])
+            ->where(function ($q) use ($semester) {
+                $q->where('semester', $semester)->orWhereNull('semester');
+            })
+            ->orderBy('sort_order')->orderBy('id')->get();
+        foreach ($cats as $cat) {
+            if (in_array($cat->id, $have, true)) {
+                continue;
+            }
+            if (! \App\Support\PackageRules::appliesToCategory($cat, $major, $grade, $entry, $ta)) {
+                continue;
+            }
+            $out[] = ['code' => $cat->code, 'name' => $cat->name, 'amount' => number_format($cat->default_amount, 0, ',', '.')];
+        }
+
+        return $out;
+    }
+
+    /** Buatkan paket tagihan semester berjalan untuk 1 siswa (yang sudah ada dilewati). */
+    public function generate(Student $student)
+    {
+        if (($student->status ?? 'aktif') !== 'aktif') {
+            return back()->with('error', 'Hanya siswa aktif yang bisa dibuatkan tagihan.');
+        }
+        $ta = \App\Models\SchoolSetting::get('academic_year');
+        $semester = strtolower((string) \App\Models\SchoolSetting::get('active_semester', 'Ganjil')) === 'genap' ? 'genap' : 'ganjil';
+        if (! $ta) {
+            return back()->with('error', 'Lengkapi tahun ajaran di Pengaturan dulu.');
+        }
+        $student->loadMissing('classRoom');
+        $major = $student->classRoom->major ?? null;
+        $grade = $student->classRoom->grade ?? null;
+        $entry = $student->entry_year ? (int) $student->entry_year : null;
+        $cats = \App\Models\FeeCategory::where('is_active', true)
+            ->whereIn('type', ['semesteran', 'sekali'])
+            ->where(function ($q) use ($semester) {
+                $q->where('semester', $semester)->orWhereNull('semester');
+            })
+            ->orderBy('sort_order')->orderBy('id')->get();
+        $year = $semester === 'ganjil' ? (int) explode('/', $ta)[0] : (int) (explode('/', $ta)[1] ?? date('Y'));
+        $tag = $semester === 'ganjil' ? 'GJL' : 'GNP';
+        $created = 0;
+        $skipped = 0;
+        foreach ($cats as $cat) {
+            if (! \App\Support\PackageRules::appliesToCategory($cat, $major, $grade, $entry, $ta)) {
+                $skipped++;
+                continue;
+            }
+            if ($student->bills()->where('fee_category_id', $cat->id)->where('academic_year', $ta)->where('semester', $semester)->exists()) {
+                $skipped++;
+                continue;
+            }
+            $billCode = 'INV-' . $year . '-' . $tag . '-' . substr(strtoupper(preg_replace('/[^A-Z0-9]/', '', $cat->code ?? 'CAT')), 0, 3) . '-' . str_pad($student->id, 4, '0', STR_PAD_LEFT);
+            $student->bills()->create([
+                'bill_code' => $billCode,
+                'fee_category_id' => $cat->id,
+                'period_month' => $semester === 'ganjil' ? 7 : 1,
+                'period_year' => $year,
+                'academic_year' => $ta,
+                'semester' => $semester,
+                'amount' => $cat->default_amount,
+                'paid_amount' => 0,
+                'status' => 'unpaid',
+                'due_date' => \App\Support\PackageRules::dueDateFor($cat, $ta, $semester),
+                'sort_order' => \App\Support\PackageRules::sequenceIndexFor($cat->code, $semester === 'ganjil' ? 7 : 1),
+            ]);
+            $created++;
+        }
+
+        return back()->with('success', "Berhasil membuat {$created} tagihan untuk {$student->name} ({$skipped} dilewati karena sudah ada atau tidak berlaku).");
     }
 
     public function import(Request $request)
@@ -172,6 +269,7 @@ class StudentController extends Controller
                 'guardian_name' => $row['guardian_name'] ?: null,
                 'guardian_phone' => $row['guardian_phone'] ?: null,
                 'address' => $row['address'] ?: null,
+                'entry_year' => Student::expectedEntryYear(ClassRoom::find($row['class_id'])?->grade) ?? (int) date('Y'),
             ]);
             $created++;
         }
@@ -329,6 +427,7 @@ class StudentController extends Controller
             'guardian_name' => 'nullable|string|max:255',
             'guardian_phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'entry_year' => 'nullable|integer|min:2000|max:' . (date('Y') + 1),
         ]);
 
         if ((int) $validated['class_id'] !== (int) $student->class_id) {
@@ -340,7 +439,13 @@ class StudentController extends Controller
 
         $student->update($validated);
 
-        return redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil diperbarui.');
+        $redirect = redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil diperbarui.');
+        $room = ClassRoom::find($validated['class_id']);
+        if (! empty($validated['entry_year']) && Student::entryMismatch((int) $validated['entry_year'], $room->grade ?? null)) {
+            $redirect->with('warning', 'Tahun masuk ' . $validated['entry_year'] . ' tidak biasa untuk kelas ' . ($room->name ?? '-') . ' — periksa kembali bila bukan siswa mengulang atau pindahan.');
+        }
+
+        return $redirect;
     }
 
     public function destroy(Student $student)

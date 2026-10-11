@@ -27,11 +27,15 @@
             <div class="grid grid-cols-3 gap-3">
                 <div>
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelas <span class="text-rose-500">*</span></label>
-                    <select name="class_id" class="ss-input text-xs !py-2" required>
+                    <select name="class_id" id="create-class" class="ss-input text-xs !py-2" required>
                         @foreach($classes ?? [] as $cls)
-                            <option value="{{ $cls->id }}">{{ $cls->name }}</option>
+                            <option value="{{ $cls->id }}" data-grade="{{ $cls->grade }}">{{ $cls->name }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tahun Masuk <span class="text-slate-400 font-normal" title="Tahun pertama masuk sekolah ini. Menentukan Daftar Ulang vs Seragam">?</span></label>
+                    <input type="number" name="entry_year" id="create-entry" min="2000" max="{{ date('Y') + 1 }}" value="{{ (int) (explode('/', $academicYear ?? (date('Y') . '/' . (date('Y') + 1)))[0]) }}" class="ss-input text-xs !py-2">
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Gender</label>
@@ -71,3 +75,20 @@
         </form>
     </div>
 </div>
+
+<script>
+(function () {
+    var form = document.querySelector('#create-modal form');
+    if (!form) return;
+    var taStart = {{ (int) (explode('/', $academicYear ?? (date('Y') . '/' . (date('Y') + 1)))[0]) }};
+    form.addEventListener('submit', function (e) {
+        var cls = document.getElementById('create-class');
+        var grade = cls && cls.selectedOptions[0] ? cls.selectedOptions[0].getAttribute('data-grade') : '';
+        var entry = parseInt((document.getElementById('create-entry').value || ''), 10);
+        var idx = { X: 0, XI: 1, XII: 2 }[grade];
+        if (!isNaN(entry) && idx !== undefined && entry !== (taStart - idx)) {
+            if (!confirm('Tahun masuk ' + entry + ' tidak biasa untuk kelas ' + grade + ' (mis. bukan siswa baru). Tetap simpan?')) e.preventDefault();
+        }
+    });
+})();
+</script>

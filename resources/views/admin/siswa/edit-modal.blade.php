@@ -37,9 +37,13 @@
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelas <span class="text-rose-500">*</span></label>
                     <select name="class_id" id="edit-class" class="ss-input text-xs !py-2" required>
                         @foreach($classes ?? [] as $cls)
-                            <option value="{{ $cls->id }}">{{ $cls->name }}</option>
+                            <option value="{{ $cls->id }}" data-grade="{{ $cls->grade }}">{{ $cls->name }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tahun Masuk <span class="text-slate-400 font-normal" title="Tahun pertama masuk sekolah ini. Menentukan Daftar Ulang vs Seragam">?</span></label>
+                    <input type="number" name="entry_year" id="edit-entry" min="2000" max="{{ date('Y') + 1 }}" class="ss-input text-xs !py-2">
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Gender</label>
@@ -95,6 +99,7 @@ function openEditModal(id, btn) {
     document.getElementById('edit-nisn').value = g('nisn');
     document.getElementById('edit-name').value = name;
     document.getElementById('edit-class').value = g('class-id');
+    document.getElementById('edit-entry').value = g('entry');
     document.getElementById('edit-gender').value = g('gender') || 'L';
     document.getElementById('edit-status').value = g('status') || 'aktif';
     document.getElementById('edit-wali').value = g('wali');
@@ -111,4 +116,18 @@ function closeEditModal() {
 document.getElementById('edit-modal').addEventListener('click', function (e) {
     if (e.target === this) closeEditModal();
 });
+(function () {
+    var form = document.getElementById('edit-form');
+    if (!form) return;
+    var taStart = {{ (int) (explode('/', $academicYear ?? (date('Y') . '/' . (date('Y') + 1)))[0]) }};
+    form.addEventListener('submit', function (e) {
+        var cls = document.getElementById('edit-class');
+        var grade = cls && cls.selectedOptions[0] ? cls.selectedOptions[0].getAttribute('data-grade') : '';
+        var entry = parseInt((document.getElementById('edit-entry').value || ''), 10);
+        var idx = { X: 0, XI: 1, XII: 2 }[grade];
+        if (!isNaN(entry) && idx !== undefined && entry !== (taStart - idx)) {
+            if (!confirm('Tahun masuk ' + entry + ' tidak biasa untuk kelas ' + grade + ' (mis. bukan siswa baru). Tetap simpan?')) e.preventDefault();
+        }
+    });
+})();
 </script>

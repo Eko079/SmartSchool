@@ -124,6 +124,7 @@
                         data-gender="{{ $st->gender }}"
                         data-status="{{ $st->status }}"
                         data-class-id="{{ $st->class_id }}"
+                        data-entry="{{ $st->entry_year ?? '' }}"
                         data-wali="{{ $st->guardian_name ?? '' }}"
                         data-wa="{{ $st->guardian_phone ?? '' }}"
                         data-alamat="{{ $st->address ?? '' }}"

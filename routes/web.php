@@ -42,6 +42,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/siswa/{student}/bills', [StudentController::class, 'bills'])->name('siswa.bills');
     Route::get('/siswa/{student}/edit', [StudentController::class, 'edit'])->name('siswa.edit');
     Route::put('/siswa/{student}', [StudentController::class, 'update'])->name('siswa.update');
+    Route::post('/siswa/{student}/generate', [StudentController::class, 'generate'])->name('siswa.generate');
     Route::delete('/siswa/{student}', [StudentController::class, 'destroy'])->name('siswa.destroy');
 
     // Kategori Tagihan
