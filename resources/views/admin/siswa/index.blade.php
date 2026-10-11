@@ -372,10 +372,10 @@
             timer = setTimeout(applyFilter, 120);
         });
 
-        // Mencegah submit saat Enter — hasil sudah tampil instan.
-        input.closest('form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            applyFilter();
+        // Mencegah reload saat Enter di kolom cari (hasil sudah tampil instan,
+        // dan reload akan menghilangkan centangan) — tombol Tampilkan tetap submit normal.
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') e.preventDefault();
         });
     })();
     </script>
