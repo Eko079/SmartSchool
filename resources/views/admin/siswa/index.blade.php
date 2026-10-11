@@ -284,10 +284,13 @@
         f.addEventListener('submit', function () {
             var l = document.getElementById('siswa-filter-loading');
             if (l) l.classList.remove('hidden');
-            var b = document.getElementById('kelas-tampilkan-btn');
-            if (b) { b.disabled = true; b.textContent = 'Memuat…'; }
             var d = document.getElementById('kelas-drop');
             if (d) d.classList.add('hidden');
+            // Kunci tombol SETELAH submit jalan (sync disable bisa membatalkan navigasi).
+            setTimeout(function () {
+                var b = document.getElementById('kelas-tampilkan-btn');
+                if (b) { b.disabled = true; b.textContent = 'Memuat…'; }
+            }, 0);
         });
     })();
     kelasDropTick();
