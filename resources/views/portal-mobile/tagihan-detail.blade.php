@@ -109,7 +109,7 @@
                 qrImg.style.display = 'none';
             }
             document.getElementById('pay-result-order').textContent = 'Order ' + (res.body.transaction.order_id || '-');
-            setTimeout(function () { location.reload(); }, 15000);
+            submit.disabled = false; submit.textContent = 'Bayar';
         }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     function checkDetailPay() {

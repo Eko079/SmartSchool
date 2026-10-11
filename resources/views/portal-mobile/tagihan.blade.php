@@ -155,15 +155,16 @@
             <div class="m-card" id="pm-va-box" style="display:none">
                 <div class="m-sec-title">Nomor bayar • <span id="pm-expiry"></span></div>
                 <div class="m-stu-name" id="pm-va">-</div>
-                <img id="pm-qr" style="display:none;margin:8px auto;border-radius:8px;background:#fff;padding:8px" width="180" height="180" alt="Kode QRIS">
+                <img id="pm-qr" style="display:none;margin:8px auto;border-radius:8px;background:#fff;padding:8px;width:100%;max-width:260px;height:auto" width="260" height="260" alt="Kode QRIS">
                 <div class="m-actions">
-                    <button type="button" class="m-btn" onclick="copyPayVa()">Salin</button>
+                    <button type="button" id="pm-copy" class="m-btn" onclick="copyPayVa()">Salin</button>
                     <span class="m-fdesc" id="pm-order"></span>
                 </div>
             </div>
         </div>
         <div class="m-actions">
             <a href="#" id="pm-detail-link" class="m-btn">Halaman Detail</a>
+            <button type="button" id="pm-check" class="m-btn" style="display:none;flex:1" onclick="checkPayModal()">Saya Sudah Bayar (Cek Status)</button>
             <button type="button" id="pm-submit" class="m-btn m-btn-primary" onclick="submitPayModal()">Bayar</button>
         </div>
     </div>
@@ -188,7 +189,9 @@
         document.getElementById('pm-va-box').style.display = 'none';
         if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
         var submit = document.getElementById('pm-submit');
-        submit.disabled = false; submit.textContent = 'Bayar';
+        submit.disabled = false; submit.textContent = 'Bayar'; submit.style.display = '';
+        document.getElementById('pm-check').style.display = 'none';
+        document.getElementById('pm-copy').style.display = '';
         document.getElementById('pay-modal').classList.remove('hidden');
     }
     function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); if (pmTimer) { clearInterval(pmTimer); pmTimer = null; } }
@@ -213,13 +216,16 @@
             el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.style.display = '';
             var qrImg = document.getElementById('pm-qr');
+            var copyBtn = document.getElementById('pm-copy');
             if (j.transaction.qr_string) {
                 document.getElementById('pm-va').textContent = 'Pindai kode QR di bawah';
-                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(j.transaction.qr_string);
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(j.transaction.qr_string);
                 qrImg.style.display = 'block';
+                copyBtn.style.display = 'none';
             } else {
                 document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
                 qrImg.style.display = 'none';
+                copyBtn.style.display = '';
             }
             document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
             document.getElementById('pm-va-box').style.display = '';
@@ -230,8 +236,21 @@
                 if (left <= 0) { document.getElementById('pm-expiry').textContent = 'kedaluwarsa'; clearInterval(pmTimer); return; }
                 document.getElementById('pm-expiry').textContent = 'berlaku ' + Math.floor(left / 3600000) + 'j ' + Math.floor(left % 3600000 / 60000) + 'm';
             }, 1000);
-            setTimeout(function () { location.reload(); }, 8000);
+            submit.style.display = 'none';
+            document.getElementById('pm-check').style.display = '';
         }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
+    }
+    function checkPayModal() {
+        var btn = document.getElementById('pm-check');
+        if (btn.disabled) return;
+        btn.disabled = true; btn.textContent = 'Mengecek...';
+        fetch('/tagihan/' + pmBillId + '/status', { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); }).then(function (res) {
+            if (!res.ok) { ssAlert(res.body.message || 'Gagal cek status.'); }
+            else if (res.body.settled) { location.reload(); return; }
+            else { ssAlert('Status: ' + (res.body.status || '-') + '. Selesaikan pembayaran lalu tekan lagi.'); }
+            btn.disabled = false; btn.textContent = 'Saya Sudah Bayar (Cek Status)';
+        }).catch(function () { ssAlert('Gagal cek status.'); btn.disabled = false; btn.textContent = 'Saya Sudah Bayar (Cek Status)'; });
     }
     </script>
 @endsection

@@ -207,15 +207,16 @@
                     <div class="text-[10px] font-bold uppercase tracking-wider text-blue-300">Nomor bayar • <span id="pm-expiry"></span></div>
                     <div class="mt-1 flex items-center justify-between gap-2">
                         <span class="text-lg font-bold tracking-wider" id="pm-va"></span>
-                        <button type="button" onclick="copyPayVa()" class="rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-semibold hover:bg-blue-700">Salin</button>
+                        <button type="button" id="pm-copy" onclick="copyPayVa()" class="rounded-lg bg-blue-600 px-3 py-1.5 text-[11px] font-semibold hover:bg-blue-700">Salin</button>
                     </div>
-                    <img id="pm-qr" class="hidden mx-auto rounded-lg bg-white p-2" width="180" height="180" alt="Kode QRIS">
+                    <img id="pm-qr" class="hidden mx-auto rounded-lg bg-white p-2" style="width:100%;max-width:260px;height:auto" width="260" height="260" alt="Kode QRIS">
                     <div class="text-[11px] text-blue-200" id="pm-order"></div>
                 </div>
             </div>
             <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-3">
                 <button type="button" onclick="closePayModal()" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold">Tutup</button>
                 <a href="#" id="pm-detail-link" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold hover:border-blue-500 hover:text-blue-600">Halaman Detail</a>
+                <button type="button" id="pm-check" onclick="checkPayModal()" class="hidden rounded-lg border border-emerald-500 px-4 py-2 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950">Saya Sudah Bayar (Cek Status)</button>
                 <button type="button" id="pm-submit" onclick="submitPayModal()" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">Bayar</button>
             </div>
         </div>
@@ -241,7 +242,9 @@
         document.getElementById('pm-va-box').classList.add('hidden');
         if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
         var submit = document.getElementById('pm-submit');
-        submit.disabled = false; submit.textContent = 'Bayar';
+        submit.disabled = false; submit.textContent = 'Bayar'; submit.classList.remove('hidden');
+        document.getElementById('pm-check').classList.add('hidden');
+        document.getElementById('pm-copy').classList.remove('hidden');
         var m = document.getElementById('pay-modal');
         m.classList.remove('hidden'); m.classList.add('flex');
     }
@@ -250,7 +253,6 @@
         m.classList.add('hidden'); m.classList.remove('flex');
         if (pmTimer) { clearInterval(pmTimer); pmTimer = null; }
     }
-    document.getElementById('pay-modal').addEventListener('click', function (e) { if (e.target === this) closePayModal(); });
     function copyPayVa() {
         var t = document.getElementById('pm-va').textContent || '';
         if (navigator.clipboard) { navigator.clipboard.writeText(t); }
@@ -285,19 +287,35 @@
             el.textContent = 'Order: ' + (j.transaction.order_id || '-');
             el.classList.remove('hidden');
             var qrImg = document.getElementById('pm-qr');
+            var copyBtn = document.getElementById('pm-copy');
             if (j.transaction.qr_string) {
                 document.getElementById('pm-va').textContent = 'Pindai kode QR di bawah';
-                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(j.transaction.qr_string);
+                qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(j.transaction.qr_string);
                 qrImg.classList.remove('hidden');
+                copyBtn.classList.add('hidden');
             } else {
                 document.getElementById('pm-va').textContent = j.transaction.va_number || '-';
                 qrImg.classList.add('hidden');
+                copyBtn.classList.remove('hidden');
             }
             document.getElementById('pm-order').textContent = 'Order ' + (j.transaction.order_id || '-');
             document.getElementById('pm-va-box').classList.remove('hidden');
             startPayCountdown(j.transaction.expired_at);
-            setTimeout(function () { location.reload(); }, 12000);
+            submit.classList.add('hidden');
+            document.getElementById('pm-check').classList.remove('hidden');
         }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
+    }
+    function checkPayModal() {
+        var btn = document.getElementById('pm-check');
+        if (btn.disabled) return;
+        btn.disabled = true; btn.textContent = 'Mengecek...';
+        fetch('/tagihan/' + pmBillId + '/status', { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); }).then(function (res) {
+            if (!res.ok) { ssAlert(res.body.message || 'Gagal cek status.'); }
+            else if (res.body.settled) { location.reload(); return; }
+            else { ssAlert('Status: ' + (res.body.status || '-') + '. Selesaikan pembayaran lalu tekan lagi.'); }
+            btn.disabled = false; btn.textContent = 'Saya Sudah Bayar (Cek Status)';
+        }).catch(function () { ssAlert('Gagal cek status.'); btn.disabled = false; btn.textContent = 'Saya Sudah Bayar (Cek Status)'; });
     }
     </script>
 @endsection
