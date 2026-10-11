@@ -38,7 +38,7 @@
         <a href="{{ route('admin.siswa') }}" class="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-xs font-semibold">Batal</a>
         @if($summary['ok'] > 0)
             @if($summary['error'] > 0 || $summary['duplikat'] > 0)
-            <form method="POST" action="{{ route('admin.siswa.import.confirm') }}" onsubmit="return confirm('Tidak semua valid ({{ $summary['ok'] }} OK, {{ $summary['duplikat'] }} duplikat, {{ $summary['error'] }} error). Yakin hanya import data valid?');">
+            <form method="POST" action="{{ route('admin.siswa.import.confirm') }}" onsubmit="return ssConfirmSubmit(this, 'Tidak semua valid ({{ $summary['ok'] }} OK, {{ $summary['duplikat'] }} duplikat, {{ $summary['error'] }} error). Yakin hanya import data valid?', 'Import')">
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
                 <input type="hidden" name="mode" value="valid">

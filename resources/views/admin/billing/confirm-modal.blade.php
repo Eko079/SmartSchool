@@ -31,7 +31,7 @@
 function openConfirmModal() {
     var count = (typeof billingCheckedCount === 'function') ? billingCheckedCount() : 0;
     if (count === 0) {
-        alert('Pilih minimal 1 kelas target dulu.');
+        ssAlert('Pilih minimal 1 kelas target dulu.');
         return;
     }
     var cat = (typeof billingSelectedCategory === 'function') ? billingSelectedCategory() : { code: '-', name: '-' };

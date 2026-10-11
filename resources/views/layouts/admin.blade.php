@@ -212,5 +212,6 @@
             }
         })();
     </script>
+    @include('components.ss-dialog')
 </body>
 </html>

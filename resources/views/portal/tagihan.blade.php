@@ -275,7 +275,7 @@
             document.getElementById('pm-va-box').classList.remove('hidden');
             startPayCountdown(j.transaction.expired_at);
             setTimeout(function () { location.reload(); }, 8000);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
+        }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     </script>
 @endsection

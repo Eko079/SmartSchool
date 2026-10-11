@@ -87,7 +87,10 @@
         var entry = parseInt((document.getElementById('create-entry').value || ''), 10);
         var idx = { X: 0, XI: 1, XII: 2 }[grade];
         if (!isNaN(entry) && idx !== undefined && entry !== (taStart - idx)) {
-            if (!confirm('Tahun masuk ' + entry + ' tidak biasa untuk kelas ' + grade + ' (mis. bukan siswa baru). Tetap simpan?')) e.preventDefault();
+            e.preventDefault();
+            ssConfirm('Tahun masuk ' + entry + ' tidak biasa untuk kelas ' + grade + ' (mis. bukan siswa baru). Tetap simpan?', 'Tetap Simpan').then(function (ok) {
+                if (ok) form.submit();
+            });
         }
     });
 })();

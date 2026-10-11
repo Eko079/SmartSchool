@@ -172,7 +172,7 @@
                         data-alamat="{{ $st->address ?? '' }}"
                         class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Edit</button>
                     <form action="{{ route('admin.siswa.destroy', $st->id) }}" method="POST"
-                        onsubmit="return confirm('Hapus {{ addslashes($st->name) }} (NIS {{ $st->nis }})? Bila masih punya tagihan, penghapusan ditolak.');"
+                        onsubmit="return ssConfirmSubmit(this, 'Hapus {{ addslashes($st->name) }} (NIS {{ $st->nis }})? Bila masih punya tagihan, penghapusan ditolak.', 'Hapus')"
                         class="inline">
                         @csrf
                         @method('DELETE')
@@ -298,14 +298,16 @@
     }
     function siswaBulkStatus(action) {
         var list = siswaChecked();
-        if (!list.length) { alert('Centang dulu siswanya.'); return; }
+        if (!list.length) { ssAlert('Centang dulu siswanya.'); return; }
         var label = action === 'lulus' ? 'lulus' : 'nonaktif';
-        if (!confirm('Tandai ' + list.length + ' siswa sebagai ' + label + '?')) return;
-        siswaPost('/admin/siswa/bulk-status', list.map(function (c) { return c.value; }), { action: action });
+        ssConfirm('Tandai ' + list.length + ' siswa sebagai ' + label + '?', 'Tandai').then(function (ok) {
+            if (!ok) return;
+            siswaPost('/admin/siswa/bulk-status', list.map(function (c) { return c.value; }), { action: action });
+        });
     }
     function siswaBulkPromote() {
         var list = siswaChecked();
-        if (!list.length) { alert('Centang dulu siswanya.'); return; }
+        if (!list.length) { ssAlert('Centang dulu siswanya.'); return; }
         var lines = [];
         var blocked = 0;
         list.forEach(function (c) {
@@ -314,8 +316,10 @@
             else { lines.push(c.getAttribute('data-name') + ': tidak bisa naik (dilewati)'); blocked++; }
         });
         var preview = lines.slice(0, 12).join('\n') + (lines.length > 12 ? '\n... +' + (lines.length - 12) + ' lainnya' : '');
-        if (!confirm('Naikkan ' + (list.length - blocked) + ' siswa? (' + blocked + ' dilewati)\n\n' + preview)) return;
-        siswaPost('/admin/siswa/bulk-promote', list.map(function (c) { return c.value; }), {});
+        ssConfirm('Naikkan ' + (list.length - blocked) + ' siswa? (' + blocked + ' dilewati)\n\n' + preview, 'Naikkan').then(function (ok) {
+            if (!ok) return;
+            siswaPost('/admin/siswa/bulk-promote', list.map(function (c) { return c.value; }), {});
+        });
     }
     </script>
 

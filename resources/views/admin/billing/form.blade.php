@@ -114,7 +114,7 @@
     </div>
 </form>
 
-<form method="POST" action="{{ route('admin.billing.package') }}" class="ss-card space-y-3" onsubmit="return confirm('Generate 1 paket semester penuh untuk kelas terpilih? Duplikat dilewati otomatis.');">
+<form method="POST" action="{{ route('admin.billing.package') }}" class="ss-card space-y-3" onsubmit="return ssConfirmSubmit(this, 'Generate 1 paket semester penuh untuk kelas terpilih? Duplikat dilewati otomatis.', 'Generate')">
     @csrf
     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
         <div>
@@ -191,7 +191,7 @@ document.getElementById('billing-form').addEventListener('submit', function (e) 
     // Anti submit kosong: server juga menolak, tapi cegah dini di sini.
     if (typeof billingCheckedCount === 'function' && billingCheckedCount() === 0) {
         e.preventDefault();
-        alert('Pilih minimal 1 kelas target dulu.');
+        ssAlert('Pilih minimal 1 kelas target dulu.');
     }
 });
 </script>

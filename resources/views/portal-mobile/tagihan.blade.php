@@ -209,7 +209,7 @@
                 document.getElementById('pm-expiry').textContent = 'berlaku ' + Math.floor(left / 3600000) + 'j ' + Math.floor(left % 3600000 / 60000) + 'm';
             }, 1000);
             setTimeout(function () { location.reload(); }, 8000);
-        }).catch(function () { alert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
+        }).catch(function () { ssAlert('Gagal membuat pembayaran.'); submit.disabled = false; submit.textContent = 'Bayar'; });
     }
     </script>
 @endsection

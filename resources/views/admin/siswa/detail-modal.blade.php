@@ -142,15 +142,17 @@ function closeDetailModal() {
 function generateStudentBills(id, btn) {
     var items = btn ? (btn.getAttribute('data-items') || '') : '';
     var total = btn ? (btn.getAttribute('data-total') || '') : '';
-    if (!confirm('Buatkan tagihan berikut?\n' + items + '\nTotal Rp ' + total)) return;
-    var f = document.createElement('form');
-    f.method = 'POST';
-    f.action = '/admin/siswa/' + id + '/generate';
-    var t = document.createElement('input');
-    t.type = 'hidden'; t.name = '_token';
-    t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
-    f.appendChild(t);
-    document.body.appendChild(f);
-    f.submit();
+    ssConfirm('Buatkan tagihan berikut?\n' + items + '\nTotal Rp ' + total, 'Buatkan').then(function (ok) {
+        if (!ok) return;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = '/admin/siswa/' + id + '/generate';
+        var t = document.createElement('input');
+        t.type = 'hidden'; t.name = '_token';
+        t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
+        f.appendChild(t);
+        document.body.appendChild(f);
+        f.submit();
+    });
 }
 </script>

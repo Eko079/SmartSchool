@@ -70,16 +70,18 @@ function mOpenDetail(id, btn) {
 function mCloseDetail() { document.getElementById('m-detail').classList.add('hidden'); }
 function mGenerateBills(id, btn) {
     var items = btn ? (btn.getAttribute('data-items') || '') : '';
-    if (!confirm('Buatkan tagihan berikut?\n' + items)) return;
-    var f = document.createElement('form');
-    f.method = 'POST';
-    f.action = '/admin/siswa/' + id + '/generate';
-    var t = document.createElement('input');
-    t.type = 'hidden'; t.name = '_token';
-    t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
-    f.appendChild(t);
-    document.body.appendChild(f);
-    f.submit();
+    ssConfirm('Buatkan tagihan berikut?\n' + items, 'Buatkan').then(function (ok) {
+        if (!ok) return;
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = '/admin/siswa/' + id + '/generate';
+        var t = document.createElement('input');
+        t.type = 'hidden'; t.name = '_token';
+        t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
+        f.appendChild(t);
+        document.body.appendChild(f);
+        f.submit();
+    });
 }
 document.getElementById('m-detail').addEventListener('click', function (e) { if (e.target === this) mCloseDetail(); });
 </script>

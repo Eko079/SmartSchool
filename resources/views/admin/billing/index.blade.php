@@ -7,7 +7,7 @@
     @if(session('success'))<div class="ss-card !border-emerald-300 text-xs font-semibold text-emerald-700">{{ session('success') }}</div>@endif
     @if(session('error'))<div class="ss-card !border-rose-300 text-xs font-semibold text-rose-600">{{ session('error') }}</div>@endif
     <div class="flex justify-end">
-        <form method="POST" action="{{ route('admin.billing.overdue') }}" onsubmit="return confirm('Hitung ulang denda + status menunggak sekarang?');">
+        <form method="POST" action="{{ route('admin.billing.overdue') }}" onsubmit="return ssConfirmSubmit(this, 'Hitung ulang denda + status menunggak sekarang?', 'Hitung')">
             @csrf
             <button type="submit" class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100">Hitung Denda Sekarang</button>
         </form>

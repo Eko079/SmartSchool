@@ -109,5 +109,6 @@
         </aside>
         @include('mobile.partials.notif-popup')
     </div>
+    @include('components.ss-dialog')
 </body>
 </html>
