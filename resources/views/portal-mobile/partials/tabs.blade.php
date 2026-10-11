@@ -4,7 +4,7 @@
         ['route' => 'portal.dashboard', 'label' => 'Beranda'],
         ['route' => 'portal.tagihan', 'label' => 'Tagihan'],
         ['route' => 'portal.riwayat', 'label' => 'Riwayat'],
-        ['route' => 'portal.profil', 'label' => 'Profil'],
+        ['route' => 'portal.profil', 'label' => 'Profile'],
         ['route' => 'portal.pengaturan', 'label' => 'Lainnya'],
     ];
 @endphp

@@ -36,7 +36,8 @@
   <table>
     <tr><td>Siswa</td><td>{{ $pay->student->name ?? '-' }} ({{ $pay->student->classRoom->name ?? '-' }})</td></tr>
     <tr><td>Tagihan</td><td>{{ $pay->bill->bill_code ?? '-' }} • {{ $pay->bill->display_name }}</td></tr>
-    <tr><td>TA / Semester</td><td>{{ $pay->bill->academic_year ?? '-' }} • {{ $pay->bill->semester ? ucfirst($pay->bill->semester) : '-' }}</td></tr>
+    <tr><td>Order</td><td>{{ $pay->bill->order_id ?? '-' }}</td></tr>
+    <tr><td>TA / Semester</td><td>{{ $pay->bill->display_year ?? '-' }}{{ $pay->bill->semester ? ' • ' . ucfirst($pay->bill->semester) : '' }}</td></tr>
     <tr><td>Metode</td><td>{{ $pay->method_label }}</td></tr>
     <tr><td>Tanggal Bayar</td><td>{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</td></tr>
     @php $kFine = (float) ($pay->bill->fine_amount ?? 0); $kPokok = max(0, (float) $pay->amount - $kFine); @endphp
@@ -45,7 +46,7 @@
     <tr class="total"><td>Total Dibayar</td><td>{{ $rp($pay->amount) }}</td></tr>
   </table>
   <div class="stamp">
-    <div class="muted">Status: {{ strtoupper($pay->status) }}</div>
+    <div class="muted">Status: {{ $pay->status_label }}</div>
     <div>Bendahara,<br><br><br>( .................... )</div>
   </div>
   <div class="actions">

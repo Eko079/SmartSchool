@@ -92,7 +92,7 @@ class BillingController extends Controller
             }
         }
 
-        // Urutan prioritas bayar: menunggak, belum bayar, sebagian, lunas; lalu jatuh tempo terdekat.
+        // Urutan tabel rancangan: sort_order lalu jatuh tempo (status hanya label).
         $bills = $query->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->paginate($perPage)->withQueryString();
         $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
@@ -100,6 +100,9 @@ class BillingController extends Controller
             'waiting_principal' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount'),
             'waiting_fine' => (float) (clone $waitingQuery)->sum('fine_amount'),
             'paid' => (float) (clone $query)->where('status', 'paid')->sum('amount'),
+            'open_count' => (clone $waitingQuery)->count(),
+            'paid_count' => (clone $query)->where('status', 'paid')->count(),
+            'overdue_count' => (clone $query)->where('status', 'overdue')->count(),
         ];
 
         $studentId = $this->student()->id;
@@ -107,6 +110,9 @@ class BillingController extends Controller
         $isArchived = (($this->student()->status ?? 'aktif') !== 'aktif');
         $semesters = Bill::where('student_id', $studentId)->whereNotNull('semester')->distinct()->pluck('semester')->values();
         $academicYears = Bill::where('student_id', $studentId)->whereNotNull('academic_year')->distinct()->orderByDesc('academic_year')->pluck('academic_year')->values();
+        if ($academicYears->isEmpty() && $selYear) {
+            $academicYears = collect([$selYear]);
+        }
         $categories = \App\Models\FeeCategory::whereIn('id', Bill::where('student_id', $studentId)->distinct()->pluck('fee_category_id'))->orderBy('name')->get(['id', 'name']);
 
         if ($request->expectsJson() || ! view()->exists('portal.tagihan')) {

@@ -71,9 +71,9 @@ class Payment extends Model
     public function getStatusLabelAttribute(): string
     {
         return match (strtolower((string) $this->status)) {
-            'success' => 'LUNAS',
-            'pending' => 'MENUNGGU',
-            'failed' => 'GAGAL',
+            'success' => 'Lunas',
+            'pending' => 'Menunggu',
+            'failed' => 'Gagal',
             default => strtoupper((string) $this->status),
         };
     }

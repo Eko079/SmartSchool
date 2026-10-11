@@ -2,36 +2,18 @@
 @section('title', 'Profile')
 
 @section('hero')
-    <div class="m-rev-label">NIS {{ $student->nis }} • {{ $student->classRoom->name ?? '-' }}</div>
-    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">{{ $student->name }}</div></div>
-    <div class="m-rev-sub">Masuk {{ $student->entry_year ?? '-' }} • {{ ucfirst($student->status) }}</div>
-@endsection
-
-@section('kpi')
-    <div class="m-kpi-card">
-        <div class="m-kpi-val" data-m-count="{{ $student->bills->count() }}" data-m-fmt="int">{{ number_format($student->bills->count(), 0, ',', '.') }}</div>
-        <div class="m-kpi-lab">Total</div>
-        <div class="m-kpi-sub">Tagihan</div>
-    </div>
-    <div class="m-kpi-card">
-        <div class="m-kpi-val" data-m-count="{{ $student->bills->where('status', 'paid')->count() }}" data-m-fmt="int">{{ number_format($student->bills->where('status', 'paid')->count(), 0, ',', '.') }}</div>
-        <div class="m-kpi-lab">Lunas</div>
-        <div class="m-kpi-sub">Tagihan Lunas</div>
-    </div>
-    <div class="m-kpi-card">
-        <div class="m-kpi-val" data-m-count="{{ $student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->count() }}" data-m-fmt="int">{{ number_format($student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->count(), 0, ',', '.') }}</div>
-        <div class="m-kpi-lab">Berjalan</div>
-        <div class="m-kpi-sub">Tagihan Berjalan</div>
-    </div>
+    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">Profile</div></div>
 @endsection
 
 @section('content')
     <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Data Anak</div></div>
-        <div class="m-stu-sub">NISN: {{ $student->nisn ?? '-' }}</div>
-        <div class="m-stu-sub">Email: {{ $student->email ?? '-' }}</div>
-        <div class="m-stu-sub">No. WA: {{ $student->guardian_phone ?? '-' }}</div>
-        <div class="m-stu-sub">Alamat: {{ $student->address ?? '-' }}</div>
+        <div class="m-sec-head" style="margin-bottom:8px"><div class="m-sec-title">Profile</div></div>
+        <div class="m-kv"><span>NISN</span><b>{{ $student->nisn ?? '-' }}</b></div>
+        <div class="m-kv"><span>Email</span><b style="word-break:break-all">{{ $student->email ?? '-' }}</b></div>
+        <div class="m-kv"><span>No. WA</span><b>{{ $student->guardian_phone ?? '-' }}</b></div>
+        <div class="m-kv"><span>Alamat</span><b>{{ $student->address ?? '-' }}</b></div>
+        <div class="m-kv"><span>Tahun Masuk</span><b>{{ $student->entry_year ?? '-' }}</b></div>
+        <div class="m-kv"><span>Status Siswa</span><b>{{ ucfirst($student->status) }}</b></div>
     </div>
 
     <div class="m-sec-head"><div class="m-sec-title">Riwayat Tagihan</div><span class="m-see">klik untuk detail</span></div>

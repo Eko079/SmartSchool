@@ -2,28 +2,26 @@
 @section('title', 'Tagihan')
 
 @section('hero')
-    <div class="m-rev-label">TOTAL MENUNGGU • {{ number_format($bills->total(), 0, ',', '.') }} TAGIHAN</div>
     <div class="m-rev-row">
         <div class="m-rev-value" data-m-count="{{ $summary['waiting'] }}" data-m-fmt="rp-short">Rp {{ number_format($summary['waiting'], 0, ',', '.') }}</div>
     </div>
-    <div class="m-rev-sub">Lunas Rp {{ number_format($summary['paid'], 0, ',', '.') }}@if((float) ($summary['waiting_fine'] ?? 0) > 0) • denda Rp {{ number_format($summary['waiting_fine'], 0, ',', '.') }}@endif</div>
 @endsection
 
 @section('kpi')
     <div class="m-kpi-card">
-        <div class="m-kpi-val" data-m-count="{{ $bills->total() }}" data-m-fmt="int">{{ number_format($bills->total(), 0, ',', '.') }}</div>
-        <div class="m-kpi-lab">Tagihan</div>
-        <div class="m-kpi-sub">Ditampilkan</div>
+        <div class="m-kpi-val" data-m-count="{{ $summary['open_count'] }}" data-m-fmt="int">{{ number_format($summary['open_count'], 0, ',', '.') }}</div>
+        <div class="m-kpi-lab">Belum Lunas</div>
+        <div class="m-kpi-sub">Rp {{ number_format($summary['waiting'], 0, ',', '.') }}</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">Rp</div>
-        <div class="m-kpi-lab">Menunggu</div>
-        <div class="m-kpi-sub">{{ number_format($summary['waiting'], 0, ',', '.') }}</div>
+        <div class="m-kpi-val" data-m-count="{{ $summary['overdue_count'] }}" data-m-fmt="int">{{ number_format($summary['overdue_count'], 0, ',', '.') }}</div>
+        <div class="m-kpi-lab">Menunggak</div>
+        <div class="m-kpi-sub">Segera bayar</div>
     </div>
     <div class="m-kpi-card">
-        <div class="m-kpi-val">Rp</div>
+        <div class="m-kpi-val" data-m-count="{{ $summary['paid_count'] }}" data-m-fmt="int">{{ number_format($summary['paid_count'], 0, ',', '.') }}</div>
         <div class="m-kpi-lab">Lunas</div>
-        <div class="m-kpi-sub">{{ number_format($summary['paid'], 0, ',', '.') }}</div>
+        <div class="m-kpi-sub">Rp {{ number_format($summary['paid'], 0, ',', '.') }}</div>
     </div>
 @endsection
 
@@ -35,6 +33,7 @@
     </form>
 
     <form method="GET" action="{{ route('portal.tagihan') }}" class="m-card">
+        <div class="m-sec-head"><div class="m-sec-title">Filter</div></div>
         <div class="m-actions">
             <select name="semester_key" onchange="this.form.submit()" class="m-btn" aria-label="Pilih Semester">
                 <option value="">Pilih Semester</option>
@@ -47,9 +46,7 @@
                 <option value="{{ $val }}" {{ request('status', 'all') === $val ? 'selected' : '' }}>{{ $label }}</option>
                 @endforeach
             </select>
-            <a class="m-btn m-btn-primary" href="{{ route('portal.riwayat') }}">Riwayat</a>
         </div>
-        <div class="m-fdesc">TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }} saja.</div>
     </form>
 
     @if(! empty($isArchived))
@@ -84,7 +81,7 @@
                     data-jenis="{{ $bill->display_name }}"
                     data-amount="Rp {{ number_format($bill->amount, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
-                    data-status="BELUM BAYAR">Bayar</button>
+                    data-status="{{ $statusLabel }}">Bayar</button>
                 @endif
             </div>
         </div>
@@ -130,9 +127,11 @@
     @endforelse
 
     <div id="pay-modal" class="m-card hidden" style="position:fixed;inset:auto 12px 76px 12px;z-index:60">
-        <div class="m-sec-head"><div class="m-sec-title" id="pm-code">-</div><button type="button" class="m-btn" onclick="closePayModal()">Tutup</button></div>
-        <div class="m-fdesc" id="pm-jenis">-</div>
-        <div class="m-fdesc">Jumlah <b id="pm-amount">-</b> • Tempo <b id="pm-due">-</b> • <b id="pm-status">-</b></div>
+        <div class="m-sec-head"><div class="m-sec-title" id="pm-jenis">-</div><button type="button" class="m-btn" onclick="closePayModal()">Tutup</button></div>
+        <div class="m-kv"><span>INV</span><b id="pm-code">-</b></div>
+        <div class="m-kv"><span>Jumlah</span><b id="pm-amount">-</b></div>
+        <div class="m-kv"><span>Jatuh Tempo</span><b id="pm-due">-</b></div>
+        <div class="m-kv"><span>Status</span><b id="pm-status">-</b></div>
         <div class="m-fdesc" id="pm-history">-</div>
         <div id="pm-paybox">
             <div class="m-sec-title">Silakan pilih metode pembayaran</div>
@@ -170,7 +169,7 @@
         document.getElementById('pm-status').textContent = g('status');
         document.getElementById('pm-history').textContent = (g('tanggal') !== '-' ? g('tanggal') + ' • ' + g('tempat') : '-');
         document.getElementById('pm-detail-link').href = '/tagihan/' + id;
-        var isPaid = g('status') === 'LUNAS';
+        var isPaid = g('status') === 'Lunas';
         document.getElementById('pm-paybox').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-submit').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-result').style.display = 'none';

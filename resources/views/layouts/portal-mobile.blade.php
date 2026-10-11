@@ -31,8 +31,9 @@
                 @php $pmUser = Auth::guard('wali')->user() ?? Auth::user(); @endphp
                 <div class="m-avatar">{{ strtoupper(substr($pmUser->student->name ?? $pmUser->name ?? 'W', 0, 1)) }}</div>
                 <div class="m-meta">
-                    <div class="m-hi">Halo, {{ explode(' ', $pmUser->name ?? 'Wali')[0] }}</div>
+                    <div class="m-hi">Halo, {{ explode(' ', $pmUser->student->name ?? $pmUser->name ?? 'Wali')[0] }}</div>
                     <div class="m-name">{{ $pmUser->student->name ?? $siteBrand['school_name'] ?? 'SmartSchool' }}</div>
+                    @if($pmUser->student)<div class="m-sub">{{ $pmUser->student->classRoom->name ?? '-' }}</div>@endif
                 </div>
                 <button type="button" class="m-iconbtn" aria-label="Notifikasi" title="Notifikasi" onclick="toggleNotifPop()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -64,9 +65,6 @@
 
             @yield('content')
 
-            <div class="m-foot">
-                <div class="m-foot-tx">© {{ date('Y') }} {{ $siteBrand['school_name'] ?? 'SmartSchool' }} • Portal</div>
-            </div>
             <div class="m-bottompad"></div>
         </main>
 
@@ -87,7 +85,7 @@
                     ['route' => 'portal.tagihan', 'label' => 'Tagihan'],
                     ['route' => 'portal.riwayat', 'label' => 'Riwayat Pembayaran'],
                     ['route' => 'portal.profil', 'label' => 'Profile'],
-                    ['route' => 'portal.pengaturan', 'label' => 'Pengaturan'],
+                    ['route' => 'portal.pengaturan', 'label' => 'Pengaturan Akun'],
                     ['route' => 'portal.bantuan', 'label' => 'Bantuan'],
                 ];
             @endphp

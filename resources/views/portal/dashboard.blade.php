@@ -5,11 +5,11 @@
 @section('content')
     @php
         $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.');
-        $fineNote = (float) ($stats['waiting_fine'] ?? 0) > 0 ? ' • denda ' . $rp($stats['waiting_fine']) : '';
+        $fineText = (float) ($stats['waiting_fine'] ?? 0) > 0 ? 'Denda ' . $rp($stats['waiting_fine']) : '';
         $cards = [
-            ['title' => 'Menunggu Dibayar', 'val' => $rp($stats['waiting_amount']), 'count' => (float) $stats['waiting_amount'], 'fmt' => 'rp', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', 'text' => 'text-amber-600', 'sub' => $stats['active_count'] . ' Tagihan Berjalan' . $fineNote],
-            ['title' => 'Sudah Lunas', 'val' => $stats['paid_count'] . ' Tagihan Lunas', 'count' => (float) $stats['paid_count'], 'fmt' => 'int', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', 'text' => 'text-emerald-600', 'sub' => 'Termasuk Kuitansi Tersedia'],
-            ['title' => 'Tagihan Berjalan', 'val' => $stats['overdue_count'] . ' Tagihan Berjalan', 'count' => (float) $stats['overdue_count'], 'fmt' => 'int', 'bg' => 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400', 'text' => 'text-rose-600', 'sub' => ''],
+            ['title' => 'Menunggu Dibayar', 'val' => $rp($stats['waiting_amount']), 'count' => (float) $stats['waiting_amount'], 'fmt' => 'rp', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', 'text' => 'text-amber-600', 'sub' => $stats['active_count'] . ' Tagihan Berjalan', 'fine' => $fineText],
+            ['title' => 'Sudah Lunas', 'val' => $stats['paid_count'] . ' Tagihan Lunas', 'count' => (float) $stats['paid_count'], 'fmt' => 'int', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', 'text' => 'text-emerald-600', 'sub' => 'Termasuk Kuitansi Tersedia', 'fine' => ''],
+            ['title' => 'Tunggakan', 'val' => $stats['overdue_count'] . ' Tunggakan', 'count' => (float) $stats['overdue_count'], 'fmt' => 'int', 'bg' => 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400', 'text' => 'text-rose-600', 'sub' => '', 'fine' => ''],
         ];
     @endphp
 
@@ -27,7 +27,12 @@
                 </div>
             </div>
             <div>
-                <div class="text-xl font-bold {{ $s['text'] }}" data-count-up="{{ $s['count'] }}" data-count-fmt="{{ $s['fmt'] }}">{{ $s['val'] }}</div>
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-xl font-bold {{ $s['text'] }}" data-count-up="{{ $s['count'] }}" data-count-fmt="{{ $s['fmt'] }}">{{ $s['val'] }}</div>
+                    @if($s['fine'] ?? '')
+                        <span class="inline-flex shrink-0 items-center rounded-full bg-rose-50 dark:bg-rose-950 border border-rose-200 dark:border-rose-800 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-300">{{ $s['fine'] }}</span>
+                    @endif
+                </div>
                 @if($s['sub'])
                     <div class="text-xs text-slate-400 mt-0.5">{{ $s['sub'] }}</div>
                 @endif
@@ -93,6 +98,7 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <div class="ss-card space-y-3">
         <div>
             <h2 class="text-sm font-bold text-slate-800 dark:text-white">Tagihan per Semester</h2>
@@ -139,5 +145,6 @@
         @else
         <p class="text-xs text-slate-400">Belum ada data kategori.</p>
         @endif
+    </div>
     </div>
 @endsection

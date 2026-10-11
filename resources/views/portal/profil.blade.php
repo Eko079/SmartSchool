@@ -3,8 +3,6 @@
 @section('page-title', 'Profile')
 
 @section('content')
-    @php $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.'); @endphp
-
     <div class="ss-card space-y-3">
         <div class="flex flex-wrap items-center gap-3">
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">{{ strtoupper(substr($student->name, 0, 1)) }}</div>

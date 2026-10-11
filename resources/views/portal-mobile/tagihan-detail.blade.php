@@ -60,10 +60,12 @@
     @endif
 
     <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Rincian</div><span class="m-see">Order {{ $bill->order_id ?? '-' }}</span></div>
-        <div class="m-fdesc">Kategori: {{ $bill->display_name }}</div>
-        <div class="m-fdesc">Siswa: {{ $bill->student->name ?? '-' }} • {{ $bill->student->classRoom->name ?? '-' }}</div>
-        <div class="m-fdesc">WA Wali: {{ $bill->student->guardian_phone ?? '-' }}</div>
+        <div class="m-sec-head"><div class="m-sec-title">Rincian</div></div>
+        <div class="m-kv"><span>Order</span><b>{{ $bill->order_id ?? '-' }}</b></div>
+        <div class="m-kv"><span>Kategori</span><b>{{ $bill->display_name }}</b></div>
+        <div class="m-kv"><span>Siswa</span><b>{{ $bill->student->name ?? '-' }}</b></div>
+        <div class="m-kv"><span>Kelas</span><b>{{ $bill->student->classRoom->name ?? '-' }}</b></div>
+        <div class="m-kv"><span>Kontak Wali</span><b>{{ $bill->student->guardian_phone ?? '-' }}</b></div>
     </div>
 
     <div class="m-card">
@@ -78,12 +80,16 @@
     <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Pembayaran</div></div>
         @forelse($bill->payments as $pay)
-            <div class="m-feed">
-                <div class="m-fmid">
-                    <div class="m-fname">{{ $pay->invoice_number }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
-                    <div class="m-fdesc">{{ $pay->method_label }} • {{ $pay->status_label }}</div>
+            <div style="padding:10px 0;border-top:1px solid var(--m-border)">
+                <div class="m-kv"><span>Order</span><b>{{ $pay->invoice_number }}</b></div>
+                <div class="m-kv"><span>Total Biaya</span><b>Rp {{ number_format($pay->amount, 0, ',', '.') }}</b></div>
+                <div class="m-kv"><span>Jenis Pembayaran</span><b>{{ $pay->method_label }}</b></div>
+                <div class="m-kv"><span>Status</span>
+                    @if($pay->status === 'success')<span class="m-pill m-pill-ok">{{ $pay->status_label }}</span>
+                    @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">{{ $pay->status_label }}</span>
+                    @else<span class="m-pill m-pill-err">{{ $pay->status_label }}</span>@endif
                 </div>
-                <a class="m-btn" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>
+                <a class="m-btn" style="width:100%;margin-top:8px" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>
             </div>
         @empty
             <div class="m-fdesc">Belum ada pembayaran.</div>
