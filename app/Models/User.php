@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
         'student_id',
         'google_id',
         'phone',
@@ -66,5 +67,16 @@ class User extends Authenticatable
     public function helpTickets()
     {
         return $this->hasMany(HelpTicket::class, 'user_id');
+    }
+
+    /** Label peran untuk tampilan (tanpa istilah teknis). */
+    public function getRoleLabelAttribute(): string
+    {
+        return match ($this->role) {
+            'superadmin' => 'Super Admin',
+            'admin' => 'Bendahara',
+            'wali' => 'Wali',
+            default => (string) $this->role,
+        };
     }
 }

@@ -29,6 +29,15 @@ class EnsureAdmin
             return redirect()->route('portal.dashboard');
         }
 
+        if (! ($user->is_active ?? true)) {
+            Auth::logout();
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Akun dinonaktifkan.'], 403);
+            }
+
+            return redirect()->route('login')->withErrors(['email' => 'Akun ini sudah dinonaktifkan.']);
+        }
+
         return $next($request);
     }
 }

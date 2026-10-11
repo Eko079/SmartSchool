@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FeeCategoryController;
 use App\Http\Controllers\Admin\BillingController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\StaffAccountController;
 use App\Http\Controllers\Portal\AuthController as PortalAuthController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\BillingController as PortalBillingController;
@@ -71,6 +72,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/tiket/{ticket}/balas', [\App\Http\Controllers\Admin\TicketController::class, 'reply'])->name('tiket.reply');
     Route::post('/tiket/{ticket}/tutup', [\App\Http\Controllers\Admin\TicketController::class, 'close'])->name('tiket.close');
     Route::post('/tiket/{ticket}/buka', [\App\Http\Controllers\Admin\TicketController::class, 'reopen'])->name('tiket.reopen');
+
+    // Akun Staf (bendahara: kelola sesama bendahara; nonaktif = Super Admin)
+    Route::get('/akun-staf', [StaffAccountController::class, 'index'])->name('akun');
+    Route::post('/akun-staf', [StaffAccountController::class, 'store'])->name('akun.store');
+    Route::post('/akun-staf/{user}/reset', [StaffAccountController::class, 'reset'])->name('akun.reset');
+    Route::post('/akun-staf/{user}/toggle', [StaffAccountController::class, 'toggle'])->name('akun.toggle')->middleware('super');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------

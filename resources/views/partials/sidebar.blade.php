@@ -29,6 +29,7 @@
             ];
             $menuLainnya = [
                 ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'life-buoy'],
+                ['route' => 'admin.akun', 'label' => 'Akun Staf', 'icon' => 'users'],
             ];
             $menuSuper = [
                 ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
