@@ -27,7 +27,11 @@ class StudentSeeder extends Seeder
             ['name' => 'Zahra Maharani', 'nis' => '20261012', 'nisn' => '0081234012', 'class' => 'X IPS 1', 'gender' => 'P', 'status' => 'aktif', 'guardian_name' => 'Maya Estianty', 'guardian_phone' => '0877-6655-4433'],
         ];
 
+        $classGrades = ClassRoom::pluck('grade', 'name');
+        $entryByGrade = ['X' => 2026, 'XI' => 2025, 'XII' => 2024];
+
         foreach ($students as $idx => $s) {
+            $grade = explode(' ', $s['class'])[0] ?? null;
             Student::updateOrCreate(
                 ['nis' => $s['nis']],
                 [
@@ -36,6 +40,7 @@ class StudentSeeder extends Seeder
                     'name' => $s['name'],
                     'gender' => $s['gender'],
                     'status' => $s['status'],
+                    'entry_year' => $entryByGrade[$grade] ?? ($classGrades[$s['class']] ?? null ? ($entryByGrade[$classGrades[$s['class']]] ?? 2026) : 2026),
                     'guardian_name' => $s['guardian_name'],
                     'guardian_phone' => $s['guardian_phone'],
                     'address' => 'Jl. Pendidikan No. ' . ($idx + 10) . ', Jakarta Selatan',

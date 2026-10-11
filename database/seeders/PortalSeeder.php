@@ -53,7 +53,11 @@ class PortalSeeder extends Seeder
                 $st->email = $slug . '.' . $st->nis . '@smartschool.id';
             }
             if (empty($st->entry_year)) {
-                $st->entry_year = 2023;
+                $st->entry_year = match ($st->classRoom->grade ?? null) {
+                    'XII' => 2024,
+                    'XI' => 2025,
+                    default => 2026,
+                };
             }
             $st->save();
         }
