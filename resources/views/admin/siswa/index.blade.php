@@ -58,7 +58,7 @@
                             class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
                             Kelas: <span id="kelas-drop-label" class="font-semibold">{{ $kelasLabel }}</span> ▾
                         </button>
-                        <div id="kelas-drop" class="hidden absolute z-30 mt-1 w-64 max-h-72 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-lg text-xs">
+                        <div id="kelas-drop" class="hidden absolute z-30 mt-1 w-[38rem] max-w-[92vw] max-h-80 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-lg text-xs">
                             <div class="flex flex-wrap gap-2 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
                                 <button type="button" onclick="kelasDropAll(true)" class="text-blue-600">Semua</button>
                                 <button type="button" onclick="kelasDropAll(false)" class="text-slate-400">Kosongkan</button>
@@ -66,17 +66,21 @@
                                     <button type="button" onclick="kelasDropGrade('{{ $g }}')" class="text-blue-600">Hanya {{ $g }}</button>
                                 @endforeach
                             </div>
-                            @foreach(['X', 'XI', 'XII'] as $g)
-                                <div class="font-bold text-slate-500 mt-1 mb-1">Kelas {{ $g }}</div>
-                                @foreach(($classes ?? collect())->where('grade', $g) as $cls)
-                                    <label class="flex items-center gap-2 py-1 cursor-pointer text-slate-700 dark:text-slate-200">
-                                        <input type="checkbox" name="class_id[]" value="{{ $cls->id }}" data-grade="{{ $cls->grade }}"
-                                            {{ in_array($cls->id, $pickedClasses, true) ? 'checked' : '' }}
-                                            class="kelas-check rounded text-blue-600" onchange="kelasDropTick()">
-                                        {{ $cls->name }}
-                                    </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                @foreach(['X', 'XI', 'XII'] as $g)
+                                    <div>
+                                        <div class="font-bold text-slate-500 mb-1">Kelas {{ $g }}</div>
+                                        @foreach(($classes ?? collect())->where('grade', $g) as $cls)
+                                            <label class="flex items-center gap-2 py-1 cursor-pointer text-slate-700 dark:text-slate-200">
+                                                <input type="checkbox" name="class_id[]" value="{{ $cls->id }}" data-grade="{{ $cls->grade }}"
+                                                    {{ in_array($cls->id, $pickedClasses, true) ? 'checked' : '' }}
+                                                    class="kelas-check rounded text-blue-600" onchange="kelasDropTick()">
+                                                {{ $cls->name }}
+                                            </label>
+                                        @endforeach
+                                    </div>
                                 @endforeach
-                            @endforeach
+                            </div>
                             <button type="submit" class="mt-2 w-full rounded-lg bg-blue-600 py-2 font-bold text-white hover:bg-blue-700">Tampilkan</button>
                         </div>
                     </div>
