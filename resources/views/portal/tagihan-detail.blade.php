@@ -54,7 +54,11 @@
     </div>
     @endif
 
-    @if($bill->status !== 'paid')
+    @if(! empty($isArchived))
+    <div class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">Akun arsip: pembayaran dinonaktifkan, hubungi operator.</div>
+    @endif
+
+    @if($bill->status !== 'paid' && empty($isArchived))
     <div class="ss-card space-y-3">
         <h2 class="text-sm font-bold">Bayar Tagihan</h2>
         <form method="POST" action="{{ route('portal.tagihan.pay', $bill->id) }}" class="flex flex-wrap gap-2">

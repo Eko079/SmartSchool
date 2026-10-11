@@ -44,6 +44,9 @@
         <input type="text" name="q" placeholder="Cari invoice, SPP…" aria-label="Cari tagihan" data-m-filter=".m-stu-card">
     </form>
 
+    @if(! empty($isArchived))
+    <div class="m-card"><div class="m-fdesc">Akun arsip: beranda ini hanya riwayat. Pembayaran dinonaktifkan.</div></div>
+    @endif
     <div class="m-sec-head">
         <div class="m-sec-title">Menu Layanan</div>
         <a class="m-see" href="{{ route('portal.tagihan') }}">Lihat ›</a>

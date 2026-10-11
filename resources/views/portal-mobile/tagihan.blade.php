@@ -36,14 +36,11 @@
 
     <form method="GET" action="{{ route('portal.tagihan') }}" class="m-card">
         <div class="m-actions">
-            <select name="academic_year" onchange="this.form.submit()" class="m-btn" aria-label="Filter tahun ajaran">
-                @foreach(($academicYears ?? collect()) as $ta)
-                <option value="{{ $ta }}" {{ ($selYear ?? request('academic_year')) === $ta ? 'selected' : '' }}>{{ $ta }}</option>
+            <select name="semester_key" onchange="this.form.submit()" class="m-btn" aria-label="Pilih Semester">
+                <option value="">Pilih Semester</option>
+                @foreach(($semesterOptions ?? collect()) as $opt)
+                <option value="{{ $opt['key'] }}" {{ ($selKey ?? '') === $opt['key'] ? 'selected' : '' }}>{{ $opt['label'] }}</option>
                 @endforeach
-            </select>
-            <select name="semester" onchange="this.form.submit()" class="m-btn" aria-label="Filter semester">
-                <option value="ganjil" {{ ($selSemester ?? 'ganjil') === 'ganjil' ? 'selected' : '' }}>Ganjil</option>
-                <option value="genap" {{ ($selSemester ?? '') === 'genap' ? 'selected' : '' }}>Genap</option>
             </select>
             <select name="status" onchange="this.form.submit()" class="m-btn" aria-label="Filter status">
                 @foreach(['all' => 'Semua', 'unpaid' => 'Belum bayar', 'partial' => 'Sebagian', 'paid' => 'Lunas', 'overdue' => 'Menunggak'] as $val => $label)
@@ -55,7 +52,10 @@
         <div class="m-fdesc">TA {{ $selYear ?? '-' }} • Semester {{ isset($selSemester) ? ucfirst($selSemester) : '-' }} saja.</div>
     </form>
 
-    <div class="m-sec-head"><div class="m-sec-title">Tagihan {{ isset($selSemester) ? ucfirst($selSemester) : '' }}</div><span class="m-see">{{ $bills->total() }} data ›</span></div>
+    @if(! empty($isArchived))
+    <div class="m-card"><div class="m-fdesc">Akun arsip: hanya riwayat, pembayaran dinonaktifkan.</div></div>
+    @endif
+    <div class="m-sec-head"><div class="m-sec-title">Tagihan Semester {{ isset($selSemester) ? ucfirst($selSemester) : '' }}</div><span class="m-see">{{ $bills->total() }} data ›</span></div>
     @forelse($bills as $i => $bill)
         @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
         <div class="m-card m-stu-card">
@@ -78,7 +78,7 @@
                     data-status="{{ $statusLabel }}"
                     data-tanggal="{{ $pay?->paid_at?->format('d M Y H:i') ?? '-' }}"
                     data-tempat="{{ $methodLabel }}">Detail</button>
-                @if(! $isPaid)
+                @if(! $isPaid && empty($isArchived))
                 <button type="button" class="m-btn m-btn-primary" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"
                     data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
@@ -90,6 +90,43 @@
         </div>
     @empty
         <div class="m-card"><div class="m-fdesc">Tidak ada tagihan pada semester ini.</div></div>
+    @endforelse
+
+    <div class="m-sec-head"><div class="m-sec-title">Tagihan Lainnya</div><span class="m-see">{{ $otherTotal ?? 0 }} data ›</span></div>
+    @forelse(($otherBills ?? collect()) as $bill)
+        @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
+        <div class="m-card m-stu-card">
+            <div class="m-stu">
+                <div class="m-stu-mid">
+                    <div class="m-stu-name">{{ $bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $bill->bill_code }} • {{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }}</div>
+                    <div class="m-stu-sub">Rp {{ number_format($bill->total_due, 0, ',', '.') }} • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
+                </div>
+                @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
+                @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
+                @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
+            </div>
+            <div class="m-actions">
+                <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"
+                    data-code="{{ $bill->bill_code }}"
+                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-amount="Rp {{ number_format($bill->total_due, 0, ',', '.') }}"
+                    data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
+                    data-status="{{ $statusLabel }}"
+                    data-tanggal="{{ $pay?->paid_at?->format('d M Y H:i') ?? '-' }}"
+                    data-tempat="{{ $methodLabel }}">Detail</button>
+                @if(! $isPaid && empty($isArchived))
+                <button type="button" class="m-btn m-btn-primary" onclick="openPayModal({{ $bill->id }}, this)"
+                    data-code="{{ $bill->bill_code }}"
+                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-amount="Rp {{ number_format($bill->total_due, 0, ',', '.') }}"
+                    data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
+                    data-status="BELUM BAYAR">Bayar</button>
+                @endif
+            </div>
+        </div>
+    @empty
+        <div class="m-card"><div class="m-fdesc">Tidak Ada Data</div></div>
     @endforelse
 
     <div id="pay-modal" class="m-card hidden" style="position:fixed;inset:auto 12px 76px 12px;z-index:60">

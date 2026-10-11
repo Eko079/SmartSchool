@@ -44,6 +44,7 @@ class DashboardController extends Controller
 
         $payload = [
             'student' => $student->load('classRoom'),
+            'isArchived' => (($student->status ?? 'aktif') !== 'aktif'),
             'stats' => [
                 'active_count' => (clone $activeBills)->count(),
                 'waiting_amount' => max(0, $waitingAmount),

@@ -33,6 +33,11 @@ class BillingController extends Controller
 
     public function index(Request $request)
     {
+        // Dropdown gabungan "Pilih Semester" dipecah ke academic_year + semester.
+        if ($request->filled('semester_key') && str_contains((string) $request->semester_key, '|')) {
+            [$ky, $ks] = explode('|', (string) $request->semester_key, 2);
+            $request->merge(['academic_year' => $ky, 'semester' => $ks]);
+        }
         $query = $this->scopeOwned($request);
 
         if ($request->filled('q')) {
@@ -54,7 +59,7 @@ class BillingController extends Controller
 
         if ($request->filled('academic_year')) {
             $taFilter = $request->string('academic_year')->toString();
-            $query->where(fn ($w) => $w->where('academic_year', $taFilter)->orWhereNull('academic_year'));
+            $query->where('academic_year', $taFilter);
         }
 
         if ($request->filled('fee_category_id')) {
@@ -70,7 +75,7 @@ class BillingController extends Controller
         if (! in_array($selSemester, ['ganjil', 'genap'], true)) {
             $selSemester = $activeSemester;
         }
-        $query->where(fn ($w) => $w->where('semester', $selSemester)->orWhereNull('semester'));
+        $query->where('semester', $selSemester);
 
         // Default TA ikut Pengaturan, fallback TA terbaru siswa.
         $selYear = $request->filled('academic_year') ? $request->string('academic_year')->toString() : null;
@@ -78,11 +83,12 @@ class BillingController extends Controller
             $selYear = \App\Models\SchoolSetting::get('academic_year')
                 ?: Bill::where('student_id', $this->student()->id)->whereNotNull('academic_year')->orderByDesc('academic_year')->value('academic_year');
             if ($selYear) {
-                $query->where(fn ($w) => $w->where('academic_year', $selYear)->orWhereNull('academic_year'));
+                $query->where('academic_year', $selYear);
             }
         }
 
-        $bills = $query->orderBy('fee_category_id')->orderBy('due_date')->paginate($perPage)->withQueryString();
+        // Urutan prioritas bayar: menunggak, belum bayar, sebagian, lunas; lalu jatuh tempo terdekat.
+        $bills = $query->orderByRaw("FIELD(status, 'overdue', 'unpaid', 'partial', 'paid')")->orderBy('due_date')->paginate($perPage)->withQueryString();
         $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
             'waiting' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount') + (float) (clone $waitingQuery)->sum('fine_amount'),
@@ -92,6 +98,8 @@ class BillingController extends Controller
         ];
 
         $studentId = $this->student()->id;
+        // Siswa lulus/nonaktif: portal jadi mode riwayat (baca saja, tombol bayar disembunyikan).
+        $isArchived = (($this->student()->status ?? 'aktif') !== 'aktif');
         $semesters = Bill::where('student_id', $studentId)->whereNotNull('semester')->distinct()->pluck('semester')->values();
         $academicYears = Bill::where('student_id', $studentId)->whereNotNull('academic_year')->distinct()->orderByDesc('academic_year')->pluck('academic_year')->values();
         $categories = \App\Models\FeeCategory::whereIn('id', Bill::where('student_id', $studentId)->distinct()->pluck('fee_category_id'))->orderBy('name')->get(['id', 'name']);
@@ -100,13 +108,56 @@ class BillingController extends Controller
             return response()->json(['bills' => $bills, 'summary' => $summary]);
         }
 
-        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear'));
+        // Opsi semester gabungan "GANJIL 2026/2027" untuk dropdown Pilih Semester.
+        $semesterOptions = Bill::where('student_id', $studentId)->whereNotNull('academic_year')->whereNotNull('semester')->select('academic_year', 'semester')->distinct()->get()
+            ->map(fn ($p) => ['key' => $p->academic_year.'|'.$p->semester, 'label' => strtoupper($p->semester).' '.$p->academic_year, 'year' => $p->academic_year, 'sem' => $p->semester])
+            ->sort(function ($a, $b) {
+                if ($a['year'] !== $b['year']) {
+                    return $b['year'] <=> $a['year'];
+                }
+
+                return $a['sem'] <=> $b['sem'];
+            })->values();
+        $selKey = ($selYear ?? '').'|'.($selSemester ?? '');
+        if ($selYear && $selSemester && ! $semesterOptions->contains('key', $selKey)) {
+            $semesterOptions->prepend(['key' => $selKey, 'label' => strtoupper($selSemester).' '.$selYear, 'year' => $selYear, 'sem' => $selSemester]);
+        }
+
+        // Tagihan di luar semester terpilih (bagian "Tagihan Lainnya").
+        $otherBills = collect();
+        $otherTotal = 0;
+        if ($selYear && $selSemester) {
+            $otherQuery = $this->scopeOwned($request);
+            if ($request->filled('q')) {
+                $q2 = $request->string('q')->toString();
+                $otherQuery->where(function ($w) use ($q2) {
+                    $w->where('bill_code', 'like', "%{$q2}%")
+                        ->orWhere('order_id', 'like', "%{$q2}%")
+                        ->orWhereHas('feeCategory', fn ($f) => $f->where('name', 'like', "%{$q2}%"));
+                });
+            }
+            if ($request->filled('status') && $request->status !== 'all') {
+                $otherQuery->where('status', $request->status);
+            }
+            if ($request->filled('overdue_only') && $request->boolean('overdue_only')) {
+                $otherQuery->where('status', 'overdue');
+            }
+            if ($request->filled('fee_category_id')) {
+                $otherQuery->where('fee_category_id', (int) $request->integer('fee_category_id'));
+            }
+            $otherQuery->whereRaw('((academic_year IS NULL OR academic_year != ?) OR (semester IS NULL OR semester != ?))', [$selYear, $selSemester]);
+            $otherTotal = (clone $otherQuery)->count();
+            $otherBills = $otherQuery->orderByRaw("FIELD(status, 'overdue', 'unpaid', 'partial', 'paid')")->orderBy('due_date')->take(10)->get();
+        }
+
+        return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear', 'semesterOptions', 'selKey', 'otherBills', 'otherTotal', 'isArchived'));
     }
 
     public function show(Request $request, Bill $bill)
     {
         $student = $this->student();
         abort_if(! $student || $bill->student_id !== $student->id, 403);
+        $isArchived = (($student->status ?? 'aktif') !== 'aktif');
 
         $bill->load(['feeCategory', 'student.classRoom', 'payments', 'events']);
 
@@ -114,7 +165,7 @@ class BillingController extends Controller
             return response()->json(['bill' => $bill]);
         }
 
-        return $this->portalView($request, 'portal.tagihan-detail', 'portal-mobile.tagihan-detail', compact('bill'));
+        return $this->portalView($request, 'portal.tagihan-detail', 'portal-mobile.tagihan-detail', compact('bill', 'isArchived'));
     }
 
     public function pay(Request $request, Bill $bill, MidtransService $midtrans, WaService $wa)
@@ -125,6 +176,7 @@ class BillingController extends Controller
 
         $student = $this->student();
         abort_if(! $student || $bill->student_id !== $student->id, 403);
+        abort_if(($student->status ?? 'aktif') !== 'aktif', 422, 'Akun arsip: pembayaran dinonaktifkan, hubungi operator.');
         abort_if($bill->status === 'paid', 422, 'Tagihan sudah lunas.');
 
         $trx = $midtrans->createTransaction($bill, $validated['method']);

@@ -83,6 +83,24 @@ class Bill extends Model
         return max(0, (float) $this->amount - (float) $this->paid_amount);
     }
 
+    /** Teks jatuh tempo: tanggal + sisa/lewat hari. */
+    public function getDueInfoAttribute(): string
+    {
+        if (! $this->due_date) {
+            return '-';
+        }
+        $dl = (int) \Carbon\Carbon::today()->diffInDays(\Carbon\Carbon::parse($this->due_date->format('Y-m-d')), false);
+        $base = $this->due_date->format('d M Y');
+        if ($dl < 0) {
+            return $base.' • lewat '.abs($dl).' hari';
+        }
+        if ($dl === 0) {
+            return $base.' • hari ini';
+        }
+
+        return $base.' • '.$dl.' hari lagi';
+    }
+
     /** Hitung denda dari Pengaturan: per-hari x hari telat lewat grace, dibatasi max. */
     public static function calcFine(string|object|null $dueDate, ?string $today = null): array
     {

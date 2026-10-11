@@ -39,7 +39,10 @@
     </div>
     @endif
 
-    @if($bill->status !== 'paid')
+    @if(! empty($isArchived))
+    <div class="m-card"><div class="m-fdesc">Akun arsip: pembayaran dinonaktifkan, hubungi operator.</div></div>
+    @endif
+    @if($bill->status !== 'paid' && empty($isArchived))
     <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Bayar Sekarang</div></div>
         <form method="POST" action="{{ route('portal.tagihan.pay', $bill->id) }}">

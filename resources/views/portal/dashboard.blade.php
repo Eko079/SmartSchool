@@ -13,6 +13,10 @@
         ];
     @endphp
 
+    @if(! empty($isArchived))
+    <div class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">Akun arsip: beranda ini hanya riwayat. Pembayaran dinonaktifkan.</div>
+    @endif
+
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         @foreach($cards as $s)
         <div class="ss-card flex flex-col gap-2 p-3!">
