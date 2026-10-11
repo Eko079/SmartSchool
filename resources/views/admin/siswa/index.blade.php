@@ -35,7 +35,7 @@
                     </button>
                 </div>
             </div>
-            <form method="GET" action="{{ route('admin.siswa') }}" class="flex flex-wrap items-center justify-between gap-3 pt-3">
+            <form method="GET" action="{{ route('admin.siswa') }}" id="siswa-filter-form" class="flex flex-wrap items-center justify-between gap-3 pt-3">
                 <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
                     <div class="relative flex-1 min-w-[180px] max-w-sm">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
@@ -81,9 +81,10 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <button type="submit" class="mt-2 w-full rounded-lg bg-blue-600 py-2 font-bold text-white hover:bg-blue-700">Tampilkan</button>
+                            <button type="submit" id="kelas-tampilkan-btn" class="mt-2 w-full rounded-lg bg-blue-600 py-2 font-bold text-white hover:bg-blue-700 disabled:opacity-60">Tampilkan</button>
                         </div>
                     </div>
+                    <span id="siswa-filter-loading" class="hidden text-[11px] font-semibold text-blue-600">Memuat…</span>
                     <select name="status" onchange="this.form.submit()"
                         class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
                         <option value="">Semua Status</option>
@@ -250,10 +251,13 @@
         kelasDropTick();
     }
     function kelasDropSubmit() {
-        var d = document.getElementById('kelas-drop');
-        var f = d ? d.closest('form') : null;
-        if (f) f.submit();
+        var f = document.getElementById('siswa-filter-form');
+        if (!f) return;
+        // requestSubmit memicu event submit (ada efek Memuat…), submit() biasa tidak.
+        if (f.requestSubmit) f.requestSubmit();
+        else f.submit();
     }
+    // Efek refresh yang sama untuk Tampilkan maupun pintasan: kunci tombol + tampilkan Memuat…
     // Pintasan: langsung terapkan tanpa perlu klik Tampilkan / ubah halaman dulu.
     function kelasDropReset() {
         document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = false; });
@@ -273,6 +277,19 @@
         var d = document.getElementById('kelas-drop');
         if (d && !d.classList.contains('hidden') && !d.contains(e.target)) d.classList.add('hidden');
     });
+    (function () {
+        var f = document.getElementById('siswa-filter-form');
+        if (!f || f.dataset.loadingBound) return;
+        f.dataset.loadingBound = '1';
+        f.addEventListener('submit', function () {
+            var l = document.getElementById('siswa-filter-loading');
+            if (l) l.classList.remove('hidden');
+            var b = document.getElementById('kelas-tampilkan-btn');
+            if (b) { b.disabled = true; b.textContent = 'Memuat…'; }
+            var d = document.getElementById('kelas-drop');
+            if (d) d.classList.add('hidden');
+        });
+    })();
     kelasDropTick();
     function siswaPost(url, ids, extra) {
         var f = document.createElement('form');
