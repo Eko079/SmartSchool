@@ -50,6 +50,7 @@ class StaffAccountController extends Controller
             'role' => $role,
             'is_active' => true,
         ]);
+        \App\Models\AuditLog::log('akun.tambah', "Buat akun {$user->role_label} {$user->name} ({$user->email})");
 
         return back()->with('success', "Akun {$user->role_label} {$user->name} dibuat.");
     }
@@ -60,6 +61,7 @@ class StaffAccountController extends Controller
         $this->guardTarget($user);
         $plain = Str::random(10);
         $user->update(['password' => $plain]);
+        \App\Models\AuditLog::log('akun.reset', "Reset sandi {$user->name} ({$user->email})");
 
         return back()->with('success', "Sandi baru {$user->name}: {$plain} — catat dan teruskan sekarang, tidak ditampilkan lagi.");
     }
@@ -76,6 +78,7 @@ class StaffAccountController extends Controller
         }
         $user->update(['is_active' => ! $user->is_active]);
         $aksi = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        \App\Models\AuditLog::log('akun.status', "Akun {$user->name} {$aksi}");
 
         return back()->with('success', "Akun {$user->name} {$aksi}.");
     }

@@ -44,6 +44,7 @@ class ClassRoomController extends Controller
             'major' => $validated['major'],
             'capacity' => $validated['capacity'] ?? null,
         ]);
+        \App\Models\AuditLog::log('kelas.tambah', "Tambah kelas {$room->name}");
 
         return back()->with('success', "Kelas {$room->name} ditambahkan.");
     }
@@ -57,6 +58,7 @@ class ClassRoomController extends Controller
             'major' => $validated['major'],
             'capacity' => $validated['capacity'] ?? null,
         ]);
+        \App\Models\AuditLog::log('kelas.ubah', "Ubah kelas {$class->name}");
 
         return back()->with('success', "Kelas {$class->name} diperbarui.");
     }
@@ -66,8 +68,10 @@ class ClassRoomController extends Controller
         if ($class->students()->exists()) {
             return back()->with('error', "Kelas {$class->name} masih berisi siswa, tidak bisa dihapus. Pindahkan siswanya dulu.");
         }
+        $name = $class->name;
         $class->delete();
+        \App\Models\AuditLog::log('kelas.hapus', "Hapus kelas {$name}");
 
-        return back()->with('success', "Kelas {$class->name} dihapus.");
+        return back()->with('success', "Kelas {$name} dihapus.");
     }
 }

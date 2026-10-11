@@ -94,7 +94,8 @@ class FeeCategoryController extends Controller
         $validated['is_active'] = $request->boolean('is_active', true);
         $this->normalizeTargeting($validated);
 
-        FeeCategory::create($validated);
+        $cat = FeeCategory::create($validated);
+        \App\Models\AuditLog::log('kategori.tambah', "Tambah {$cat->code} {$cat->name} Rp " . number_format((float) $cat->default_amount, 0, ',', '.'));
 
         return redirect()->route('admin.kategori-tagihan')->with('success', 'Kategori tagihan berhasil ditambahkan.');
     }
@@ -102,6 +103,8 @@ class FeeCategoryController extends Controller
     public function toggle(FeeCategory $category)
     {
         $category->update(['is_active' => !$category->is_active]);
+        \App\Models\AuditLog::log('kategori.status', "Kategori {$category->code} " . ($category->is_active ? 'diaktifkan' : 'dinonaktifkan'));
+
         return redirect()->route('admin.kategori-tagihan')->with('success', 'Status kategori berhasil diubah.');
     }
 
@@ -127,6 +130,7 @@ class FeeCategoryController extends Controller
         $this->normalizeTargeting($validated);
 
         $category->update($validated);
+        \App\Models\AuditLog::log('kategori.ubah', "Ubah {$category->code} {$category->name} Rp " . number_format((float) $category->default_amount, 0, ',', '.'));
 
         return redirect()->route('admin.kategori-tagihan')->with('success', 'Kategori tagihan berhasil diperbarui.');
     }

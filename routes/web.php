@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StaffAccountController;
 use App\Http\Controllers\Admin\ClassRoomController;
+use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Portal\AuthController as PortalAuthController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\BillingController as PortalBillingController;
@@ -85,6 +86,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/kelas', [ClassRoomController::class, 'store'])->name('kelas.store')->middleware('super');
     Route::put('/kelas/{class}', [ClassRoomController::class, 'update'])->name('kelas.update')->middleware('super');
     Route::delete('/kelas/{class}', [ClassRoomController::class, 'destroy'])->name('kelas.destroy')->middleware('super');
+
+    // Jejak Audit (Super Admin saja)
+    Route::get('/audit', [AuditController::class, 'index'])->name('audit')->middleware('super');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------

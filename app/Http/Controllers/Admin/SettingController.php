@@ -47,6 +47,7 @@ class SettingController extends Controller
         foreach ($validated as $key => $value) {
             SchoolSetting::set($key, $value ?? '');
         }
+        \App\Models\AuditLog::log('pengaturan.ubah', 'Pengaturan sekolah disimpan.');
 
         return redirect()->route('admin.pengaturan')->with('success', 'Pengaturan berhasil disimpan.');
     }

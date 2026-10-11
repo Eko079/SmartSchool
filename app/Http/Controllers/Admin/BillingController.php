@@ -121,6 +121,8 @@ class BillingController extends Controller
             $createdCount++;
         }
 
+        \App\Models\AuditLog::log('billing.generate', "Generate manual: {$createdCount} dibuat, {$skippedCount} dilewati.");
+
         return redirect()->route('admin.billing')->with('success', "Berhasil men-generate {$createdCount} tagihan ({$skippedCount} dilewati karena sudah ada).");
     }
 
@@ -190,6 +192,8 @@ class BillingController extends Controller
             }
         }
 
+        \App\Models\AuditLog::log('billing.paket', "Paket {$validated['semester']} {$validated['academic_year']}: {$created} dibuat, {$skipped} dilewati.");
+
         return redirect()->route('admin.billing')->with('success', "Paket semester {$validated['semester']} {$validated['academic_year']}: {$created} dibuat, {$skipped} dilewati.");
     }
 
@@ -198,6 +202,7 @@ class BillingController extends Controller
     {
         \Illuminate\Support\Facades\Artisan::call('bills:mark-overdue');
         $out = trim(\Illuminate\Support\Facades\Artisan::output());
+        \App\Models\AuditLog::log('billing.denda', $out ?: 'Denda dihitung ulang.');
 
         return redirect()->route('admin.billing')->with('success', $out ?: 'Denda dihitung ulang.');
     }

@@ -234,6 +234,8 @@ class StudentController extends Controller
             $created++;
         }
 
+        \App\Models\AuditLog::log('siswa.generate', "Buat {$created} tagihan untuk {$student->name} ({$skipped} dilewati).");
+
         return back()->with('success', "Berhasil membuat {$created} tagihan untuk {$student->name} ({$skipped} dilewati karena sudah ada atau tidak berlaku).");
     }
 
@@ -296,6 +298,7 @@ class StudentController extends Controller
             $created++;
         }
         cache()->forget('siswa_import_' . $validated['token']);
+        \App\Models\AuditLog::log('siswa.import', "Import: {$created} ditambahkan, {$skipped} dilewati.");
 
         return redirect()->route('admin.siswa')->with('success', "Import selesai: {$created} ditambahkan, {$skipped} dilewati (duplikat saat simpan).");
     }
@@ -480,6 +483,7 @@ class StudentController extends Controller
         ]);
         $n = Student::whereIn('id', $validated['ids'])->update(['status' => $validated['action'], 'updated_at' => now()]);
         $label = $validated['action'] === 'lulus' ? 'lulus' : 'nonaktif';
+        \App\Models\AuditLog::log('siswa.massal', "{$n} siswa ditandai {$label}.");
 
         return back()->with('success', "{$n} siswa ditandai {$label}.");
     }
@@ -509,6 +513,7 @@ class StudentController extends Controller
         if (! empty($lewat)) {
             $msg .= ' Dilewati (sudah tertinggi/tanpa kelas tujuan/tidak aktif): ' . implode(', ', array_slice($lewat, 0, 5)) . (count($lewat) > 5 ? '...' : '');
         }
+        \App\Models\AuditLog::log('siswa.massal', $msg);
 
         return back()->with('success', $msg);
     }
@@ -524,7 +529,9 @@ class StudentController extends Controller
         }
 
         $name = $student->name;
+        $nis = $student->nis;
         $student->delete();
+        \App\Models\AuditLog::log('siswa.hapus', "Hapus {$name} (NIS {$nis})");
 
         return redirect()->route('admin.siswa')
             ->with('success', "Data siswa {$name} berhasil dihapus.");
