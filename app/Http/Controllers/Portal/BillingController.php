@@ -93,7 +93,7 @@ class BillingController extends Controller
         }
 
         // Urutan prioritas bayar: menunggak, belum bayar, sebagian, lunas; lalu jatuh tempo terdekat.
-        $bills = $query->orderByRaw("FIELD(status, 'overdue', 'unpaid', 'partial', 'paid')")->orderBy('sort_order')->orderBy('due_date')->paginate($perPage)->withQueryString();
+        $bills = $query->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->paginate($perPage)->withQueryString();
         $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
             'waiting' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount') + (float) (clone $waitingQuery)->sum('fine_amount'),
@@ -153,7 +153,7 @@ class BillingController extends Controller
             $otherQuery->where('academic_year', $selYear)->where('semester', $selSemester);
             $otherQuery->whereNotIn('fee_category_id', \App\Models\FeeCategory::whereIn('code', \App\Support\PackageRules::packageCodes())->pluck('id'));
             $otherTotal = (clone $otherQuery)->count();
-            $otherBills = $otherQuery->orderByRaw("FIELD(status, 'overdue', 'unpaid', 'partial', 'paid')")->orderBy('sort_order')->orderBy('due_date')->take(10)->get();
+            $otherBills = $otherQuery->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->take(10)->get();
         }
 
         return $this->portalView($request, 'portal.tagihan', 'portal-mobile.tagihan', compact('bills', 'summary', 'semesters', 'academicYears', 'categories', 'selSemester', 'selYear', 'semesterOptions', 'selKey', 'otherBills', 'otherTotal', 'isArchived'));
