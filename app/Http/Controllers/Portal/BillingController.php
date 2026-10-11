@@ -230,6 +230,29 @@ class BillingController extends Controller
         return $this->portalView($request, 'portal.riwayat', 'portal-mobile.riwayat', compact('payments'));
     }
 
+    /** Dokumen cetak rekap seluruh riwayat pembayaran (tanpa potongan halaman). */
+    public function historyPrint(Request $request)
+    {
+        $student = $this->student();
+        abort_if(! $student, 422);
+        $student->load('classRoom');
+
+        $payments = Payment::with(['bill.feeCategory'])
+            ->where('student_id', $student->id)
+            ->orderByDesc('paid_at')
+            ->get();
+        $school = \App\Models\SchoolSetting::pluck('value', 'key')->toArray();
+        $totalSukses = (float) $payments->where('status', 'success')->sum('amount');
+
+        return response(view('portal.cetak-riwayat', [
+            'student' => $student,
+            'payments' => $payments,
+            'school' => $school,
+            'totalSukses' => $totalSukses,
+            'terbilang' => ReceiptService::terbilang($totalSukses),
+        ])->render(), 200, ['Content-Type' => 'text/html']);
+    }
+
     public function receipt(Request $request, Payment $payment, ReceiptService $receipts)
     {
         $student = $this->student();

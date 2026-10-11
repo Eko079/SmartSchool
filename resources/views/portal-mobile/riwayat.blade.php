@@ -30,6 +30,11 @@
     </div>
 
     <div class="m-sec-head"><div class="m-sec-title">Riwayat Pembayaran</div><a class="m-see" href="{{ request()->fullUrlWithQuery(['show' => request('show') === 'all' ? null : 'all']) }}">{{ request('show') === 'all' ? '‹ Tutup' : 'Detail ›' }}</a></div>
+    @if($payments->total() > 0)
+    <div class="m-actions" style="margin-bottom:10px">
+        <a class="m-btn m-btn-primary" style="flex:1" href="{{ route('portal.riwayat.cetak') }}" target="_blank">Cetak Rekap</a>
+    </div>
+    @endif
     @forelse((request('show') === 'all' ? $payments->getCollection() : $payments->getCollection()->take(3)) as $pay)
         <div class="m-card m-stu-card">
             <div class="m-stu">

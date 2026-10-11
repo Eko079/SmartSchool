@@ -117,6 +117,7 @@ Route::middleware(['wali'])->name('portal.')->group(function () {
     Route::get('/tagihan/{bill}', [PortalBillingController::class, 'show'])->name('tagihan.show');
     Route::post('/tagihan/{bill}/bayar', [PortalBillingController::class, 'pay'])->name('tagihan.pay');
     Route::get('/riwayat', [PortalBillingController::class, 'history'])->name('riwayat');
+    Route::get('/riwayat/cetak', [PortalBillingController::class, 'historyPrint'])->name('riwayat.cetak');
     Route::get('/kuitansi/{payment}', [PortalBillingController::class, 'receipt'])->name('kuitansi');
     Route::get('/profil', [PortalAccountController::class, 'profile'])->name('profil');
     Route::get('/bantuan', [PortalSupportController::class, 'index'])->name('bantuan');

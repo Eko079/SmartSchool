@@ -37,6 +37,53 @@ class ReceiptService
             'pay' => $payment,
             'school' => $school,
             'rp' => $rp,
+            'terbilang' => self::terbilang((float) $payment->amount),
         ])->render();
+    }
+
+    /** Nominal menjadi kata Bahasa Indonesia ("satu juta rupiah"). */
+    public static function terbilang(float $number): string
+    {
+        $n = (int) round($number);
+        if ($n < 0) {
+            return 'minus ' . self::terbilang(-$n);
+        }
+        if ($n === 0) {
+            return 'nol rupiah';
+        }
+        $kata = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+        $sebut = function ($x) use (&$sebut, $kata): string {
+            if ($x < 12) {
+                return $kata[$x];
+            }
+            if ($x < 20) {
+                return $sebut($x - 10) . ' belas';
+            }
+            if ($x < 100) {
+                return trim($sebut(intdiv($x, 10)) . ' puluh ' . $sebut($x % 10));
+            }
+            if ($x < 200) {
+                return trim('seratus ' . $sebut($x - 100));
+            }
+            if ($x < 1000) {
+                return trim($sebut(intdiv($x, 100)) . ' ratus ' . $sebut($x % 100));
+            }
+            if ($x < 2000) {
+                return trim('seribu ' . $sebut($x - 1000));
+            }
+            if ($x < 1000000) {
+                return trim($sebut(intdiv($x, 1000)) . ' ribu ' . $sebut($x % 1000));
+            }
+            if ($x < 1000000000) {
+                return trim($sebut(intdiv($x, 1000000)) . ' juta ' . $sebut($x % 1000000));
+            }
+            if ($x < 1000000000000) {
+                return trim($sebut(intdiv($x, 1000000000)) . ' miliar ' . $sebut($x % 1000000000));
+            }
+
+            return trim($sebut(intdiv($x, 1000000000000)) . ' triliun ' . $sebut($x % 1000000000000));
+        };
+
+        return trim(preg_replace('/\s+/', ' ', $sebut($n))) . ' rupiah';
     }
 }

@@ -8,6 +8,9 @@
     <div class="ss-card space-y-2">
         <div class="flex items-center justify-between">
             <h2 class="text-sm font-bold">Riwayat Pembayaran</h2>
+            @if($payments->total() > 0)
+            <a href="{{ route('portal.riwayat.cetak') }}" target="_blank" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700">Cetak Rekap</a>
+            @endif
         </div>
         @forelse($payments as $pay)
         <div class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
