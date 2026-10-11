@@ -56,6 +56,23 @@ class Student extends Model
         return (int) $entryYear !== $exp;
     }
 
+    /** Tujuan kenaikan dari kelas saat ini: naik (kelas setingkat+1, jurusan & nomor sama) / lulus / tetap. */
+    public static function promotionTarget(self $student, $rooms): array
+    {
+        $name = $student->classRoom->name ?? '';
+        if (! preg_match('/^(X|XI|XII)\s+(.+?)\s+(\d+)$/', $name, $m)) {
+            return ['action' => 'tetap', 'class' => null];
+        }
+        [, $grade, $major, $no] = $m;
+        if ($grade === 'XII') {
+            return ['action' => 'lulus', 'class' => null];
+        }
+        $next = ['X' => 'XI', 'XI' => 'XII'][$grade] ?? null;
+        $found = $next ? $rooms->first(fn ($c) => $c->grade === $next && $c->major === $major && (int) substr(strrchr($c->name, ' '), 1) === (int) $no) : null;
+
+        return $found ? ['action' => 'naik', 'class' => $found] : ['action' => 'tetap', 'class' => null];
+    }
+
     public function bills()
     {
         return $this->hasMany(Bill::class, 'student_id');

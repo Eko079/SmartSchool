@@ -43,6 +43,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/siswa/{student}/edit', [StudentController::class, 'edit'])->name('siswa.edit');
     Route::put('/siswa/{student}', [StudentController::class, 'update'])->name('siswa.update');
     Route::post('/siswa/{student}/generate', [StudentController::class, 'generate'])->name('siswa.generate');
+    Route::post('/siswa/bulk-status', [StudentController::class, 'bulkStatus'])->name('siswa.bulk-status');
+    Route::post('/siswa/bulk-promote', [StudentController::class, 'bulkPromote'])->name('siswa.bulk-promote');
     Route::delete('/siswa/{student}', [StudentController::class, 'destroy'])->name('siswa.destroy');
 
     // Kategori Tagihan
@@ -56,10 +58,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/billing/generate', [BillingController::class, 'generate'])->name('billing.generate');
     Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package');
     Route::post('/billing/mark-overdue', [BillingController::class, 'markOverdue'])->name('billing.overdue');
-
-    // Kenaikan Kelas
-    Route::get('/kenaikan', [\App\Http\Controllers\Admin\KenaikanController::class, 'index'])->name('kenaikan');
-    Route::post('/kenaikan', [\App\Http\Controllers\Admin\KenaikanController::class, 'process'])->name('kenaikan.process');
 
     // Laporan
     Route::get('/laporan', [ReportController::class, 'index'])->name('laporan');

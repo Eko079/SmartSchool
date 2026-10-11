@@ -73,9 +73,16 @@
                     @endif
                 </div>
             </form>
+            <div class="flex flex-wrap items-center gap-2 pt-3">
+                <span class="text-[11px] text-slate-400">Aksi massal (<span id="siswa-checked-count">0</span> dipilih):</span>
+                <button type="button" onclick="siswaBulkPromote()" class="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 hover:bg-emerald-100">Naik Kelas</button>
+                <button type="button" onclick="siswaBulkStatus('lulus')" class="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-100">Tandai Lulus</button>
+                <button type="button" onclick="siswaBulkStatus('nonaktif')" class="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-100">Tandai Nonaktif</button>
+            </div>
         </x-slot>
 
         <x-slot name="head">
+            <th class="py-2.5 px-3 w-8"><input type="checkbox" id="siswa-check-all" title="Pilih yang tampil" class="rounded text-blue-600"></th>
             <x-ss-th sort="nis" label="NIS" />
             <x-ss-th sort="name" label="Nama Siswa" />
             <th class="py-2.5 px-3">Wali / No. WA</th>
@@ -87,6 +94,10 @@
         @forelse($students ?? [] as $st)
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition"
             title="{{ $st->name }} • NIS {{ $st->nis }} • {{ $st->classRoom->name ?? 'tanpa kelas' }}">
+            @php $tgt = \App\Models\Student::promotionTarget($st, $classes ?? collect()); @endphp
+            <td class="py-3 px-3"><input type="checkbox" class="siswa-check rounded text-blue-600" value="{{ $st->id }}"
+                data-name="{{ $st->name }}" data-from="{{ $st->classRoom->name ?? '-' }}"
+                data-to="{{ $tgt['action'] === 'naik' && $tgt['class'] ? $tgt['class']->name : '' }}"></td>
             <td class="py-3 px-3 font-semibold text-blue-600 dark:text-blue-400">{{ $st->nis }}</td>
             <td class="py-3 px-3">
                 <div class="font-medium text-slate-800 dark:text-white">{{ $st->name }}@if(in_array($st->id, $noBillIds ?? []))<span class="ml-1.5 inline-block h-2 w-2 rounded-full bg-amber-400 align-middle" title="Belum punya tagihan semester ini — buka Detail untuk membuatkan"></span>@endif</div>
@@ -142,7 +153,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="6" class="py-6 text-center text-slate-400">
+            <td colspan="7" class="py-6 text-center text-slate-400">
                 @if(request()->anyFilled(['q', 'class_id', 'status']))
                     Tidak cocok dengan filter. <a href="{{ route('admin.siswa') }}" class="text-blue-600 hover:underline">Tampilkan semua</a>.
                 @else
@@ -173,6 +184,71 @@
         if (btn && typeof openDetailModal === 'function') openDetailModal(id, btn);
         history.replaceState(null, '', window.location.pathname);
     })();
+    </script>
+    <script>
+    // Aksi massal: centang + tombol.
+    function siswaChecked() {
+        var list = [];
+        document.querySelectorAll('.siswa-check').forEach(function (c) {
+            if (c.checked && c.offsetParent !== null) list.push(c);
+        });
+        return list;
+    }
+    function siswaCountTick() {
+        document.getElementById('siswa-checked-count').textContent = siswaChecked().length;
+    }
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList && e.target.classList.contains('siswa-check')) siswaCountTick();
+    });
+    document.getElementById('siswa-check-all').addEventListener('change', function () {
+        var on = this.checked;
+        document.querySelectorAll('.siswa-check').forEach(function (c) {
+            if (c.offsetParent !== null) c.checked = on;
+        });
+        siswaCountTick();
+    });
+    function siswaPost(url, ids, extra) {
+        var f = document.createElement('form');
+        f.method = 'POST';
+        f.action = url;
+        var t = document.createElement('input');
+        t.type = 'hidden'; t.name = '_token';
+        t.value = (document.querySelector('input[name="_token"]') || {}).value || '';
+        f.appendChild(t);
+        ids.forEach(function (id) {
+            var h = document.createElement('input');
+            h.type = 'hidden'; h.name = 'ids[]'; h.value = id;
+            f.appendChild(h);
+        });
+        Object.keys(extra || {}).forEach(function (k) {
+            var h = document.createElement('input');
+            h.type = 'hidden'; h.name = k; h.value = extra[k];
+            f.appendChild(h);
+        });
+        document.body.appendChild(f);
+        f.submit();
+    }
+    function siswaBulkStatus(action) {
+        var list = siswaChecked();
+        if (!list.length) { alert('Centang dulu siswanya.'); return; }
+        var label = action === 'lulus' ? 'lulus' : 'nonaktif';
+        if (!confirm('Tandai ' + list.length + ' siswa sebagai ' + label + '?')) return;
+        siswaPost('/admin/siswa/bulk-status', list.map(function (c) { return c.value; }), { action: action });
+    }
+    function siswaBulkPromote() {
+        var list = siswaChecked();
+        if (!list.length) { alert('Centang dulu siswanya.'); return; }
+        var lines = [];
+        var blocked = 0;
+        list.forEach(function (c) {
+            var to = c.getAttribute('data-to') || '';
+            if (to) lines.push(c.getAttribute('data-name') + ': ' + c.getAttribute('data-from') + ' → ' + to);
+            else { lines.push(c.getAttribute('data-name') + ': tidak bisa naik (dilewati)'); blocked++; }
+        });
+        var preview = lines.slice(0, 12).join('\n') + (lines.length > 12 ? '\n... +' + (lines.length - 12) + ' lainnya' : '');
+        if (!confirm('Naikkan ' + (list.length - blocked) + ' siswa? (' + blocked + ' dilewati)\n\n' + preview)) return;
+        siswaPost('/admin/siswa/bulk-promote', list.map(function (c) { return c.value; }), {});
+    }
     </script>
 
     {{-- Live search: ketik langsung filter, hapus langsung kembali semua.
@@ -217,7 +293,7 @@
             if (visible === 0 && filtering) {
                 var tr = document.createElement('tr');
                 tr.id = emptyId;
-                tr.innerHTML = '<td colspan="6" class="py-6 text-center text-slate-400">Tidak ada hasil untuk “'
+                tr.innerHTML = '<td colspan="7" class="py-6 text-center text-slate-400">Tidak ada hasil untuk “'
                     + input.value.replace(/</g, '&lt;') + '”.</td>';
                 tbody.appendChild(tr);
             }

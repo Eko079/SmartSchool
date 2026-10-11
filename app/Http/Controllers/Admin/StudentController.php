@@ -464,6 +464,49 @@ class StudentController extends Controller
         return $redirect;
     }
 
+    /** Tandai massal: lulus / nonaktif. */
+    public function bulkStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'exists:students,id',
+            'action' => 'required|in:lulus,nonaktif',
+        ]);
+        $n = Student::whereIn('id', $validated['ids'])->update(['status' => $validated['action'], 'updated_at' => now()]);
+        $label = $validated['action'] === 'lulus' ? 'lulus' : 'nonaktif';
+
+        return back()->with('success', "{$n} siswa ditandai {$label}.");
+    }
+
+    /** Naikkan massal ke kelas setingkat di atas (XII + tanpa tujuan dilewati). */
+    public function bulkPromote(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'exists:students,id',
+        ]);
+        $rooms = ClassRoom::all();
+        $naik = 0;
+        $lewat = [];
+        \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $rooms, &$naik, &$lewat) {
+            foreach (Student::with('classRoom')->whereIn('id', $validated['ids'])->where('status', 'aktif')->get() as $s) {
+                $t = Student::promotionTarget($s, $rooms);
+                if ($t['action'] === 'naik' && $t['class']) {
+                    $s->update(['class_id' => $t['class']->id]);
+                    $naik++;
+                } else {
+                    $lewat[] = $s->name;
+                }
+            }
+        });
+        $msg = "{$naik} siswa naik kelas.";
+        if (! empty($lewat)) {
+            $msg .= ' Dilewati (sudah tertinggi/tanpa kelas tujuan/tidak aktif): ' . implode(', ', array_slice($lewat, 0, 5)) . (count($lewat) > 5 ? '...' : '');
+        }
+
+        return back()->with('success', $msg);
+    }
+
     public function destroy(Student $student)
     {
         // Tahan hapus bila siswa masih punya tagihan/pembayaran —
