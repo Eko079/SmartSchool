@@ -57,11 +57,4 @@
     </div>
     @endif
 
-    @if($payments->hasPages())
-        <div class="m-card"><div class="m-actions">
-            @if($payments->previousPageUrl())<a class="m-btn" href="{{ $payments->previousPageUrl() }}">Kembali</a>@endif
-            @if($payments->nextPageUrl())<a class="m-btn m-btn-primary" href="{{ $payments->nextPageUrl() }}">Lanjut</a>@endif
-        </div></div>
-    @endif
-
 @endsection
