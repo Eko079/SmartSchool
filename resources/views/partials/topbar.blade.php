@@ -3,6 +3,7 @@
     @php
         $topbarUser = Auth::guard('wali')->user() ?? Auth::user();
         $topbarName = $topbarUser?->student->name ?? $topbarUser->name ?? 'Admin';
+        $topbarProfileUrl = Auth::guard('wali')->check() ? route('portal.profil') : route('admin.profil');
     @endphp
     <div class="flex items-center gap-3 sm:gap-5">
     {{-- Mobile hamburger --}}
@@ -53,13 +54,13 @@
     </div>
 
     {{-- Profile --}}
-    <div title="Masuk sebagai {{ $topbarName }}"
-        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-2 md:pr-4 dark:border-slate-700 dark:bg-slate-900" data-tip="Profil pengguna">
+    <a href="{{ $topbarProfileUrl }}" title="Lihat {{ $topbarName }}"
+        class="ss-tip ss-tip-bottom flex items-center gap-3 rounded-[28px] border border-[#E2E8F0] bg-white py-2 pl-2 pr-2 md:pr-4 dark:border-slate-700 dark:bg-slate-900 hover:border-blue-500 transition" data-tip="Profil pengguna">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB] text-base font-bold text-white">
             {{ strtoupper(substr($topbarName, 0, 1)) }}
         </div>
         <span class="text-sm font-semibold text-[#0F172A] hidden md:inline dark:text-white">{{ $topbarName }}</span>
-    </div>
+    </a>
     </div>
     </div>
 

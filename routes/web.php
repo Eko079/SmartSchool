@@ -100,6 +100,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/kasir', [KasirController::class, 'index'])->name('kasir');
     Route::post('/kasir/bayar', [KasirController::class, 'pay'])->name('kasir.bayar');
     Route::get('/kasir/struk', [KasirController::class, 'struk'])->name('kasir.struk');
+
+    // Profil sendiri (semua staf)
+    Route::get('/profil', [\App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profil');
+    Route::put('/profil/sandi', [\App\Http\Controllers\Admin\ProfileController::class, 'password'])->name('profil.sandi');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------
