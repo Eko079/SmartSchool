@@ -21,6 +21,7 @@
             ];
             $menuMaster = [
                 ['route' => 'admin.siswa', 'label' => 'Data Siswa', 'icon' => 'users'],
+                ['route' => 'admin.kenaikan', 'label' => 'Kenaikan Kelas', 'icon' => 'users'],
                 ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan', 'icon' => 'tag'],
             ];
             $menuTransaksi = [

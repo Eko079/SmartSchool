@@ -57,6 +57,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package');
     Route::post('/billing/mark-overdue', [BillingController::class, 'markOverdue'])->name('billing.overdue');
 
+    // Kenaikan Kelas
+    Route::get('/kenaikan', [\App\Http\Controllers\Admin\KenaikanController::class, 'index'])->name('kenaikan');
+    Route::post('/kenaikan', [\App\Http\Controllers\Admin\KenaikanController::class, 'process'])->name('kenaikan.process');
+
     // Laporan
     Route::get('/laporan', [ReportController::class, 'index'])->name('laporan');
 
