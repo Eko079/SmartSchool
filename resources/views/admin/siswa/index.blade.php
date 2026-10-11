@@ -106,9 +106,9 @@
             </form>
             <div class="flex flex-wrap items-center gap-2 pt-3">
                 <span class="text-[11px] text-slate-400">Aksi massal (<span id="siswa-checked-count">0</span> dipilih):</span>
-                <button type="button" onclick="siswaBulkPromote()" class="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 hover:bg-emerald-100">Naik Kelas</button>
-                <button type="button" onclick="siswaBulkStatus('lulus')" class="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-100">Tandai Lulus</button>
-                <button type="button" onclick="siswaBulkStatus('nonaktif')" class="rounded-lg border border-slate-200 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-100">Tandai Nonaktif</button>
+                <button type="button" onclick="siswaBulkPromote()" class="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 px-3 py-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900">Naik Kelas</button>
+                <button type="button" onclick="siswaBulkStatus('lulus')" class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Tandai Lulus</button>
+                <button type="button" onclick="siswaBulkStatus('nonaktif')" class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Tandai Nonaktif</button>
             </div>
         </x-slot>
 
