@@ -37,6 +37,7 @@
             $menuSuper = [
                 ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
                 ['route' => 'admin.audit', 'label' => 'Jejak Audit', 'icon' => 'file-text'],
+                ['route' => 'admin.backup', 'label' => 'Backup', 'icon' => 'download'],
             ];
             $isSuper = ((Auth::user()->role ?? '') === 'superadmin');
             $roleLabel = $isSuper ? 'Super Admin' : 'Bendahara';

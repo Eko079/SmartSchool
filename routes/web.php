@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StaffAccountController;
 use App\Http\Controllers\Admin\ClassRoomController;
 use App\Http\Controllers\Admin\AuditController;
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Portal\AuthController as PortalAuthController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\BillingController as PortalBillingController;
@@ -89,6 +90,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Jejak Audit (Super Admin saja)
     Route::get('/audit', [AuditController::class, 'index'])->name('audit')->middleware('super');
+
+    // Backup (Super Admin saja)
+    Route::get('/backup', [BackupController::class, 'index'])->name('backup')->middleware('super');
+    Route::post('/backup', [BackupController::class, 'download'])->name('backup.download')->middleware('super');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------
