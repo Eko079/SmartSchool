@@ -33,7 +33,11 @@ class StudentController extends Controller
         }
 
         if ($request->filled('class_id')) {
-            $query->where('class_id', $request->input('class_id'));
+            $classIds = array_values(array_filter((array) $request->input('class_id', []), fn ($v) => is_numeric($v)));
+            $classIds = array_values(array_intersect($classIds, ClassRoom::pluck('id')->map(fn ($i) => (string) $i)->all()));
+            if (! empty($classIds)) {
+                $query->whereIn('students.class_id', $classIds);
+            }
         }
 
         // ---------- Sorting via klik header kolom ----------
@@ -62,7 +66,9 @@ class StudentController extends Controller
             $perPage = 10;
         }
 
-        $students = $query->paginate($perPage)->withQueryString();
+        // Filter aktif → tampilkan SEMUA yang cocok (abaikan per halaman).
+        $isFiltered = $request->filled('q') || $request->filled('class_id') || $request->filled('status');
+        $students = $isFiltered ? $query->get() : $query->paginate($perPage)->withQueryString();
 
         $stats = [
             'total' => Student::count(),
@@ -86,7 +92,7 @@ class StudentController extends Controller
             $noBillIds = array_values(array_diff($pageIds, $withBills));
         }
 
-        return view('admin.siswa.index', compact('students', 'stats', 'classes', 'academicYear', 'noBillIds'));
+        return view('admin.siswa.index', compact('students', 'stats', 'classes', 'academicYear', 'noBillIds', 'isFiltered'));
     }
 
     public function store(Request $request)

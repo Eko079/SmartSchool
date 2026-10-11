@@ -48,13 +48,38 @@
                         <input type="hidden" name="sort" value="{{ request('sort') }}">
                         <input type="hidden" name="dir" value="{{ request('dir') }}">
                     </div>
-                    <select name="class_id" onchange="this.form.submit()"
-                        class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
-                        <option value="">Semua Kelas</option>
-                        @foreach($classes ?? [] as $cls)
-                            <option value="{{ $cls->id }}" {{ request('class_id') == $cls->id ? 'selected' : '' }}>{{ $cls->name }}</option>
-                        @endforeach
-                    </select>
+                    @php
+                        $pickedClasses = array_map('intval', (array) request('class_id', []));
+                        $totalClasses = ($classes ?? collect())->count();
+                        $kelasLabel = (! $pickedClasses || count($pickedClasses) === $totalClasses) ? 'Semua' : count($pickedClasses) . ' kelas';
+                    @endphp
+                    <div class="relative">
+                        <button type="button" id="kelas-drop-btn"
+                            class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
+                            Kelas: <span id="kelas-drop-label" class="font-semibold">{{ $kelasLabel }}</span> ▾
+                        </button>
+                        <div id="kelas-drop" class="hidden absolute z-30 mt-1 w-64 max-h-72 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-lg text-xs">
+                            <div class="flex flex-wrap gap-2 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
+                                <button type="button" onclick="kelasDropAll(true)" class="text-blue-600">Semua</button>
+                                <button type="button" onclick="kelasDropAll(false)" class="text-slate-400">Kosongkan</button>
+                                @foreach(['X', 'XI', 'XII'] as $g)
+                                    <button type="button" onclick="kelasDropGrade('{{ $g }}')" class="text-blue-600">Hanya {{ $g }}</button>
+                                @endforeach
+                            </div>
+                            @foreach(['X', 'XI', 'XII'] as $g)
+                                <div class="font-bold text-slate-500 mt-1 mb-1">Kelas {{ $g }}</div>
+                                @foreach(($classes ?? collect())->where('grade', $g) as $cls)
+                                    <label class="flex items-center gap-2 py-1 cursor-pointer text-slate-700 dark:text-slate-200">
+                                        <input type="checkbox" name="class_id[]" value="{{ $cls->id }}" data-grade="{{ $cls->grade }}"
+                                            {{ in_array($cls->id, $pickedClasses, true) ? 'checked' : '' }}
+                                            class="kelas-check rounded text-blue-600" onchange="kelasDropTick()">
+                                        {{ $cls->name }}
+                                    </label>
+                                @endforeach
+                            @endforeach
+                            <button type="submit" class="mt-2 w-full rounded-lg bg-blue-600 py-2 font-bold text-white hover:bg-blue-700">Tampilkan</button>
+                        </div>
+                    </div>
                     <select name="status" onchange="this.form.submit()"
                         class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
                         <option value="">Semua Status</option>
@@ -70,6 +95,7 @@
                     </select>
                     @if(request()->anyFilled(['q', 'class_id', 'status']))
                         <a href="{{ route('admin.siswa', request()->only(['sort', 'dir'])) }}" class="text-xs text-rose-500 hover:underline">Reset</a>
+                        <span class="text-[11px] text-slate-400">Menampilkan semua {{ ($isFiltered ?? false) ? $students->count() : $students->total() }} yang cocok (tanpa halaman).</span>
                     @endif
                 </div>
             </form>
@@ -163,7 +189,7 @@
         </tr>
         @endforelse
 
-        @if(isset($students) && $students->hasPages())
+        @if(isset($students) && method_exists($students, 'hasPages') && $students->hasPages())
         <x-slot name="pagination">
             {{ $students->links() }}
         </x-slot>
@@ -190,7 +216,7 @@
     function siswaChecked() {
         var list = [];
         document.querySelectorAll('.siswa-check').forEach(function (c) {
-            if (c.checked && c.offsetParent !== null) list.push(c);
+            if (c.checked) list.push(c);
         });
         return list;
     }
@@ -207,6 +233,30 @@
         });
         siswaCountTick();
     });
+    // Dropdown filter multi-kelas.
+    function kelasDropTick() {
+        var boxes = document.querySelectorAll('.kelas-check');
+        var n = 0;
+        boxes.forEach(function (c) { if (c.checked) n++; });
+        document.getElementById('kelas-drop-label').textContent = (n === 0 || n === boxes.length) ? 'Semua' : n + ' kelas';
+    }
+    function kelasDropAll(on) {
+        document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = on; });
+        kelasDropTick();
+    }
+    function kelasDropGrade(g) {
+        document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = (c.getAttribute('data-grade') === g); });
+        kelasDropTick();
+    }
+    document.getElementById('kelas-drop-btn').addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.getElementById('kelas-drop').classList.toggle('hidden');
+    });
+    document.addEventListener('click', function (e) {
+        var d = document.getElementById('kelas-drop');
+        if (d && !d.classList.contains('hidden') && !d.contains(e.target)) d.classList.add('hidden');
+    });
+    kelasDropTick();
     function siswaPost(url, ids, extra) {
         var f = document.createElement('form');
         f.method = 'POST';
