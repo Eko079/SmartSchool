@@ -28,16 +28,13 @@ class AccountController extends Controller
     {
         $user = Auth::guard('wali')->user() ?? Auth::user();
 
+        // Nama & telp adalah data induk sekolah: hanya bendahara yang boleh ubah via Data Siswa.
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'phone' => ['nullable', 'string', 'max:20'],
             'notify_wa' => ['nullable', 'boolean'],
             'notify_email' => ['nullable', 'boolean'],
         ]);
 
         $user->forceFill([
-            'name' => $validated['name'],
-            'phone' => $validated['phone'] ?? $user->phone,
             'notify_wa' => $validated['notify_wa'] ?? $user->notify_wa,
             'notify_email' => $validated['notify_email'] ?? $user->notify_email,
         ])->save();
