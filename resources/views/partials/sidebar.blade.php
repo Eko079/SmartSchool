@@ -22,9 +22,11 @@
             $menuMaster = [
                 ['route' => 'admin.siswa', 'label' => 'Data Siswa', 'icon' => 'users'],
                 ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan', 'icon' => 'tag'],
+                ['route' => 'admin.akun', 'label' => 'Akun Staf', 'icon' => 'users'],
             ];
             $menuMasterSuper = [
                 ['route' => 'admin.kelas', 'label' => 'Data Kelas', 'icon' => 'school'],
+                ['route' => 'admin.backup', 'label' => 'Backup', 'icon' => 'download'],
             ];
             $menuTransaksi = [
                 ['route' => 'admin.billing', 'label' => 'Billing Generator', 'icon' => 'receipt'],
@@ -32,12 +34,10 @@
             ];
             $menuLainnya = [
                 ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'life-buoy'],
-                ['route' => 'admin.akun', 'label' => 'Akun Staf', 'icon' => 'users'],
             ];
             $menuSuper = [
                 ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
-                ['route' => 'admin.audit', 'label' => 'Jejak Audit', 'icon' => 'file-text'],
-                ['route' => 'admin.backup', 'label' => 'Backup', 'icon' => 'download'],
+                ['route' => 'admin.audit', 'label' => 'Log Aktifitas', 'icon' => 'file-text'],
             ];
             $isSuper = ((Auth::user()->role ?? '') === 'superadmin');
             $roleLabel = $isSuper ? 'Super Admin' : 'Bendahara';

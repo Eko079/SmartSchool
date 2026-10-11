@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'Jejak Audit')
-@section('page-title', 'Jejak Audit')
+@section('title', 'Log Aktifitas')
+@section('page-title', 'Log Aktifitas')
 @section('page-subtitle', 'Siapa melakukan apa dan kapan. Hanya Super Admin.')
 @section('content')
     <x-ss-table>
