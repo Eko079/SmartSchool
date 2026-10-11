@@ -95,6 +95,11 @@ class StudentController extends Controller
             'nisn.unique' => 'NISN sudah terdaftar, gunakan NISN lain.',
         ]);
 
+        $room = ClassRoom::find($validated['class_id']);
+        if ($room && $room->students()->count() >= (int) ($room->capacity ?? 36)) {
+            return back()->withErrors(["class_id" => "Kelas {$room->name} penuh (kuota {$room->capacity})."])->withInput();
+        }
+
         Student::create($validated);
 
         return redirect()->route('admin.siswa')->with('success', 'Data siswa berhasil ditambahkan.');
@@ -228,6 +233,10 @@ class StudentController extends Controller
         $classes = ClassRoom::pluck('id', 'name');
         $existingNis = Student::pluck('nis')->flip()->toArray();
         $seenInFile = [];
+        $classCount = [];
+        foreach (ClassRoom::withCount('students')->get() as $c) {
+            $classCount[$c->id] = $c->students_count;
+        }
         $out = [];
         $valid = [];
         $ok = $dup = $err = 0;
@@ -269,14 +278,24 @@ class StudentController extends Controller
                 $reasons[] = isset($existingNis[$nis]) ? "NIS {$nis} sudah ada di sistem" : "NIS {$nis} ganda di file";
                 $dup++;
             } else {
-                $ok++;
-                $valid[] = [
-                    'nis' => $nis, 'nisn' => $nisn, 'name' => $name,
-                    'class_id' => $classes[$kelasName], 'class_name' => $kelasName,
-                    'gender' => $gender, 'status' => $status,
-                    'guardian_name' => trim($row[6] ?? ''), 'guardian_phone' => trim($row[7] ?? ''),
-                    'address' => trim($row[8] ?? ''),
-                ];
+                $cid = $classes[$kelasName];
+                $room = ClassRoom::find($cid);
+                $used = ($classCount[$cid] ?? 0);
+                if ($room && $used >= (int) ($room->capacity ?? 36)) {
+                    $state = 'error';
+                    $reasons[] = "Kelas '{$kelasName}' penuh (kuota {$room->capacity})";
+                    $err++;
+                } else {
+                    $ok++;
+                    $classCount[$cid] = $used + 1;
+                    $valid[] = [
+                        'nis' => $nis, 'nisn' => $nisn, 'name' => $name,
+                        'class_id' => $cid, 'class_name' => $kelasName,
+                        'gender' => $gender, 'status' => $status,
+                        'guardian_name' => trim($row[6] ?? ''), 'guardian_phone' => trim($row[7] ?? ''),
+                        'address' => trim($row[8] ?? ''),
+                    ];
+                }
             }
             $seenInFile[$nis] = true;
 
@@ -311,6 +330,13 @@ class StudentController extends Controller
             'guardian_phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
         ]);
+
+        if ((int) $validated['class_id'] !== (int) $student->class_id) {
+            $room = ClassRoom::find($validated['class_id']);
+            if ($room && $room->students()->count() >= (int) ($room->capacity ?? 36)) {
+                return back()->withErrors(["class_id" => "Kelas {$room->name} penuh (kuota {$room->capacity})."])->withInput();
+            }
+        }
 
         $student->update($validated);
 

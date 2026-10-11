@@ -9,20 +9,22 @@ class SchoolClassSeeder extends Seeder
 {
     public function run(): void
     {
-        $classes = [
-            ['name' => 'X RPL 1', 'grade' => 'X', 'major' => 'Rekayasa Perangkat Lunak'],
-            ['name' => 'X RPL 2', 'grade' => 'X', 'major' => 'Rekayasa Perangkat Lunak'],
-            ['name' => 'X TKJ 1', 'grade' => 'X', 'major' => 'Teknik Komputer Jaringan'],
-            ['name' => 'XI RPL 1', 'grade' => 'XI', 'major' => 'Rekayasa Perangkat Lunak'],
-            ['name' => 'XI RPL 2', 'grade' => 'XI', 'major' => 'Rekayasa Perangkat Lunak'],
-            ['name' => 'XI TKJ 1', 'grade' => 'XI', 'major' => 'Teknik Komputer Jaringan'],
-            ['name' => 'XII RPL 1', 'grade' => 'XII', 'major' => 'Rekayasa Perangkat Lunak'],
-            ['name' => 'XII MM 1', 'grade' => 'XII', 'major' => 'Multimedia / DKV'],
-        ];
+        $classes = [];
+        foreach (['X', 'XI', 'XII'] as $grade) {
+            foreach (['IPA' => 3, 'IPS' => 3, 'IBB' => 2] as $major => $rombels) {
+                for ($i = 1; $i <= $rombels; $i++) {
+                    $classes[] = [
+                        'name' => "{$grade} {$major} {$i}",
+                        'grade' => $grade,
+                        'major' => $major,
+                        'capacity' => 36,
+                    ];
+                }
+            }
+        }
 
         foreach ($classes as $c) {
             ClassRoom::updateOrCreate(['name' => $c['name']], $c);
         }
     }
 }
-

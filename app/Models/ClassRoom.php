@@ -16,7 +16,14 @@ class ClassRoom extends Model
         'grade',
         'major',
         'academic_year',
+        'capacity',
     ];
+
+    /** Sisa kursi tersedia di kelas. */
+    public function getSeatsLeftAttribute(): int
+    {
+        return max(0, (int) ($this->capacity ?? 36) - $this->students()->count());
+    }
 
     public function students()
     {
