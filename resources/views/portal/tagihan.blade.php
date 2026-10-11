@@ -63,7 +63,7 @@
             <td class="py-3 px-3 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $bill->bill_code }}<div class="text-[10px] font-semibold text-slate-400">{{ $bill->due_info }}</div></td>
             <td class="py-3 px-3 text-slate-400">{{ ($bills->firstItem() ?? 1) + $i }}</td>
             <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->feeCategory->name ?? '-' }}</td>
-            <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->total_due) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">termasuk denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
+            <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->amount) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">+ denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
             <td class="py-3 px-3 text-center">
                 @if($isPaid)
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{{ $statusLabel }}</span>
@@ -124,7 +124,7 @@
             <td class="py-3 px-3 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $bill->bill_code }}<div class="text-[10px] font-semibold text-slate-400">{{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }} • {{ $bill->due_info }}</div></td>
             <td class="py-3 px-3 text-slate-400">{{ $j + 1 }}</td>
             <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->feeCategory->name ?? '-' }}</td>
-            <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->total_due) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">termasuk denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
+            <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->amount) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">+ denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
             <td class="py-3 px-3 text-center">
                 @if($isPaid)
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{{ $statusLabel }}</span>

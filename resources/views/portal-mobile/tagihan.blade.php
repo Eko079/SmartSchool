@@ -100,7 +100,7 @@
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $bill->feeCategory->name ?? '-' }}</div>
                     <div class="m-stu-sub">{{ $bill->bill_code }} • {{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }}</div>
-                    <div class="m-stu-sub">Rp {{ number_format($bill->total_due, 0, ',', '.') }} • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
+                    <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}@if((float) $bill->fine_amount > 0) + denda Rp {{ number_format($bill->fine_amount, 0, ',', '.') }}@endif • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
                 </div>
                 @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
                 @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
