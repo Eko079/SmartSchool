@@ -33,6 +33,7 @@
                 @include('partials.flash')
                 @yield('content')
             </main>
+            @include('partials.notif-popup')
             @include('partials.footer')
         </div>
     </div>

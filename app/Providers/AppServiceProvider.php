@@ -52,6 +52,14 @@ class AppServiceProvider extends ServiceProvider
                 'total_students' => $totalStudents,
                 'total_classes' => $totalClasses,
             ]);
+            // Feed popup bell: pengingat jatuh tempo + denda (wali = miliknya, admin = global).
+            try {
+                $feed = \App\Support\Notifications::feed();
+            } catch (\Throwable $e) {
+                $feed = ['count' => 0, 'items' => []];
+            }
+            $view->with('notifFeed', $feed);
+            $view->with('hasNotif', ((int) ($feed['count'] ?? 0)) > 0);
         });
     }
 }
