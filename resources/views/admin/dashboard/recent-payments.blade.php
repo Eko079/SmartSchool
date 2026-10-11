@@ -34,7 +34,7 @@
                             <div>
                                 <div class="font-medium text-slate-800 dark:text-white">{{ $p->student->name ?? '-' }}</div>
                                 <div class="text-[11px] text-slate-400">
-                                    {{ $p->bill->feeCategory->name ?? 'Tagihan' }} • {{ $p->student->classRoom->name ?? '-' }}
+                                    {{ $p->bill->display_name }} • {{ $p->student->classRoom->name ?? '-' }}
                                 </div>
                             </div>
                         </div>

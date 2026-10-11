@@ -15,7 +15,7 @@ class ReceiptService
             'SMARTSCHOOL - KUITANSI PEMBAYARAN',
             'Invoice: ' . $payment->invoice_number,
             'Siswa: ' . ($payment->student->name ?? '-'),
-            'Kategori: ' . ($payment->bill->feeCategory->name ?? '-'),
+            'Kategori: ' . ($payment->bill->display_name ?? '-'),
             'Pokok: Rp ' . number_format($principal, 0, ',', '.'),
             'Denda: Rp ' . number_format($fine, 0, ',', '.'),
             'Jumlah: Rp ' . number_format((float) $payment->amount, 0, ',', '.'),

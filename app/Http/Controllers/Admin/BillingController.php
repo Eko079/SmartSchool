@@ -20,7 +20,8 @@ class BillingController extends Controller
             return app(MobileController::class)->tagihan($request);
         }
 
-        $categories = FeeCategory::where('is_active', true)->get();
+        $categories = FeeCategory::where('is_active', true)->get()
+            ->sortBy(fn ($c) => \App\Support\PackageRules::categorySequence($c->code))->values();
         $classes = ClassRoom::withCount(['students' => function ($q) {
             $q->where('status', 'aktif');
         }])->get();
@@ -66,6 +67,12 @@ class BillingController extends Controller
             ->get();
 
         $category = FeeCategory::findOrFail($validated['fee_category_id']);
+
+        // SPP flat 850rb (audit 2026-10-11): tolak nominal custom agar tak terulang.
+        if ($category->code === 'SPP' && round((float) $validated['amount'], 2) !== round((float) $category->default_amount, 2)) {
+            return redirect()->route('admin.billing')->with('error', 'Nominal SPP harus Rp ' . number_format($category->default_amount, 0, ',', '.') . ' sesuai kategori.');
+        }
+
         $createdCount = 0;
         $skippedCount = 0;
 
@@ -108,6 +115,7 @@ class BillingController extends Controller
                 'paid_amount' => 0,
                 'status' => 'unpaid',
                 'due_date' => $validated['due_date'],
+                'sort_order' => \App\Support\PackageRules::sequenceIndexFor($category->code, (int) $validated['period_month']),
             ]);
 
             $createdCount++;
@@ -128,7 +136,10 @@ class BillingController extends Controller
         $tag = $validated['semester'] === 'ganjil' ? 'GJL' : 'GNP';
         $cats = FeeCategory::where('is_active', true)
             ->whereIn('type', ['semesteran', 'sekali'])
-            ->where('code', 'like', '%-' . $tag)
+            ->where(function ($q) use ($validated) {
+                $q->where('semester', $validated['semester'])->orWhereNull('semester');
+            })
+            ->orderBy('sort_order')->orderBy('id')
             ->get();
 
         if ($cats->isEmpty()) {
@@ -143,12 +154,8 @@ class BillingController extends Controller
             $major = $student->classRoom->major ?? null;
             $grade = $student->classRoom->grade ?? null;
             foreach ($cats as $cat) {
-                // Daftar Ulang hanya Ganjil; khusus jurusan/tingkat ikut aturan paket.
-                if ($validated['semester'] === 'genap' && str_starts_with($cat->code, 'DU-')) {
-                    $skipped++;
-                    continue;
-                }
-                if (! \App\Support\PackageRules::appliesTo($cat->code, $major, $grade)) {
+                // Sasaran jurusan/tingkat/siswa dibaca dari kategori.
+                if (! \App\Support\PackageRules::appliesToCategory($cat, $major, $grade, $student->entry_year ? (int) $student->entry_year : null, $validated['academic_year'])) {
                     $skipped++;
                     continue;
                 }
@@ -176,7 +183,8 @@ class BillingController extends Controller
                     'amount' => $cat->default_amount,
                     'paid_amount' => 0,
                     'status' => 'unpaid',
-                    'due_date' => now()->addDays(14),
+                    'due_date' => \App\Support\PackageRules::dueDateFor($cat, $validated['academic_year'], $validated['semester']),
+                    'sort_order' => \App\Support\PackageRules::sequenceIndexFor($cat->code, $validated['semester'] === 'ganjil' ? 7 : 1),
                 ]);
                 $created++;
             }

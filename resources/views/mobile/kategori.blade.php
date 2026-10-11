@@ -42,6 +42,7 @@
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $c->code }} · {{ $c->name }}</div>
                     <div class="m-stu-sub">{{ $c->bills_count }} tagihan · terkumpul Rp {{ number_format($c->total_collected ?? 0, 0, ',', '.') }}</div>
+                    <div class="m-stu-sub">{{ $c->target_summary }}</div>
                 </div>
                 @if($c->is_active)<span class="m-pill m-pill-ok">Aktif</span>@else<span class="m-pill m-pill-warn">Nonaktif</span>@endif
             </div>

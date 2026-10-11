@@ -2,7 +2,7 @@
 @section('title', 'Detail Tagihan')
 
 @section('hero')
-    <div class="m-rev-label">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>
+    <div class="m-rev-label">{{ $bill->bill_code }} • {{ $bill->display_name }}</div>
     <div class="m-rev-row">
         <div class="m-rev-value">Rp {{ number_format($bill->total_due, 0, ',', '.') }}</div>
         @if($bill->status === 'paid')<span class="m-delta">Lunas</span>
@@ -26,7 +26,7 @@
     <div class="m-kpi-card">
         <div class="m-kpi-val">{{ $bill->period_month }}/{{ $bill->period_year }}</div>
         <div class="m-kpi-lab">Periode</div>
-        <div class="m-kpi-sub">{{ $bill->feeCategory->name ?? '-' }}</div>
+        <div class="m-kpi-sub">{{ $bill->display_name }}</div>
     </div>
 @endsection
 
@@ -61,7 +61,7 @@
 
     <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Rincian</div><span class="m-see">Order {{ $bill->order_id ?? '-' }}</span></div>
-        <div class="m-fdesc">Kategori: {{ $bill->feeCategory->name ?? '-' }}</div>
+        <div class="m-fdesc">Kategori: {{ $bill->display_name }}</div>
         <div class="m-fdesc">Siswa: {{ $bill->student->name ?? '-' }} • {{ $bill->student->classRoom->name ?? '-' }}</div>
         <div class="m-fdesc">WA Wali: {{ $bill->student->guardian_phone ?? '-' }}</div>
     </div>

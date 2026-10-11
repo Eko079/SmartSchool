@@ -31,7 +31,7 @@
                             <div class="text-[10px] font-normal text-slate-400">{{ $h->academic_year ?? '-' }} • {{ $h->semester ? ucfirst($h->semester) : '-' }}</div>
                             @endif
                         </td>
-                        <td class="py-3 px-3">{{ $h->feeCategory->name ?? $h->feeCategory->code ?? '-' }}</td>
+                        <td class="py-3 px-3">{{ $h->display_name }}</td>
                         <td class="py-3 px-3">{{ $h->total }} siswa</td>
                         <td class="py-3 px-3 font-semibold">Rp {{ number_format($h->nominal, 0, ',', '.') }}</td>
                     </tr>

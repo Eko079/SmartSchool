@@ -62,7 +62,7 @@
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition">
             <td class="py-3 px-3 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $bill->bill_code }}<div class="text-[10px] font-semibold text-slate-400">{{ $bill->due_info }}</div></td>
             <td class="py-3 px-3 text-slate-400">{{ ($bills->firstItem() ?? 1) + $i }}</td>
-            <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->feeCategory->name ?? '-' }}</td>
+            <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->display_name }}</td>
             <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->amount) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">+ denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
             <td class="py-3 px-3 text-center">
                 @if($isPaid)
@@ -81,7 +81,7 @@
                 @if(! $isPaid && empty($isArchived))
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="{{ $rp($bill->total_due) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"
@@ -89,7 +89,7 @@
                 @endif
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this, true)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="{{ $rp($bill->total_due) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"
@@ -123,7 +123,7 @@
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition">
             <td class="py-3 px-3 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $bill->bill_code }}<div class="text-[10px] font-semibold text-slate-400">{{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }} • {{ $bill->due_info }}</div></td>
             <td class="py-3 px-3 text-slate-400">{{ $j + 1 }}</td>
-            <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->feeCategory->name ?? '-' }}</td>
+            <td class="py-3 px-3 font-medium text-slate-800 dark:text-white">{{ $bill->display_name }}</td>
             <td class="py-3 px-3 font-bold whitespace-nowrap">{{ $rp($bill->amount) }}@if((float) $bill->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">+ denda {{ $rp($bill->fine_amount) }}</div>@endif</td>
             <td class="py-3 px-3 text-center">
                 @if($isPaid)
@@ -142,7 +142,7 @@
                 @if(! $isPaid && empty($isArchived))
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="{{ $rp($bill->total_due) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"
@@ -150,7 +150,7 @@
                 @endif
                 <button type="button" onclick="openPayModal({{ $bill->id }}, this, true)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="{{ $rp($bill->total_due) }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"

@@ -75,7 +75,7 @@
             <div class="font-medium text-slate-800 dark:text-white">{{ $in->student->name ?? '-' }}</div>
             <div class="text-[11px] text-slate-400">NIS: {{ $in->student->nis ?? '-' }} • {{ $in->student->classRoom->name ?? '-' }}</div>
         </td>
-        <td class="py-3 px-3 font-medium">{{ $in->bill->feeCategory->name ?? '-' }}</td>
+        <td class="py-3 px-3 font-medium">{{ $in->bill->display_name }}</td>
         <td class="py-3 px-3 font-bold text-slate-700 dark:text-slate-300">
             Rp {{ number_format($in->amount, 0, ',', '.') }}
         </td>
@@ -89,7 +89,7 @@
                 onclick="openInvoiceModal(this)"
                 data-inv="{{ $in->invoice_number }}"
                 data-name="{{ $in->student->name ?? '-' }}"
-                data-cat="{{ $in->bill->feeCategory->name ?? '-' }}"
+                data-cat="{{ $in->bill->display_name }}"
                 data-nom="Rp {{ number_format($in->amount, 0, ',', '.') }}"
                 data-status="{{ $in->status }}"
                 data-method="{{ $in->method_label }}"

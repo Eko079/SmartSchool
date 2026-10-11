@@ -26,7 +26,10 @@ class GenerateSemesterPackage extends Command
         $tag = $semester === 'ganjil' ? 'GJL' : 'GNP';
         $cats = FeeCategory::where('is_active', true)
             ->whereIn('type', ['semesteran', 'sekali'])
-            ->where('code', 'like', '%-'.$tag)
+            ->where(function ($q) use ($semester) {
+                $q->where('semester', $semester)->orWhereNull('semester');
+            })
+            ->orderBy('sort_order')->orderBy('id')
             ->get();
         if ($cats->isEmpty()) {
             $this->error("Tidak ada kategori semesteran aktif untuk {$semester}.");
@@ -54,12 +57,7 @@ class GenerateSemesterPackage extends Command
             $major = $student->classRoom->major ?? null;
             $grade = $student->classRoom->grade ?? null;
             foreach ($cats as $cat) {
-                // Daftar Ulang hanya Ganjil; khusus jurusan/tingkat ikut aturan paket.
-                if ($semester === 'genap' && str_starts_with($cat->code, 'DU-')) {
-                    $skipped++;
-                    continue;
-                }
-                if (! \App\Support\PackageRules::appliesTo($cat->code, $major, $grade)) {
+                if (! \App\Support\PackageRules::appliesToCategory($cat, $major, $grade, $student->entry_year ? (int) $student->entry_year : null, $year)) {
                     $skipped++;
                     continue;
                 }
@@ -84,7 +82,8 @@ class GenerateSemesterPackage extends Command
                     'amount' => $cat->default_amount,
                     'paid_amount' => 0,
                     'status' => 'unpaid',
-                    'due_date' => now()->addDays(14),
+                    'due_date' => \App\Support\PackageRules::dueDateFor($cat, $year, $semester),
+                    'sort_order' => \App\Support\PackageRules::sequenceIndexFor($cat->code, $semester === 'ganjil' ? 7 : 1),
                 ]);
                 $created++;
             }

@@ -82,6 +82,7 @@
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-xs">Rp</span>
             <input id="input-amount" type="number" name="amount" value="{{ $firstAmount }}" min="1" class="ss-input text-xs font-bold !py-2 !pl-9" required oninput="billingRecalc()">
         </div>
+        <p id="amount-lock-hint" class="hidden text-[11px] text-slate-400 mt-1">Nominal SPP dikunci ikut kategori.</p>
     </div>
 
     {{-- Target Kelas --}}
@@ -148,7 +149,15 @@ function billingSelectedCategory() {
 }
 function billingCategoryChanged(radio) {
     document.getElementById('input-amount').value = radio.getAttribute('data-amount');
+    billingLockAmount(radio.getAttribute('data-code'));
     billingRecalc();
+}
+function billingLockAmount(code) {
+    var locked = (code === 'SPP');
+    var input = document.getElementById('input-amount');
+    if (input) input.readOnly = locked;
+    var hint = document.getElementById('amount-lock-hint');
+    if (hint) hint.classList.toggle('hidden', !locked);
 }
 function billingCheckAll(on) {
     document.querySelectorAll('.class-checkbox').forEach(function (c) { c.checked = on; });
@@ -174,7 +183,10 @@ function billingRecalc() {
     set('sum-valid', count + ' dari ' + count + ' target lolos validasi duplikat');
     set('btn-generate-label', 'Generate ' + count + ' Tagihan');
 }
-document.addEventListener('DOMContentLoaded', billingRecalc);
+document.addEventListener('DOMContentLoaded', function () {
+    billingLockAmount(billingSelectedCategory().code);
+    billingRecalc();
+});
 document.getElementById('billing-form').addEventListener('submit', function (e) {
     // Anti submit kosong: server juga menolak, tapi cegah dini di sini.
     if (typeof billingCheckedCount === 'function' && billingCheckedCount() === 0) {

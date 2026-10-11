@@ -40,7 +40,7 @@
                 <div class="font-medium text-slate-800 dark:text-white">{{ $b->student->name ?? '-' }}</div>
                 <div class="text-[11px] text-slate-400">{{ $b->student->classRoom->name ?? '-' }}</div>
             </td>
-            <td class="py-3 px-3">{{ $b->feeCategory->name ?? '-' }}</td>
+            <td class="py-3 px-3">{{ $b->display_name }}</td>
             <td class="py-3 px-3 font-bold">Rp {{ number_format($b->amount, 0, ',', '.') }}@if((float) $b->fine_amount > 0)<div class="text-[10px] font-semibold text-rose-500">+ denda Rp {{ number_format($b->fine_amount, 0, ',', '.') }}</div>@endif</td>
             <td class="py-3 px-3 text-center"><x-ss-pill :status="$b->status" /></td>
         </tr>

@@ -46,6 +46,7 @@
         <x-ss-th sort="name" label="Nama Tagihan" baseUrl="{{ route('admin.kategori-tagihan') }}" />
         <x-ss-th sort="amount" label="Nominal" baseUrl="{{ route('admin.kategori-tagihan') }}" />
         <x-ss-th sort="type" label="Tipe" baseUrl="{{ route('admin.kategori-tagihan') }}" />
+        <th class="py-2.5 px-3">Berlaku</th>
         <x-ss-th sort="status" label="Status" align="center" baseUrl="{{ route('admin.kategori-tagihan') }}" />
         <th class="py-2.5 px-3 text-right">Aksi</th>
     </x-slot>
@@ -63,6 +64,7 @@
             Rp {{ number_format($cat->default_amount, 0, ',', '.') }}
         </td>
         <td class="py-3 px-3 text-slate-500 capitalize">{{ $cat->type }}</td>
+        <td class="py-3 px-3 text-[11px] text-slate-500">{{ $cat->target_summary }}</td>
         <td class="py-3 px-3 text-center">
             <x-ss-pill :status="$cat->is_active ? 'aktif' : 'nonaktif'" :label="$cat->is_active ? 'Aktif' : 'Nonaktif'" />
         </td>
@@ -76,6 +78,12 @@
                     data-amount="{{ (int) $cat->default_amount }}"
                     data-type="{{ $cat->type }}"
                     data-desc="{{ $cat->description ?? '' }}"
+                    data-semester="{{ $cat->semester ?? '' }}"
+                    data-majors='@json($cat->majors ?? [])'
+                    data-grades='@json($cat->grades ?? [])'
+                    data-audience="{{ $cat->audience ?? '' }}"
+                    data-duemonth="{{ $cat->due_month ?? '' }}"
+                    data-dueday="{{ $cat->due_day ?? '' }}"
                     class="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Edit</button>
                 <form action="{{ route('admin.kategori-tagihan.toggle', $cat->id) }}" method="POST" class="inline">
                     @csrf
@@ -89,7 +97,7 @@
     </tr>
     @empty
     <tr>
-        <td colspan="6" class="py-6 text-center text-slate-400">
+        <td colspan="7" class="py-6 text-center text-slate-400">
             @if(request()->anyFilled(['q', 'status']))
                 Tidak cocok dengan filter. <a href="{{ route('admin.kategori-tagihan') }}" class="text-blue-600 hover:underline">Tampilkan semua</a>.
             @else
@@ -140,7 +148,7 @@
         if (visible === 0 && filtering) {
             var tr = document.createElement('tr');
             tr.setAttribute('data-live-empty', '1');
-            tr.innerHTML = '<td colspan="6" class="py-6 text-center text-slate-400">Tidak ada hasil untuk pencarian ini.</td>';
+            tr.innerHTML = '<td colspan="7" class="py-6 text-center text-slate-400">Tidak ada hasil untuk pencarian ini.</td>';
             tbody.appendChild(tr);
         }
     }

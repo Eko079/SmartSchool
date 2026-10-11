@@ -12,7 +12,7 @@
         @forelse($payments as $pay)
         <div class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3">
             <div class="flex-1 min-w-0">
-                <div class="text-xs font-bold truncate">{{ $pay->bill->feeCategory->name ?? '-' }}</div>
+                <div class="text-xs font-bold truncate">{{ $pay->bill->display_name }}</div>
                 <div class="text-[11px] text-slate-400">{{ $pay->invoice_number }}</div>
             </div>
             <div class="text-right shrink-0">

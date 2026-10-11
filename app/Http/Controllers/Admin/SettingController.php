@@ -17,7 +17,7 @@ class SettingController extends Controller
         }
 
         $settings = SchoolSetting::pluck('value', 'key')->toArray();
-        $users = \App\Models\User::orderBy('name')->get();
+        $users = \App\Models\User::where('role', '!=', 'wali')->orderBy('name')->get();
 
         return view('admin.pengaturan', compact('settings', 'users'));
     }

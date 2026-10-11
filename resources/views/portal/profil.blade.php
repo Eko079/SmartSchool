@@ -64,7 +64,7 @@
         @forelse($student->bills->sortByDesc('due_date')->take(8) as $bill)
         <a href="{{ route('portal.tagihan.show', $bill->id) }}" class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 hover:border-blue-500 transition">
             <div class="flex-1 min-w-0">
-                <div class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ $bill->feeCategory->name ?? '-' }}</div>
+                <div class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ $bill->display_name }}</div>
                 <div class="text-[11px] text-slate-400">{{ $bill->bill_code }}</div>
             </div>
             <div class="text-right shrink-0">

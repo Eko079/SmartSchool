@@ -81,9 +81,18 @@ class FeeCategoryController extends Controller
             'type' => 'required|in:bulanan,sekali,bebas,semesteran',
             'default_amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:500',
+            'semester' => 'nullable|in:ganjil,genap',
+            'majors' => 'nullable|array',
+            'majors.*' => 'in:IPA,IPS,IBB,semua',
+            'grades' => 'nullable|array',
+            'grades.*' => 'in:X,XI,XII,semua',
+            'audience' => 'nullable|in:semua,baru,lama',
+            'due_month' => 'nullable|integer|min:1|max:12|required_with:due_day',
+            'due_day' => 'nullable|integer|min:1|max:31|required_with:due_month',
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
+        $this->normalizeTargeting($validated);
 
         FeeCategory::create($validated);
 
@@ -104,13 +113,41 @@ class FeeCategoryController extends Controller
             'type' => 'required|in:bulanan,sekali,bebas,semesteran',
             'default_amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:500',
+            'semester' => 'nullable|in:ganjil,genap',
+            'majors' => 'nullable|array',
+            'majors.*' => 'in:IPA,IPS,IBB,semua',
+            'grades' => 'nullable|array',
+            'grades.*' => 'in:X,XI,XII,semua',
+            'audience' => 'nullable|in:semua,baru,lama',
+            'due_month' => 'nullable|integer|min:1|max:12|required_with:due_day',
+            'due_day' => 'nullable|integer|min:1|max:31|required_with:due_month',
         ], [
             'code.unique' => 'Kode sudah dipakai kategori lain.',
         ]);
+        $this->normalizeTargeting($validated);
 
         $category->update($validated);
 
         return redirect()->route('admin.kategori-tagihan')->with('success', 'Kategori tagihan berhasil diperbarui.');
+    }
+
+    /** "Semua" = null (kolom kosong = berlaku untuk semua). */
+    protected function normalizeTargeting(array &$validated): void
+    {
+        $majors = array_values(array_filter((array) ($validated['majors'] ?? []), fn ($v) => $v !== 'semua'));
+        $validated['majors'] = (empty($majors) || count($majors) === 3) ? null : $majors;
+        $grades = array_values(array_filter((array) ($validated['grades'] ?? []), fn ($v) => $v !== 'semua'));
+        $validated['grades'] = (empty($grades) || count($grades) === 3) ? null : $grades;
+        if (empty($validated['audience']) || $validated['audience'] === 'semua') {
+            $validated['audience'] = null;
+        }
+        if (empty($validated['semester'])) {
+            $validated['semester'] = null;
+        }
+        if (empty($validated['due_month']) || empty($validated['due_day'])) {
+            $validated['due_month'] = null;
+            $validated['due_day'] = null;
+        }
     }
 }
 

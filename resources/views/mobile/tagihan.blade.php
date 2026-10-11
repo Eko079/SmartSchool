@@ -57,7 +57,7 @@
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $b->bill_code }}</div>
-                    <div class="m-stu-sub">{{ $b->student->name ?? '-' }} · {{ $b->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-sub">{{ $b->student->name ?? '-' }} · {{ $b->display_name }}</div>
                     <div class="m-stu-sub">Rp {{ number_format($b->amount, 0, ',', '.') }}@if((float) $b->fine_amount > 0) + denda Rp {{ number_format($b->fine_amount, 0, ',', '.') }}@endif · {{ $b->period_month }}/{{ $b->period_year }}</div>
                 </div>
                 @if($b->status === 'paid')<span class="m-pill m-pill-ok">Lunas</span>

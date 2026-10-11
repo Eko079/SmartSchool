@@ -58,6 +58,7 @@ class BillingSeeder extends Seeder
                     'paid_amount' => $paidAmount,
                     'status' => $status,
                     'due_date' => Carbon::create(2026, 9, 10),
+                    'sort_order' => \App\Support\PackageRules::sequenceIndexFor('SPP', 9),
                 ]
             );
 

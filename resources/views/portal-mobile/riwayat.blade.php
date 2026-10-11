@@ -36,7 +36,7 @@
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ $pay->bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-name">{{ $pay->bill->display_name }}</div>
                     <div class="m-stu-sub">{{ $pay->invoice_number }} • {{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
                     <div class="m-stu-sub">{{ $pay->method_label }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
                 </div>

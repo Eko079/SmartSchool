@@ -13,7 +13,7 @@
         <dl class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Kategori</dt>
-                <dd class="mt-1 font-semibold">{{ $bill->feeCategory->name ?? '-' }}</dd>
+                <dd class="mt-1 font-semibold">{{ $bill->display_name }}</dd>
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Periode</dt>

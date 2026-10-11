@@ -39,6 +39,55 @@
                     <option value="bebas">Bebas (Dapat dicicil/Gedung)</option>
                 </select>
             </div>
+            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3 space-y-3 bg-slate-50/60 dark:bg-slate-800/40">
+                <div class="font-bold text-slate-700 dark:text-slate-200">Kapan & Siapa yang Bayar</div>
+                <div>
+                    <span class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Keluar Setiap <span class="text-slate-400 font-normal" title="Dua semester = tagihan dibuat tiap semester">?</span></span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="semester" value="" class="rounded text-blue-600"> Dua semester</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="semester" value="ganjil" class="rounded text-blue-600"> Ganjil saja (Jul–Des)</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="semester" value="genap" class="rounded text-blue-600"> Genap saja (Jan–Jun)</label>
+                    </div>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Untuk Jurusan <span class="text-slate-400 font-normal" title="Jurusan yang wajib membayar tagihan ini">?</span></span>
+                    <div class="flex flex-wrap gap-2" data-target-group="majors">
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="majors[]" value="semua" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> Semua</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="majors[]" value="IPA" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> IPA</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="majors[]" value="IPS" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> IPS</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="majors[]" value="IBB" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> IBB</label>
+                    </div>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Untuk Kelas <span class="text-slate-400 font-normal" title="Tingkat kelas yang wajib membayar">?</span></span>
+                    <div class="flex flex-wrap gap-2" data-target-group="grades">
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="grades[]" value="semua" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> Semua</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="grades[]" value="X" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> X</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="grades[]" value="XI" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> XI</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="grades[]" value="XII" class="rounded text-blue-600" onchange="targetGroupChanged(this)"> XII</label>
+                    </div>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Untuk Siswa <span class="text-slate-400 font-normal" title="Baru = tahun masuk sama dengan tahun ajaran berjalan">?</span></span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="audience" value="semua" class="rounded text-blue-600"> Semua siswa</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="audience" value="baru" class="rounded text-blue-600"> Siswa baru saja</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="audience" value="lama" class="rounded text-blue-600"> Siswa lama saja</label>
+                    </div>
+                </div>
+                <div>
+                    <span class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Jatuh Tempo <span class="text-slate-400 font-normal" title="Dikosongkan = 2 minggu setelah tagihan dibuat">?</span></span>
+                    <div class="flex gap-2">
+                        <select name="due_month" id="edit-cat-duemonth" class="ss-input text-xs !py-2">
+                            <option value="">Otomatis</option>
+                            @foreach([1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'] as $m => $lbl)
+                                <option value="{{ $m }}">{{ $lbl }}</option>
+                            @endforeach
+                        </select>
+                        <input type="number" name="due_day" id="edit-cat-dueday" min="1" max="31" placeholder="Tgl" title="Tanggal 1–31" class="ss-input text-xs !py-2 w-20">
+                    </div>
+                </div>
+            </div>
             <div>
                 <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Keterangan</label>
                 <textarea name="description" id="edit-cat-desc" rows="2" class="ss-input text-xs !py-2"></textarea>
@@ -62,6 +111,25 @@ function openCategoryEdit(id, btn) {
     document.getElementById('edit-cat-amount').value = g('amount');
     document.getElementById('edit-cat-type').value = g('type') || 'bulanan';
     document.getElementById('edit-cat-desc').value = g('desc');
+    (function () {
+        var form = document.getElementById('edit-cat-form');
+        var setRadio = function (name, val, fallback) {
+            var v = val || fallback;
+            form.querySelectorAll('input[name="' + name + '"]').forEach(function (r) { r.checked = (r.value === v); });
+        };
+        var setChecks = function (name, raw) {
+            var vals = [];
+            try { vals = JSON.parse(raw || '[]'); } catch (e) { vals = []; }
+            if (!vals.length) vals = ['semua'];
+            form.querySelectorAll('input[name="' + name + '[]"]').forEach(function (c) { c.checked = vals.indexOf(c.value) !== -1; });
+        };
+        setRadio('semester', g('semester'), '');
+        setRadio('audience', g('audience'), 'semua');
+        setChecks('majors', g('majors'));
+        setChecks('grades', g('grades'));
+        document.getElementById('edit-cat-duemonth').value = g('duemonth') || '';
+        document.getElementById('edit-cat-dueday').value = g('dueday') || '';
+    })();
     document.getElementById('edit-cat-form').action = '/admin/kategori-tagihan/' + (g('id') || id);
     document.getElementById('edit-category-modal').classList.remove('hidden');
 }

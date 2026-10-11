@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Support\PackageRules;
 
 class Bill extends Model
 {
@@ -21,6 +22,7 @@ class Bill extends Model
         'amount',
         'paid_amount',
         'fine_amount',
+        'sort_order',
         'va_number',
         'qris_payload',
         'expired_at',
@@ -69,6 +71,16 @@ class Bill extends Model
     public function getStatusLabelAttribute(): string
     {
         return self::statusLabel($this->status);
+    }
+
+    /** Nama ramah tampil: "SPP Bulan N" untuk SPP, nama kategori untuk lainnya. */
+    public function getDisplayNameAttribute(): string
+    {
+        return PackageRules::displayName(
+            $this->feeCategory->code ?? '',
+            $this->feeCategory->name,
+            $this->period_month !== null ? (int) $this->period_month : null
+        );
     }
 
     /** Total wajib bayar: sisa pokok + denda. */

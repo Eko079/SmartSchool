@@ -137,7 +137,7 @@
                                 <div class="text-[11px] text-slate-400">{{ $u->email }}</div>
                             </div>
                         </div>
-                        <span class="rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5">Admin</span>
+                        <span class="rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5">{{ ucfirst($u->role ?? 'admin') }}</span>
                     </div>
                     @empty
                     <p class="text-xs text-slate-400">Belum ada pengguna.</p>

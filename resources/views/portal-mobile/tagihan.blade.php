@@ -61,7 +61,7 @@
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ $bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-name">{{ $bill->display_name }}</div>
                     <div class="m-stu-sub">{{ $bill->bill_code }} • jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>
                     <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
                 </div>
@@ -72,7 +72,7 @@
             <div class="m-actions">
                 <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="Rp {{ number_format($bill->amount, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"
@@ -81,7 +81,7 @@
                 @if(! $isPaid && empty($isArchived))
                 <button type="button" class="m-btn m-btn-primary" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="Rp {{ number_format($bill->amount, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="BELUM BAYAR">Bayar</button>
@@ -98,7 +98,7 @@
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ $bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-name">{{ $bill->display_name }}</div>
                     <div class="m-stu-sub">{{ $bill->bill_code }} • {{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }}</div>
                     <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}@if((float) $bill->fine_amount > 0) + denda Rp {{ number_format($bill->fine_amount, 0, ',', '.') }}@endif • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
                 </div>
@@ -109,7 +109,7 @@
             <div class="m-actions">
                 <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="Rp {{ number_format($bill->total_due, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="{{ $statusLabel }}"
@@ -118,7 +118,7 @@
                 @if(! $isPaid && empty($isArchived))
                 <button type="button" class="m-btn m-btn-primary" onclick="openPayModal({{ $bill->id }}, this)"
                     data-code="{{ $bill->bill_code }}"
-                    data-jenis="{{ $bill->feeCategory->name ?? '-' }}"
+                    data-jenis="{{ $bill->display_name }}"
                     data-amount="Rp {{ number_format($bill->total_due, 0, ',', '.') }}"
                     data-due="{{ $bill->due_date?->format('d M Y') ?? '-' }}"
                     data-status="BELUM BAYAR">Bayar</button>

@@ -66,9 +66,9 @@ class PortalSeeder extends Seeder
         $spp = FeeCategory::whereIn('code', ['SPP', 'SPP-2026'])->first();
         $extraPeriods = [
             ['month' => 8, 'year' => 2026, 'category' => $lab, 'amount' => 750000, 'status' => 'paid'],
-            ['month' => 7, 'year' => 2026, 'category' => $spp, 'amount' => 1200000, 'status' => 'unpaid'],
+            ['month' => 7, 'year' => 2026, 'category' => $spp, 'amount' => 850000, 'status' => 'unpaid'],
             ['month' => 6, 'year' => 2026, 'category' => $spp, 'amount' => 850000, 'status' => 'overdue'],
-            ['month' => 5, 'year' => 2026, 'category' => $spp, 'amount' => 450000, 'status' => 'paid'],
+            ['month' => 5, 'year' => 2026, 'category' => $spp, 'amount' => 850000, 'status' => 'paid'],
             ['month' => 4, 'year' => 2026, 'category' => $spp, 'amount' => 850000, 'status' => 'paid'],
         ];
         foreach ($students->take(3) as $idx => $st) {
@@ -92,6 +92,7 @@ class PortalSeeder extends Seeder
                         'fine_amount' => $p['status'] === 'overdue' ? 25000 : 0,
                         'status' => $p['status'],
                         'due_date' => Carbon::create($p['year'], $p['month'], 12),
+                        'sort_order' => \App\Support\PackageRules::sequenceIndexFor($cat->code, $p['month']),
                     ]
                 );
             }

@@ -78,7 +78,7 @@
         <a href="{{ route('portal.tagihan.show', $bill->id) }}" class="m-card m-stu-card" style="display:block;text-decoration:none;color:inherit">
             <div class="m-stu">
                 <div class="m-stu-mid">
-                    <div class="m-stu-name">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>
+                    <div class="m-stu-name">{{ $bill->bill_code }} • {{ $bill->display_name }}</div>
                     <div class="m-stu-sub">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }} • Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
                 </div>
                 @if($bill->status === 'paid')<span class="m-pill m-pill-ok">Lunas</span>
