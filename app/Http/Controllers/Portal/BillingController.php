@@ -12,6 +12,7 @@ use App\Services\ReceiptService;
 use App\Services\WaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BillingController extends Controller
 {
@@ -298,11 +299,33 @@ class BillingController extends Controller
 
     public function callback(Request $request, MidtransService $midtrans)
     {
+        if ($request->isMethod('get')) {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Midtrans webhook endpoint is ready and accepting POST requests.',
+            ], 200);
+        }
+
         $payload = $request->all();
+        Log::info('Midtrans callback incoming:', [
+            'order_id' => $payload['order_id'] ?? null,
+            'status' => $payload['transaction_status'] ?? null,
+            'status_code' => $payload['status_code'] ?? null,
+            'gross_amount' => $payload['gross_amount'] ?? null,
+        ]);
+
         abort_unless($midtrans->verifyCallback($payload), 422, 'Callback tidak valid.');
 
         $bill = $this->findBillForOrder($payload['order_id'] ?? '');
-        abort_if(! $bill, 404, 'Tagihan tidak ditemukan.');
+        if (! $bill) {
+            Log::info('Midtrans callback order tidak ditemukan (test/sample notification): ' . ($payload['order_id'] ?? '-'));
+
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Tagihan tidak ditemukan di database. Notifikasi diakui (test event).',
+            ], 200);
+        }
+
         $status = $payload['transaction_status'] ?? '';
 
         if (in_array($status, ['settlement', 'capture'])) {

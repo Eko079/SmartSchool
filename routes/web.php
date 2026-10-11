@@ -112,7 +112,7 @@ Route::get('/login', [PortalAuthController::class, 'showLoginForm'])->name('port
 Route::post('/login', [PortalAuthController::class, 'login'])->name('portal.login.attempt');
 Route::post('/otp', [PortalAuthController::class, 'requestOtp'])->name('portal.otp');
 Route::post('/reset-password', [PortalAuthController::class, 'resetPassword'])->name('portal.reset');
-Route::post('/midtrans/callback', [PortalBillingController::class, 'callback'])->name('portal.midtrans.callback');
+Route::match(['get', 'post'], '/midtrans/callback', [PortalBillingController::class, 'callback'])->name('portal.midtrans.callback');
 
 Route::middleware(['wali'])->name('portal.')->group(function () {
     Route::post('/logout', [PortalAuthController::class, 'logout'])->name('logout');
