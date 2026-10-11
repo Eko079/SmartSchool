@@ -5,7 +5,7 @@
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold">{{ strtoupper(substr($siteBrand['school_name'] ?? 'S', 0, 1)) }}</div>
         <div>
             <div class="text-base font-bold truncate">{{ $siteBrand['school_name'] ?? 'SmartSchool' }}</div>
-            <div class="text-[10px] text-slate-400">Portal Pembayaran Sekolah</div>
+            <div class="text-[10px] text-slate-400">Portal Pembayaran SMA Jaya</div>
         </div>
     </div>
 

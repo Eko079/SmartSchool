@@ -3,8 +3,6 @@
 @section('page-title', 'Profile')
 
 @section('content')
-    @php $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.'); @endphp
-
     <div class="ss-card space-y-3">
         <div class="flex flex-wrap items-center gap-3">
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">{{ strtoupper(substr($student->name, 0, 1)) }}</div>
@@ -37,44 +35,5 @@
                 <dd class="mt-1 font-semibold">{{ $student->guardian_phone ?? '-' }}</dd>
             </div>
         </dl>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="ss-card p-3!">
-            <div class="text-xs text-slate-500">Total Tagihan</div>
-            <div class="text-xl font-bold text-blue-600">{{ $rp($student->bills->sum('amount')) }}</div>
-            <div class="text-xs text-slate-400 mt-0.5">{{ $student->bills->count() }} Tagihan</div>
-        </div>
-        <div class="ss-card p-3!">
-            <div class="text-xs text-slate-500">Lunas</div>
-            <div class="text-xl font-bold text-emerald-600">{{ $rp($student->bills->where('status', 'paid')->sum('amount')) }}</div>
-            <div class="text-xs text-slate-400 mt-0.5">{{ $student->bills->where('status', 'paid')->count() }} Tagihan Lunas</div>
-        </div>
-        <div class="ss-card p-3!">
-            <div class="text-xs text-slate-500">Tagihan Berjalan</div>
-            <div class="text-xl font-bold text-amber-600">{{ $rp($student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->sum('amount')) }}</div>
-            <div class="text-xs text-slate-400 mt-0.5">{{ $student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->count() }} Tagihan Berjalan</div>
-        </div>
-    </div>
-
-    <div class="ss-card space-y-2">
-        <div class="flex items-center justify-between">
-            <h2 class="text-sm font-bold">Riwayat Pembayaran</h2>
-        </div>
-        @forelse($student->bills->sortByDesc('due_date')->take(8) as $bill)
-        <a href="{{ route('portal.tagihan.show', $bill->id) }}" class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 hover:border-blue-500 transition">
-            <div class="flex-1 min-w-0">
-                <div class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ $bill->feeCategory->name ?? '-' }}</div>
-                <div class="text-[11px] text-slate-400">{{ $bill->bill_code }}</div>
-            </div>
-            <div class="text-right shrink-0">
-                <div class="text-xs font-bold text-slate-800 dark:text-white whitespace-nowrap">{{ $rp($bill->amount) }}</div>
-                <div class="text-[11px] text-slate-400 whitespace-nowrap">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>
-            </div>
-            <x-ss-pill status="{{ $bill->status }}" label="{{ $bill->status_label }}" />
-        </a>
-        @empty
-        <p class="text-xs text-slate-400">Belum ada tagihan.</p>
-        @endforelse
     </div>
 @endsection

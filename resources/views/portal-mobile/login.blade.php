@@ -20,7 +20,7 @@
                 <div class="m-avatar">{{ strtoupper(substr($siteBrand['school_name'] ?? 'S', 0, 1)) }}</div>
                 <div class="m-meta">
                     <div class="m-name">{{ $siteBrand['school_name'] ?? 'SmartSchool' }}</div>
-                    <div class="m-sub">Portal Pembayaran Sekolah</div>
+                    <div class="m-sub">Portal Pembayaran SMA Jaya</div>
                 </div>
                 <a href="{{ route('portal.bantuan') }}" class="m-see" style="color:#BFDBFE">Bantuan</a>
             </div>

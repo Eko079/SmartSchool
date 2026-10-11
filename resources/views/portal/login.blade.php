@@ -4,7 +4,7 @@
 @section('content')
 <div class="text-xs font-bold tracking-wider text-blue-600">SISWA & ORANG TUA</div>
 <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Selamat Datang Kembali</h2>
-<p class="text-sm text-slate-500">Masuk untuk lihat tagihan & riwayat pembayaran ananda.</p>
+<p class="text-sm text-slate-500">Masuk untuk lihat tagihan & riwayat pembayaran.</p>
 
 @if(session('status'))
     <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300">
