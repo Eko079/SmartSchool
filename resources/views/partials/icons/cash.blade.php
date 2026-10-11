@@ -1,0 +1,1 @@
+<svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 6h20v12H2z"/><path d="M2 10h20"/><circle cx="12" cy="15" r="2"/><path d="M6 15h.01M18 15h.01"/></svg>

@@ -51,6 +51,7 @@ class AuditLog extends Model
             'kelas.ubah' => 'Ubah kelas',
             'kelas.hapus' => 'Hapus kelas',
             'backup.unduh' => 'Unduh backup',
+            'kasir.bayar' => 'Bayar di kasir',
             default => $aksi,
         };
     }

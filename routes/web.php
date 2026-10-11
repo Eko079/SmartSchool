@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\StaffAccountController;
 use App\Http\Controllers\Admin\ClassRoomController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\KasirController;
 use App\Http\Controllers\Portal\AuthController as PortalAuthController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\BillingController as PortalBillingController;
@@ -94,6 +95,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Backup (Super Admin saja)
     Route::get('/backup', [BackupController::class, 'index'])->name('backup')->middleware('super');
     Route::post('/backup', [BackupController::class, 'download'])->name('backup.download')->middleware('super');
+
+    // Kasir (Bendahara + Super Admin)
+    Route::get('/kasir', [KasirController::class, 'index'])->name('kasir');
+    Route::post('/kasir/bayar', [KasirController::class, 'pay'])->name('kasir.bayar');
+    Route::get('/kasir/struk', [KasirController::class, 'struk'])->name('kasir.struk');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------

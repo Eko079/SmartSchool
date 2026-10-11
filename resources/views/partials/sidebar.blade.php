@@ -30,6 +30,7 @@
             ];
             $menuTransaksi = [
                 ['route' => 'admin.billing', 'label' => 'Billing Generator', 'icon' => 'receipt'],
+                ['route' => 'admin.kasir', 'label' => 'Kasir', 'icon' => 'cash'],
                 ['route' => 'admin.laporan', 'label' => 'Laporan', 'icon' => 'file-text'],
             ];
             $menuLainnya = [

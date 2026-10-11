@@ -27,9 +27,9 @@ class AuditController extends Controller
         }
 
         $logs = $query->paginate(25)->withQueryString();
-        $aksiList = ['kategori.tambah', 'kategori.ubah', 'kategori.status', 'siswa.hapus', 'siswa.massal',
+        $aksiList = ['kasir.bayar', 'kategori.tambah', 'kategori.ubah', 'kategori.status', 'siswa.hapus', 'siswa.massal',
             'siswa.generate', 'siswa.import', 'billing.generate', 'billing.paket', 'billing.denda',
-            'akun.tambah', 'akun.reset', 'akun.status', 'pengaturan.ubah', 'kelas.tambah', 'kelas.ubah', 'kelas.hapus'];
+            'akun.tambah', 'akun.reset', 'akun.status', 'pengaturan.ubah', 'kelas.tambah', 'kelas.ubah', 'kelas.hapus', 'backup.unduh'];
 
         return view('admin.audit.index', compact('logs', 'aksiList'));
     }
