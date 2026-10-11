@@ -114,6 +114,7 @@
     </div>
 </form>
 
+@if(((auth()->user()->role ?? '') === 'superadmin'))
 <form method="POST" action="{{ route('admin.billing.package') }}" class="ss-card space-y-3" onsubmit="return ssConfirmSubmit(this, 'Generate 1 paket semester penuh untuk kelas terpilih? Duplikat dilewati otomatis.', 'Generate')">
     @csrf
     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -134,6 +135,7 @@
     </div>
     <button class="ss-btn-primary !py-2.5 text-xs">Generate Paket Semester</button>
 </form>
+@endif
 
 <script>
 function billingCheckedCount() {

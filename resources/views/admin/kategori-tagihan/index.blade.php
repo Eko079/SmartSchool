@@ -6,6 +6,8 @@
 @section('content')
     @include('admin.kategori-tagihan.cards')
     @include('admin.kategori-tagihan.table')
+    @if(((auth()->user()->role ?? '') === 'superadmin'))
     @include('admin.kategori-tagihan.create-modal')
     @include('admin.kategori-tagihan.edit-modal')
+    @endif
 @endsection

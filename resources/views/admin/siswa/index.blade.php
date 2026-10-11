@@ -104,12 +104,14 @@
                     @endif
                 </div>
             </form>
+            @if(((auth()->user()->role ?? '') === 'superadmin'))
             <div class="flex flex-wrap items-center gap-2 pt-3">
                 <span class="text-[11px] text-slate-400">Aksi massal (<span id="siswa-checked-count">0</span> dipilih):</span>
                 <button type="button" onclick="siswaBulkPromote()" class="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950 px-3 py-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900">Naik Kelas</button>
                 <button type="button" onclick="siswaBulkStatus('lulus')" class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Tandai Lulus</button>
                 <button type="button" onclick="siswaBulkStatus('nonaktif')" class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Tandai Nonaktif</button>
             </div>
+            @endif
         </x-slot>
 
         <x-slot name="head">
@@ -176,8 +178,10 @@
                         class="inline">
                         @csrf
                         @method('DELETE')
+                        @if(((auth()->user()->role ?? '') === 'superadmin'))
                         <button type="submit" title="Hapus {{ $st->name }}"
                             class="rounded-md border border-rose-200 dark:border-rose-900 px-2 py-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950 transition">Hapus</button>
+                        @endif
                     </form>
                 </div>
             </td>
@@ -275,6 +279,7 @@
         if (d && !d.classList.contains('hidden') && !d.contains(e.target)) d.classList.add('hidden');
     });
     kelasDropTick();
+    @if(((auth()->user()->role ?? '') === 'superadmin'))
     function siswaPost(url, ids, extra) {
         var f = document.createElement('form');
         f.method = 'POST';
@@ -321,6 +326,7 @@
             siswaPost('/admin/siswa/bulk-promote', list.map(function (c) { return c.value; }), {});
         });
     }
+    @endif
     </script>
 
     {{-- Live search: ketik langsung filter, hapus langsung kembali semua.

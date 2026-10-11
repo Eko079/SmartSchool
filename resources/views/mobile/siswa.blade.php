@@ -82,12 +82,14 @@
                     data-nisn="{{ $s->nisn ?? '' }}" data-gender="{{ $s->gender }}" data-status="{{ $s->status }}"
                     data-class-id="{{ $s->class_id }}" data-wali="{{ $s->guardian_name ?? '' }}"
                     data-wa="{{ $s->guardian_phone ?? '' }}" data-alamat="{{ $s->address ?? '' }}">Edit</button>
+                @if(((auth()->user()->role ?? '') === 'superadmin'))
                 <form action="{{ route('admin.siswa.destroy', $s->id) }}" method="POST" class="m-delform"
                     onsubmit="return ssConfirmSubmit(this, 'Hapus {{ addslashes($s->name) }} (NIS {{ $s->nis }})? Bila masih punya tagihan, penghapusan ditolak.', 'Hapus')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="m-btn m-btn-danger">Hapus</button>
                 </form>
+                @endif
             </div>
         </div>
     @empty
