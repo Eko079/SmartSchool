@@ -57,6 +57,7 @@
 .m-meta { flex: 1 1 0; min-width: 0; }
 .m-hi { color: #93C5FD; font-size: 11px; }
 .m-name { color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-sub { color: #BFDBFE; font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .m-iconbtn {
     position: relative; width: 40px; height: 40px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
@@ -82,6 +83,7 @@
 .m-kpi-val { font-size: 18px; font-weight: 700; }
 .m-kpi-lab { font-size: 11px; color: #BFDBFE; }
 .m-kpi-sub { font-size: 10px; color: #93C5FD; }
+.m-kpi-single { white-space: nowrap; font-size: 9px; }
 
 /* BODY */
 .m-main { padding: 20px 16px 24px 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -128,6 +130,7 @@
 
 /* Feed */
 .m-feed { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--m-border); }
+.m-fright { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
 .m-feed:first-of-type { border-top: none; }
 .m-fav { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; background: #DBEAFE; color: #1D4ED8; }
 .m-fmid { flex: 1; min-width: 0; }
@@ -145,7 +148,9 @@
 .m-stu-av { width: 40px; height: 40px; border-radius: 12px; background: #DBEAFE; color: #1D4ED8; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
 .m-stu-mid { flex: 1; min-width: 0; }
 .m-stu-name { font-size: 13px; font-weight: 700; }
+.m-stu-price { font-size: 13px; font-weight: 700; white-space: nowrap; }
 .m-stu-sub { font-size: 11px; color: var(--m-muted); }
+.m-due { color: #DC2626; }
 .m-pill { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 20px; padding: 4px 8px; }
 .m-pill-ok { background: #DCFCE7; color: #15803D; }
 .m-pill-warn { background: #FEF3C7; color: #92400E; }
@@ -210,6 +215,10 @@
 }
 .m-input:focus, .m-select:focus { border-color: #2563EB; box-shadow: 0 0 0 3px #2563eb1f; }
 .m-row2 { display: flex; gap: 10px; }
+.m-kv { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--m-border); font-size: 12px; }
+.m-kv:last-child { border-bottom: 0; }
+.m-kv > span { color: var(--m-muted); }
+.m-kv > b { font-weight: 700; text-align: right; }
 .m-row2 > * { flex: 1; }
 
 /* Animasi ala web desktop: bar grow + seg fill + transisi tema */

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Bill;
 use App\Models\Faq;
 use App\Models\FeeCategory;
+use App\Models\Payment;
 use App\Models\SchoolSetting;
 use App\Models\Student;
 use App\Models\User;
@@ -75,7 +76,7 @@ class PortalSeeder extends Seeder
                 }
                 $billCode = sprintf('INV-%d%02d-%03d', $p['year'], $p['month'], $st->id);
                 $paid = $p['status'] === 'paid' ? $p['amount'] : 0;
-                Bill::updateOrCreate(
+                $bill = Bill::updateOrCreate(
                     ['bill_code' => $billCode],
                     [
                         'order_id' => 'SS-' . $billCode,
@@ -90,6 +91,20 @@ class PortalSeeder extends Seeder
                         'due_date' => Carbon::create($p['year'], $p['month'], 12),
                     ]
                 );
+
+                // Lunas berarti ada pembayaran sukses (termasuk backfill data lama).
+                if ($p['status'] === 'paid' && ! Payment::where('bill_id', $bill->id)->where('status', 'success')->exists()) {
+                    Payment::create([
+                        'invoice_number' => Payment::nextInvoiceNumber($cat->code ?? 'INV'),
+                        'bill_id' => $bill->id,
+                        'student_id' => $st->id,
+                        'amount' => $paid,
+                        'payment_method' => 'Tunai / Kasir',
+                        'status' => 'success',
+                        'paid_at' => Carbon::create($p['year'], $p['month'], rand(10, 12), rand(8, 16), rand(10, 59)),
+                        'note' => 'Pelunasan ' . ($cat->name ?? 'tagihan'),
+                    ]);
+                }
             }
         }
 

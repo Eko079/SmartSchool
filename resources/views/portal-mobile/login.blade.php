@@ -19,11 +19,11 @@
             <div class="m-toprow">
                 <div class="m-avatar">{{ strtoupper(substr($siteBrand['school_name'] ?? 'S', 0, 1)) }}</div>
                 <div class="m-meta">
-                    <div class="m-name">{{ $siteBrand['school_name'] ?? 'SmartSchool' }} • Portal</div>
+                    <div class="m-name">{{ $siteBrand['school_name'] ?? 'SmartSchool' }}</div>
+                    <div class="m-sub">Portal Pembayaran Sekolah</div>
                 </div>
                 <a href="{{ route('portal.bantuan') }}" class="m-see" style="color:#BFDBFE">Bantuan</a>
             </div>
-            <div class="m-rev-label">SISWA & ORANG TUA</div>
             <div class="m-rev-row"><div class="m-rev-value" style="font-size:24px">Selamat Datang Kembali</div></div>
             <div class="m-rev-sub">Masuk untuk lihat tagihan & riwayat ananda.</div>
         </div>
@@ -43,15 +43,17 @@
                     <input type="password" name="password" class="m-input" placeholder="••••••••••" required>
                     <div class="m-actions" style="margin-top:10px">
                         <label class="m-stu-sub"><input type="checkbox" name="remember"> Ingat saya</label>
-                        <button type="button" class="m-btn" onclick="document.getElementById('m-otp').classList.toggle('hidden')">Lupa sandi?</button>
                     </div>
                     <div class="m-actions" style="margin-top:10px">
                         <button type="submit" class="m-btn m-btn-primary" style="flex:1">Masuk ke Portal</button>
                     </div>
+                    <div style="margin-top:10px;text-align:center">
+                        <button type="button" class="m-see" style="font-size:12px" onclick="document.getElementById('m-otp').classList.toggle('hidden')">Lupa sandi?</button>
+                    </div>
                 </form>
             </div>
 
-            <div id="m-otp" class="m-card hidden">
+            <div id="m-otp" class="m-card hidden" style="margin-top:12px">
                 <div class="m-sec-head"><div class="m-sec-title">Lupa Kata Sandi</div></div>
                 <div class="m-fdesc">Masuk email wali, terima OTP 6 digit, buat sandi baru.</div>
                 <form method="POST" action="{{ route('portal.otp') }}">
@@ -70,7 +72,7 @@
                 <div class="m-fdesc">OTP berlaku 5 menit • salah 5x kunci 15 menit.</div>
             </div>
 
-            <div class="m-foot"><div class="m-foot-tx" style="color:#93A4C4">© {{ date('Y') }} {{ $siteBrand['school_name'] ?? 'SmartSchool' }} • {{ $siteBrand['version'] ?? 'v2.4.1' }}</div></div>
+            <div class="m-foot"><div class="m-foot-tx" style="color:#93A4C4">@ {{ date('Y') }} SMA Jaya</div></div>
             <div class="m-bottompad"></div>
         </main>
     </div>

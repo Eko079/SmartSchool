@@ -2,9 +2,7 @@
 @section('title', 'Riwayat Pembayaran')
 
 @section('hero')
-    <div class="m-rev-label">RIWAYAT • {{ $payments->total() }} TRANSAKSI</div>
-    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">Lunas & Kuitansi</div></div>
-    <div class="m-rev-sub">Unduh bukti tiap transaksi sukses</div>
+    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">Riwayat Pembayaran</div></div>
 @endsection
 
 @section('kpi')
@@ -31,17 +29,18 @@
         <input type="text" placeholder="Cari tagihan, kategori…" data-m-filter=".m-stu-card" aria-label="Cari riwayat">
     </div>
 
-    <div class="m-sec-head"><div class="m-sec-title">Riwayat Transaksi</div><span class="m-see">{{ $payments->total() }} transaksi</span></div>
-    @forelse($payments as $pay)
+    <div class="m-sec-head"><div class="m-sec-title">Riwayat Pembayaran</div><a class="m-see" href="{{ request()->fullUrlWithQuery(['show' => request('show') === 'all' ? null : 'all']) }}">{{ request('show') === 'all' ? '‹ Tutup' : 'Detail ›' }}</a></div>
+    @forelse((request('show') === 'all' ? $payments->getCollection() : $payments->getCollection()->take(3)) as $pay)
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $pay->bill->feeCategory->name ?? '-' }}</div>
-                    <div class="m-stu-sub">{{ $pay->invoice_number }} • {{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
-                    <div class="m-stu-sub">{{ $pay->method_label }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
+                    <div class="m-stu-sub">{{ $pay->invoice_number }}</div>
+                    <div class="m-stu-sub">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
                 </div>
-                @if($pay->status === 'success')<span class="m-pill m-pill-ok">Lunas</span>
-                @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">Menunggu</span>
+                <div class="m-stu-price">Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
+                @if($pay->status === 'success')<span class="m-pill m-pill-ok">{{ $pay->status_label }}</span>
+                @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">{{ $pay->status_label }}</span>
                 @else<span class="m-pill m-pill-err">{{ $pay->status_label }}</span>@endif
             </div>
             <div class="m-actions">
@@ -52,6 +51,12 @@
         <div class="m-card"><div class="m-fdesc">Belum ada riwayat pembayaran.</div></div>
     @endforelse
 
+    @if($payments->total() > 3)
+    <div class="m-actions" style="margin-top:10px">
+        <a class="m-btn m-btn-primary" style="flex:1" href="{{ request()->fullUrlWithQuery(['show' => request('show') === 'all' ? null : 'all']) }}">{{ request('show') === 'all' ? 'Tutup' : 'Detail Riwayat Pembayaran' }}</a>
+    </div>
+    @endif
+
     @if($payments->hasPages())
         <div class="m-card"><div class="m-actions">
             @if($payments->previousPageUrl())<a class="m-btn" href="{{ $payments->previousPageUrl() }}">Kembali</a>@endif
@@ -59,7 +64,4 @@
         </div></div>
     @endif
 
-    <div class="m-card"><div class="m-actions">
-        <a class="m-btn m-btn-primary" href="{{ route('portal.tagihan') }}">Bayar Tagihan</a>
-    </div></div>
 @endsection

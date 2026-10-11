@@ -59,10 +59,10 @@ class Bill extends Model
     public static function statusLabel(string $status): string
     {
         return match ($status) {
-            'paid' => 'LUNAS',
-            'partial' => 'SEBAGIAN',
-            'overdue' => 'MENUNGGAK',
-            default => 'BELUM BAYAR',
+            'paid' => 'Lunas',
+            'partial' => 'Sebagian',
+            'overdue' => 'Menunggak',
+            default => 'Belum Bayar',
         };
     }
 

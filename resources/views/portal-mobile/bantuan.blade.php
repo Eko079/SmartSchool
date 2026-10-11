@@ -36,7 +36,7 @@
         <div class="m-actions">
             <a class="m-btn" href="{{ route('portal.tagihan') }}">Bayar</a>
             <a class="m-btn" href="{{ route('portal.riwayat') }}">Kuitansi</a>
-            <a class="m-btn" href="{{ route('portal.profil') }}">Profil</a>
+            <a class="m-btn" href="{{ route('portal.profil') }}">Profile</a>
         </div>
     </div>
 

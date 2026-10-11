@@ -2,9 +2,7 @@
 @section('title', 'Pengaturan')
 
 @section('hero')
-    <div class="m-rev-label">PENGATURAN AKUN</div>
-    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">{{ $user->name }}</div></div>
-    <div class="m-rev-sub">{{ $user->email }} • {{ $user->student->name ?? '-' }}</div>
+    <div class="m-rev-row"><div class="m-rev-value" style="font-size:26px">Pengaturan Akun</div></div>
 @endsection
 
 @section('kpi')
@@ -17,11 +15,6 @@
         <div class="m-kpi-val">{{ $user->notify_email ? 'Aktif' : 'Mati' }}</div>
         <div class="m-kpi-lab">Email</div>
         <div class="m-kpi-sub">Bukti bayar</div>
-    </div>
-    <div class="m-kpi-card">
-        <div class="m-kpi-val">{{ $user->student->classRoom->name ?? '-' }}</div>
-        <div class="m-kpi-lab">Kelas</div>
-        <div class="m-kpi-sub">Anak</div>
     </div>
 @endsection
 
@@ -74,8 +67,9 @@
     </div>
 
     <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Anak Tertaut</div></div>
-        <div class="m-stu-sub">{{ $user->student->name ?? '-' }} • NIS {{ $user->student->nis ?? '-' }}</div>
-        <div class="m-stu-sub">{{ $user->student->classRoom->name ?? '-' }}</div>
+        <div class="m-sec-head" style="margin-bottom:8px"><div class="m-sec-title">Anak Tertaut</div></div>
+        <div class="m-kv"><span>Nama</span><b>{{ $user->student->name ?? '-' }}</b></div>
+        <div class="m-kv"><span>NIS</span><b>{{ $user->student->nis ?? '-' }}</b></div>
+        <div class="m-kv"><span>Kelas</span><b>{{ $user->student->classRoom->name ?? '-' }}</b></div>
     </div>
 @endsection

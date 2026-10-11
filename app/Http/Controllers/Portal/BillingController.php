@@ -82,18 +82,24 @@ class BillingController extends Controller
             }
         }
 
-        $bills = $query->orderBy('fee_category_id')->orderBy('due_date')->paginate($perPage)->withQueryString();
+        $bills = $query->orderByRaw("CASE status WHEN 'overdue' THEN 0 WHEN 'paid' THEN 2 ELSE 1 END")->orderBy('due_date')->paginate($perPage)->withQueryString();
         $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
             'waiting' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount') + (float) (clone $waitingQuery)->sum('fine_amount'),
             'waiting_principal' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount'),
             'waiting_fine' => (float) (clone $waitingQuery)->sum('fine_amount'),
             'paid' => (float) (clone $query)->where('status', 'paid')->sum('amount'),
+            'open_count' => (clone $waitingQuery)->count(),
+            'paid_count' => (clone $query)->where('status', 'paid')->count(),
+            'overdue_count' => (clone $query)->where('status', 'overdue')->count(),
         ];
 
         $studentId = $this->student()->id;
         $semesters = Bill::where('student_id', $studentId)->whereNotNull('semester')->distinct()->pluck('semester')->values();
         $academicYears = Bill::where('student_id', $studentId)->whereNotNull('academic_year')->distinct()->orderByDesc('academic_year')->pluck('academic_year')->values();
+        if ($academicYears->isEmpty() && $selYear) {
+            $academicYears = collect([$selYear]);
+        }
         $categories = \App\Models\FeeCategory::whereIn('id', Bill::where('student_id', $studentId)->distinct()->pluck('fee_category_id'))->orderBy('name')->get(['id', 'name']);
 
         if ($request->expectsJson() || ! view()->exists('portal.tagihan')) {

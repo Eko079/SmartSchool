@@ -51,7 +51,7 @@
             <div class="text-xs text-slate-400 mt-0.5">{{ $student->bills->where('status', 'paid')->count() }} Tagihan Lunas</div>
         </div>
         <div class="ss-card p-3!">
-            <div class="text-xs text-slate-500">Berjalan</div>
+            <div class="text-xs text-slate-500">Tagihan Berjalan</div>
             <div class="text-xl font-bold text-amber-600">{{ $rp($student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->sum('amount')) }}</div>
             <div class="text-xs text-slate-400 mt-0.5">{{ $student->bills->whereIn('status', ['unpaid', 'partial', 'overdue'])->count() }} Tagihan Berjalan</div>
         </div>

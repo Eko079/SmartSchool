@@ -154,7 +154,7 @@
         document.getElementById('pm-status').textContent = g('status');
         document.getElementById('pm-history').textContent = (g('tanggal') !== '-' ? g('tanggal') + ' • ' + g('tempat') : '-');
         document.getElementById('pm-detail-link').href = '/tagihan/' + id;
-        var isPaid = g('status') === 'LUNAS';
+        var isPaid = g('status') === 'Lunas';
         document.getElementById('pm-paybox').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-submit').style.display = (detailOnly || isPaid) ? 'none' : '';
         document.getElementById('pm-result').classList.add('hidden');
