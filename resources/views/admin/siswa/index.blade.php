@@ -60,10 +60,10 @@
                         </button>
                         <div id="kelas-drop" class="hidden absolute z-30 mt-1 w-[38rem] max-w-[92vw] max-h-80 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 shadow-lg text-xs">
                             <div class="flex flex-wrap gap-2 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold">
-                                <button type="button" onclick="kelasDropAll(true)" class="text-blue-600">Semua</button>
+                                <button type="button" onclick="kelasDropReset()" class="text-blue-600" title="Langsung tampil semua (tanpa filter kelas)">Semua</button>
                                 <button type="button" onclick="kelasDropAll(false)" class="text-slate-400">Kosongkan</button>
                                 @foreach(['X', 'XI', 'XII'] as $g)
-                                    <button type="button" onclick="kelasDropGrade('{{ $g }}')" class="text-blue-600">Hanya {{ $g }}</button>
+                                    <button type="button" onclick="kelasDropGrade('{{ $g }}')" class="text-blue-600" title="Langsung tampil semua kelas {{ $g }}">Hanya {{ $g }}</button>
                                 @endforeach
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -91,8 +91,9 @@
                         <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                         <option value="lulus" {{ request('status') == 'lulus' ? 'selected' : '' }}>Lulus</option>
                     </select>
-                    <select name="per_page" onchange="this.form.submit()" title="Jumlah baris per halaman"
-                        class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none">
+                    <select name="per_page" onchange="this.form.submit()" title="{{ ($isFiltered ?? false) ? 'Diabaikan saat filter aktif — menampilkan semua yang cocok' : 'Jumlah baris per halaman' }}"
+                        {{ ($isFiltered ?? false) ? 'disabled' : '' }}
+                        class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs py-2 px-3 text-slate-700 dark:text-slate-200 outline-none {{ ($isFiltered ?? false) ? 'opacity-40 cursor-not-allowed' : '' }}">
                         @foreach([10, 25, 50, 100] as $n)
                             <option value="{{ $n }}" {{ (int) request('per_page', 10) === $n ? 'selected' : '' }}>{{ $n }} / halaman</option>
                         @endforeach
@@ -248,9 +249,21 @@
         document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = on; });
         kelasDropTick();
     }
+    function kelasDropSubmit() {
+        var d = document.getElementById('kelas-drop');
+        var f = d ? d.closest('form') : null;
+        if (f) f.submit();
+    }
+    // Pintasan: langsung terapkan tanpa perlu klik Tampilkan / ubah halaman dulu.
+    function kelasDropReset() {
+        document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = false; });
+        kelasDropTick();
+        kelasDropSubmit();
+    }
     function kelasDropGrade(g) {
         document.querySelectorAll('.kelas-check').forEach(function (c) { c.checked = (c.getAttribute('data-grade') === g); });
         kelasDropTick();
+        kelasDropSubmit();
     }
     document.getElementById('kelas-drop-btn').addEventListener('click', function (e) {
         e.stopPropagation();
