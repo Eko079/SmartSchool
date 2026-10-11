@@ -33,7 +33,11 @@
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Denda</dt>
-                <dd class="mt-1 font-semibold">{{ $rp($bill->fine_amount) }}</dd>
+                <dd class="mt-1 font-semibold text-rose-600">{{ $rp($bill->fine_amount) }}</dd>
+            </div>
+            <div class="rounded-xl bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-3">
+                <dt class="text-[10px] font-bold uppercase tracking-wider text-blue-500">Total Wajib Bayar</dt>
+                <dd class="mt-1 font-bold text-blue-700 dark:text-blue-300">{{ $rp($bill->total_due) }}</dd>
             </div>
             <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Jatuh Tempo</dt>

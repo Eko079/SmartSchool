@@ -39,6 +39,9 @@
     <tr><td>TA / Semester</td><td>{{ $pay->bill->academic_year ?? '-' }} • {{ $pay->bill->semester ? ucfirst($pay->bill->semester) : '-' }}</td></tr>
     <tr><td>Metode</td><td>{{ $pay->method_label }}</td></tr>
     <tr><td>Tanggal Bayar</td><td>{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</td></tr>
+    @php $kFine = (float) ($pay->bill->fine_amount ?? 0); $kPokok = max(0, (float) $pay->amount - $kFine); @endphp
+    <tr><td>Pokok</td><td>{{ $rp($kPokok) }}</td></tr>
+    <tr><td>Denda</td><td>{{ $rp($kFine) }}</td></tr>
     <tr class="total"><td>Total Dibayar</td><td>{{ $rp($pay->amount) }}</td></tr>
   </table>
   <div class="stamp">

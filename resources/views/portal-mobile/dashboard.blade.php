@@ -17,7 +17,7 @@
         <div class="m-rev-value" data-m-count="{{ $stats['waiting_amount'] }}" data-m-fmt="rp-short">{{ $rpShort($stats['waiting_amount']) }}</div>
         <span class="m-delta {{ $stats['overdue_count'] > 0 ? 'down' : '' }}">{{ $stats['active_count'] }} aktif</span>
     </div>
-    <div class="m-rev-sub">{{ $student->classRoom->name ?? '-' }} • jatuh tempo {{ $stats['nearest_due']?->due_date?->format('d M') ?? '-' }}</div>
+    <div class="m-rev-sub">{{ $student->classRoom->name ?? '-' }} • jatuh tempo {{ $stats['nearest_due']?->due_date?->format('d M') ?? '-' }}@if((float) ($stats['waiting_fine'] ?? 0) > 0) • denda {{ $rpShort($stats['waiting_fine']) }}@endif</div>
 @endsection
 
 @section('kpi')

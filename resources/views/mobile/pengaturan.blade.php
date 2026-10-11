@@ -44,6 +44,13 @@
     </div>
 
     <div class="m-card">
+        <div class="m-sec-head"><div class="m-sec-title">Denda Keterlambatan</div></div>
+        <div class="m-stu-sub">Per hari: Rp {{ number_format($settings['fine_per_day'] ?? 0, 0, ',', '.') }}</div>
+        <div class="m-stu-sub">Maksimal: Rp {{ number_format($settings['fine_max'] ?? 0, 0, ',', '.') }}</div>
+        <div class="m-stu-sub">Toleransi: {{ $settings['grace_days'] ?? 0 }} hari</div>
+    </div>
+
+    <div class="m-card">
         <div class="m-sec-head"><div class="m-sec-title">Notifikasi</div></div>
         <div class="m-stu-sub">Ubah pengaturan langsung dari popup mobile.</div>
         <div class="m-actions"><button type="button" class="m-btn m-btn-primary" onclick="mOpenSettings()">Buka Pengaturan</button></div>
@@ -70,6 +77,12 @@
                 <input type="text" name="school_phone" value="{{ $settings['school_phone'] ?? '' }}" class="m-input">
                 <label class="m-label" style="margin-top:8px">Email</label>
                 <input type="email" name="school_email" value="{{ $settings['school_email'] ?? '' }}" class="m-input">
+                <div class="m-row2" style="margin-top:8px">
+                    <div><label class="m-label">Denda / Hari</label><input type="number" name="fine_per_day" value="{{ $settings['fine_per_day'] ?? 0 }}" min="0" class="m-input"></div>
+                    <div><label class="m-label">Maks Denda</label><input type="number" name="fine_max" value="{{ $settings['fine_max'] ?? 0 }}" min="0" class="m-input"></div>
+                </div>
+                <label class="m-label" style="margin-top:8px">Toleransi (hari)</label>
+                <input type="number" name="grace_days" value="{{ $settings['grace_days'] ?? 0 }}" min="0" max="90" class="m-input">
                 <div class="m-actions" style="margin-top:12px">
                     <button type="button" class="m-btn" onclick="document.getElementById('m-settings').classList.add('hidden')">Batal</button>
                     <button type="submit" class="m-btn m-btn-primary">Simpan</button>

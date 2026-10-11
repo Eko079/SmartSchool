@@ -71,6 +71,39 @@ class Bill extends Model
         return self::statusLabel($this->status);
     }
 
+    /** Total wajib bayar: sisa pokok + denda. */
+    public function getTotalDueAttribute(): float
+    {
+        return max(0, (float) $this->amount - (float) $this->paid_amount + (float) $this->fine_amount);
+    }
+
+    /** Sisa pokok belum dibayar (tanpa denda). */
+    public function getRemainingAttribute(): float
+    {
+        return max(0, (float) $this->amount - (float) $this->paid_amount);
+    }
+
+    /** Hitung denda dari Pengaturan: per-hari x hari telat lewat grace, dibatasi max. */
+    public static function calcFine(string|object|null $dueDate, ?string $today = null): array
+    {
+        $perDay = (float) \App\Models\SchoolSetting::get('fine_per_day', 0);
+        $max = (float) \App\Models\SchoolSetting::get('fine_max', 0);
+        $grace = (int) \App\Models\SchoolSetting::get('grace_days', 0);
+        if (! $dueDate || $perDay <= 0) {
+            return ['days_late' => 0, 'fine' => 0.0];
+        }
+        $due = $dueDate instanceof \DateTimeInterface ? \Carbon\Carbon::parse($dueDate->format('Y-m-d')) : \Carbon\Carbon::parse($dueDate)->startOfDay();
+        $now = $today ? \Carbon\Carbon::parse($today)->startOfDay() : \Carbon\Carbon::today();
+        $daysLate = max(0, (int) $due->diffInDays($now, false));
+        $billable = max(0, $daysLate - $grace);
+        $fine = $billable > 0 ? $billable * $perDay : 0;
+        if ($max > 0) {
+            $fine = min($fine, $max);
+        }
+
+        return ['days_late' => $daysLate, 'fine' => (float) $fine];
+    }
+
     public function getDisplayYearAttribute(): ?string
     {
         if ($this->academic_year) {

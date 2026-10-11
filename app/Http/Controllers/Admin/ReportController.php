@@ -99,7 +99,9 @@ class ReportController extends Controller
 
         $totalIncome = Payment::where('status', 'success')->sum('amount');
         $totalBilled = Bill::sum('amount');
-        $collectionRate = $totalBilled > 0 ? round(($totalIncome / $totalBilled) * 100, 1) : 0;
+        $totalFine = (float) Bill::sum('fine_amount');
+        $totalDue = $totalBilled + $totalFine;
+        $collectionRate = $totalDue > 0 ? round(($totalIncome / $totalDue) * 100, 1) : 0;
         $totalTransactions = Payment::count();
         $totalSuccess = Payment::where('status', 'success')->count();
 
@@ -108,6 +110,8 @@ class ReportController extends Controller
             'collection_rate' => $collectionRate,
             'total_transactions' => $totalTransactions,
             'total_success' => $totalSuccess,
+            'total_fine' => $totalFine,
+            'total_due' => $totalDue,
         ];
 
         if ($request->get('export') === 'csv') {

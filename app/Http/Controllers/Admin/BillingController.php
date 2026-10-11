@@ -173,5 +173,14 @@ class BillingController extends Controller
 
         return redirect()->route('admin.billing')->with('success', "Paket semester {$validated['semester']} {$validated['academic_year']}: {$created} dibuat, {$skipped} dilewati.");
     }
+
+    /** Hitung ulang denda + status overdue manual (tanpa menunggu scheduler). */
+    public function markOverdue()
+    {
+        \Illuminate\Support\Facades\Artisan::call('bills:mark-overdue');
+        $out = trim(\Illuminate\Support\Facades\Artisan::output());
+
+        return redirect()->route('admin.billing')->with('success', $out ?: 'Denda dihitung ulang.');
+    }
 }
 

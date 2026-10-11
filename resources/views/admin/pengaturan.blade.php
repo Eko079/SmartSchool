@@ -59,6 +59,28 @@
                     </div>
                 </div>
             </div>
+
+            <div class="ss-card space-y-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 dark:text-white">Denda Keterlambatan</h2>
+                    <p class="text-xs text-slate-400">Berlaku otomatis saat lewat jatuh tempo + toleransi</p>
+                </div>
+                @php $rpS = fn($v) => 'Rp ' . number_format((float) ($v ?? 0), 0, ',', '.'); @endphp
+                <div class="grid grid-cols-3 gap-3 text-xs">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Per Hari</div>
+                        <div class="mt-1 font-semibold text-slate-800 dark:text-white">{{ $rpS($settings['fine_per_day'] ?? 0) }}</div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Maksimal</div>
+                        <div class="mt-1 font-semibold text-slate-800 dark:text-white">{{ $rpS($settings['fine_max'] ?? 0) }}</div>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Toleransi</div>
+                        <div class="mt-1 font-semibold text-slate-800 dark:text-white">{{ $settings['grace_days'] ?? 0 }} hari</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="space-y-4">

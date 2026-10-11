@@ -12,7 +12,9 @@
         <div class="ss-card !p-3">
             <div class="text-xs font-medium text-slate-500">Total Menunggu Dibayar</div>
             <div class="text-xl font-bold text-slate-800 dark:text-white" data-count-up="{{ (float) $summary['waiting'] }}" data-count-fmt="rp">{{ $rp($summary['waiting']) }}</div>
-        </div>
+            @if((float) ($summary['waiting_fine'] ?? 0) > 0)
+            <div class="text-[11px] font-semibold text-rose-500">Termasuk denda {{ $rp($summary['waiting_fine']) }}</div>
+            @endif
         <div class="ss-card !p-3">
             <div class="text-xs font-medium text-slate-500">Total Sudah Dibayar</div>
             <div class="text-xl font-bold text-emerald-600" data-count-up="{{ (float) $summary['paid'] }}" data-count-fmt="rp">{{ $rp($summary['paid']) }}</div>

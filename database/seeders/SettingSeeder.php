@@ -23,6 +23,9 @@ class SettingSeeder extends Seeder
             'midtrans_server_key' => 'SB-Mid-server-DemoSmartSchool2026',
             'midtrans_client_key' => 'SB-Mid-client-DemoSmartSchool2026',
             'midtrans_sandbox' => '1',
+            'fine_per_day' => '5000',
+            'fine_max' => '100000',
+            'grace_days' => '3',
         ];
 
         foreach ($settings as $k => $v) {

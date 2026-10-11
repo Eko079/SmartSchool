@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('bills:mark-overdue')->dailyAt('01:00');
+Schedule::command('bills:remind')->dailyAt('07:00');

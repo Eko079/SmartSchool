@@ -25,6 +25,6 @@
         <div class="text-2xl font-bold text-purple-600 dark:text-purple-400" data-count-up="{{ $stats['collection_rate'] ?? 0 }}" data-count-fmt="pct1">
             {{ $stats['collection_rate'] ?? 0 }}%
         </div>
-        <span class="text-[11px] text-slate-400">Dari seluruh tagihan aktif</span>
+        <span class="text-[11px] text-slate-400">Dari seluruh tagihan aktif @if((float) ($stats['total_fine'] ?? 0) > 0)(denda Rp {{ number_format($stats['total_fine'], 0, ',', '.') }})@endif</span>
     </div>
 </div>

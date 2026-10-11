@@ -48,6 +48,22 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <div class="sm:col-span-3 text-xs font-bold text-slate-700 dark:text-slate-200">Denda Keterlambatan (otomatis per hari lewat toleransi)</div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Denda / Hari (Rp)</label>
+                    <input type="number" name="fine_per_day" value="{{ $settings['fine_per_day'] ?? 0 }}" min="0" max="10000000" step="500" class="ss-input text-xs !py-2">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Maksimal Denda (Rp)</label>
+                    <input type="number" name="fine_max" value="{{ $settings['fine_max'] ?? 0 }}" min="0" max="100000000" step="1000" class="ss-input text-xs !py-2">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Toleransi (hari)</label>
+                    <input type="number" name="grace_days" value="{{ $settings['grace_days'] ?? 0 }}" min="0" max="90" class="ss-input text-xs !py-2">
+                </div>
+            </div>
+
             <div class="space-y-2 pt-3 border-t border-slate-200 dark:border-slate-800">
                 <div class="text-xs font-bold text-slate-700 dark:text-slate-200">Channel Pembayaran</div>
                 @php $gatewayOn = fn($k) => (string) ($settings[$k] ?? '1') === '1'; @endphp

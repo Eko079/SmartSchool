@@ -34,6 +34,9 @@ class SettingController extends Controller
             'active_semester' => 'nullable|in:Ganjil,Genap',
             'midtrans_server_key' => 'nullable|string|max:255',
             'midtrans_client_key' => 'nullable|string|max:255',
+            'fine_per_day' => 'nullable|numeric|min:0|max:10000000',
+            'fine_max' => 'nullable|numeric|min:0|max:100000000',
+            'grace_days' => 'nullable|integer|min:0|max:90',
         ]);
 
         // Checkbox gateway/sandbox: kirim '1' bila dicentang, '0' bila tidak (anti nyangkut ON).

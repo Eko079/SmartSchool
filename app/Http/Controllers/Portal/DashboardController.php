@@ -22,7 +22,8 @@ class DashboardController extends Controller
 
         $bills = Bill::with('feeCategory')->where('student_id', $student->id);
         $activeBills = (clone $bills)->whereIn('status', ['unpaid', 'partial', 'overdue']);
-        $waitingAmount = (float) (clone $activeBills)->sum('amount') - (float) (clone $activeBills)->sum('paid_amount');
+        $waitingAmount = (float) (clone $activeBills)->sum('amount') - (float) (clone $activeBills)->sum('paid_amount') + (float) (clone $activeBills)->sum('fine_amount');
+        $waitingFine = (float) (clone $activeBills)->sum('fine_amount');
         $paidBills = (clone $bills)->where('status', 'paid');
         $overdueBills = (clone $bills)->where('status', 'overdue');
 
@@ -46,6 +47,7 @@ class DashboardController extends Controller
             'stats' => [
                 'active_count' => (clone $activeBills)->count(),
                 'waiting_amount' => max(0, $waitingAmount),
+                'waiting_fine' => max(0, $waitingFine),
                 'paid_count' => (clone $paidBills)->count(),
                 'overdue_count' => (clone $overdueBills)->count(),
                 'nearest_due' => $nearest,

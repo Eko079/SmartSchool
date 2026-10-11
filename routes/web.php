@@ -54,6 +54,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
     Route::post('/billing/generate', [BillingController::class, 'generate'])->name('billing.generate');
     Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package');
+    Route::post('/billing/mark-overdue', [BillingController::class, 'markOverdue'])->name('billing.overdue');
 
     // Laporan
     Route::get('/laporan', [ReportController::class, 'index'])->name('laporan');

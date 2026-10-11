@@ -5,8 +5,9 @@
 @section('content')
     @php
         $rp = fn($v) => 'Rp ' . number_format((float) $v, 0, ',', '.');
+        $fineNote = (float) ($stats['waiting_fine'] ?? 0) > 0 ? ' • denda ' . $rp($stats['waiting_fine']) : '';
         $cards = [
-            ['title' => 'Menunggu Dibayar', 'val' => $rp($stats['waiting_amount']), 'count' => (float) $stats['waiting_amount'], 'fmt' => 'rp', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', 'text' => 'text-amber-600', 'sub' => $stats['active_count'] . ' Tagihan Berjalan'],
+            ['title' => 'Menunggu Dibayar', 'val' => $rp($stats['waiting_amount']), 'count' => (float) $stats['waiting_amount'], 'fmt' => 'rp', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400', 'text' => 'text-amber-600', 'sub' => $stats['active_count'] . ' Tagihan Berjalan' . $fineNote],
             ['title' => 'Sudah Lunas', 'val' => $stats['paid_count'] . ' Tagihan Lunas', 'count' => (float) $stats['paid_count'], 'fmt' => 'int', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400', 'text' => 'text-emerald-600', 'sub' => 'Termasuk Kuitansi Tersedia'],
             ['title' => 'Tagihan Berjalan', 'val' => $stats['overdue_count'] . ' Tagihan Berjalan', 'count' => (float) $stats['overdue_count'], 'fmt' => 'int', 'bg' => 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400', 'text' => 'text-rose-600', 'sub' => ''],
         ];

@@ -6,7 +6,7 @@
     <div class="m-rev-row">
         <div class="m-rev-value" data-m-count="{{ $summary['waiting'] }}" data-m-fmt="rp-short">Rp {{ number_format($summary['waiting'], 0, ',', '.') }}</div>
     </div>
-    <div class="m-rev-sub">Lunas Rp {{ number_format($summary['paid'], 0, ',', '.') }}</div>
+    <div class="m-rev-sub">Lunas Rp {{ number_format($summary['paid'], 0, ',', '.') }}@if((float) ($summary['waiting_fine'] ?? 0) > 0) • denda Rp {{ number_format($summary['waiting_fine'], 0, ',', '.') }}@endif</div>
 @endsection
 
 @section('kpi')

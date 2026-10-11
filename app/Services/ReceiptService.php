@@ -9,11 +9,15 @@ class ReceiptService
     public function receiptText(Payment $payment): string
     {
         $payment->loadMissing(['student', 'bill.feeCategory']);
+        $fine = (float) ($payment->bill->fine_amount ?? 0);
+        $principal = max(0, (float) $payment->amount - $fine);
         $lines = [
             'SMARTSCHOOL - KUITANSI PEMBAYARAN',
             'Invoice: ' . $payment->invoice_number,
             'Siswa: ' . ($payment->student->name ?? '-'),
             'Kategori: ' . ($payment->bill->feeCategory->name ?? '-'),
+            'Pokok: Rp ' . number_format($principal, 0, ',', '.'),
+            'Denda: Rp ' . number_format($fine, 0, ',', '.'),
             'Jumlah: Rp ' . number_format((float) $payment->amount, 0, ',', '.'),
             'Metode: ' . $payment->method_label,
             'Waktu: ' . ($payment->paid_at?->format('d M Y H:i') ?? '-'),

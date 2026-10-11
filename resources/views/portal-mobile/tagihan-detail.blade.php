@@ -4,7 +4,7 @@
 @section('hero')
     <div class="m-rev-label">{{ $bill->bill_code }} • {{ $bill->feeCategory->name ?? '-' }}</div>
     <div class="m-rev-row">
-        <div class="m-rev-value">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+        <div class="m-rev-value">Rp {{ number_format($bill->total_due, 0, ',', '.') }}</div>
         @if($bill->status === 'paid')<span class="m-delta">Lunas</span>
         @elseif($bill->status === 'overdue')<span class="m-delta down">Menunggak</span>
         @else<span class="m-delta">Aktif</span>@endif

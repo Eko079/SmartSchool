@@ -48,6 +48,10 @@ class BillingController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('overdue_only') && $request->boolean('overdue_only')) {
+            $query->where('status', 'overdue');
+        }
+
         if ($request->filled('academic_year')) {
             $taFilter = $request->string('academic_year')->toString();
             $query->where(fn ($w) => $w->where('academic_year', $taFilter)->orWhereNull('academic_year'));
@@ -79,8 +83,11 @@ class BillingController extends Controller
         }
 
         $bills = $query->orderBy('fee_category_id')->orderBy('due_date')->paginate($perPage)->withQueryString();
+        $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
-            'waiting' => (float) (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue'])->sum('amount'),
+            'waiting' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount') + (float) (clone $waitingQuery)->sum('fine_amount'),
+            'waiting_principal' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount'),
+            'waiting_fine' => (float) (clone $waitingQuery)->sum('fine_amount'),
             'paid' => (float) (clone $query)->where('status', 'paid')->sum('amount'),
         ];
 
@@ -180,7 +187,14 @@ class BillingController extends Controller
         $status = $payload['transaction_status'] ?? '';
 
         if (in_array($status, ['settlement', 'capture'])) {
-            $amount = (float) ($payload['gross_amount'] ?? $bill->amount);
+            // Segarkan denda terkini lalu lunasi total pokok + denda.
+            $calc = Bill::calcFine($bill->due_date);
+            $bill->forceFill(['fine_amount' => $calc['fine']])->save();
+            $bill->refresh();
+            $totalDue = $bill->total_due;
+            $amount = (float) ($payload['gross_amount'] ?? $totalDue);
+            // Jangan catat kurang dari total wajib (pokok + denda).
+            $amount = max($amount, $totalDue);
             $bill->loadMissing('feeCategory');
             $existing = Payment::where('bill_id', $bill->id)->where('status', 'success')->first();
             $attrs = [
@@ -205,10 +219,11 @@ class BillingController extends Controller
             }
             $bill->forceFill([
                 'paid_amount' => $bill->amount,
+                'fine_amount' => $calc['fine'],
                 'status' => 'paid',
             ])->save();
 
-            BillEvent::create(['bill_id' => $bill->id, 'event' => 'settlement', 'message' => 'Settlement otomatis order ' . $payload['order_id']]);
+            BillEvent::create(['bill_id' => $bill->id, 'event' => 'settlement', 'message' => 'Settlement otomatis order ' . $payload['order_id'] . ' total Rp ' . number_format($amount, 0, ',', '.') . ' (pokok + denda)']);
 
             return response()->json(['message' => 'OK', 'payment_id' => $payment->id]);
         }
