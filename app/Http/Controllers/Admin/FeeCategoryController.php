@@ -13,7 +13,7 @@ class FeeCategoryController extends Controller
     public function index(Request $request)
     {
         // HP => tampilan mobile otomatis (URL tetap /admin/kategori-tagihan).
-        if (Device::isPhone($request)) {
+        if (Device::useMobileView($request)) {
             return app(MobileController::class)->kategori($request);
         }
 

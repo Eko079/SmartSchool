@@ -13,7 +13,7 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         // HP => tampilan mobile otomatis (URL tetap /admin/siswa).
-        if (Device::isPhone($request)) {
+        if (Device::useMobileView($request)) {
             return app(MobileController::class)->siswa($request);
         }
 

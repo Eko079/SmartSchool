@@ -35,7 +35,7 @@ class TicketController extends Controller
             'closed' => HelpTicket::where('status', 'closed')->count(),
         ];
 
-        if (Device::isPhone($request)) {
+        if (Device::useMobileView($request)) {
             return view('mobile.tiket', compact('tickets', 'stats'));
         }
 

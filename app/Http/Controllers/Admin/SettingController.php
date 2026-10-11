@@ -12,7 +12,7 @@ class SettingController extends Controller
     public function index(Request $request)
     {
         // HP => tampilan mobile otomatis (URL tetap /admin/pengaturan).
-        if (Device::isPhone($request)) {
+        if (Device::useMobileView($request)) {
             return app(MobileController::class)->pengaturan();
         }
 

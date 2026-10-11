@@ -43,28 +43,28 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/siswa/{student}/edit', [StudentController::class, 'edit'])->name('siswa.edit');
     Route::put('/siswa/{student}', [StudentController::class, 'update'])->name('siswa.update');
     Route::post('/siswa/{student}/generate', [StudentController::class, 'generate'])->name('siswa.generate');
-    Route::post('/siswa/bulk-status', [StudentController::class, 'bulkStatus'])->name('siswa.bulk-status');
-    Route::post('/siswa/bulk-promote', [StudentController::class, 'bulkPromote'])->name('siswa.bulk-promote');
-    Route::delete('/siswa/{student}', [StudentController::class, 'destroy'])->name('siswa.destroy');
+    Route::post('/siswa/bulk-status', [StudentController::class, 'bulkStatus'])->name('siswa.bulk-status')->middleware('super');
+    Route::post('/siswa/bulk-promote', [StudentController::class, 'bulkPromote'])->name('siswa.bulk-promote')->middleware('super');
+    Route::delete('/siswa/{student}', [StudentController::class, 'destroy'])->name('siswa.destroy')->middleware('super');
 
-    // Kategori Tagihan
+    // Kategori Tagihan (tulis = Super Admin; baca = semua staf)
     Route::get('/kategori-tagihan', [FeeCategoryController::class, 'index'])->name('kategori-tagihan');
-    Route::post('/kategori-tagihan', [FeeCategoryController::class, 'store'])->name('kategori-tagihan.store');
-    Route::put('/kategori-tagihan/{category}', [FeeCategoryController::class, 'update'])->name('kategori-tagihan.update');
-    Route::post('/kategori-tagihan/{category}/toggle', [FeeCategoryController::class, 'toggle'])->name('kategori-tagihan.toggle');
+    Route::post('/kategori-tagihan', [FeeCategoryController::class, 'store'])->name('kategori-tagihan.store')->middleware('super');
+    Route::put('/kategori-tagihan/{category}', [FeeCategoryController::class, 'update'])->name('kategori-tagihan.update')->middleware('super');
+    Route::post('/kategori-tagihan/{category}/toggle', [FeeCategoryController::class, 'toggle'])->name('kategori-tagihan.toggle')->middleware('super');
 
-    // Billing Generator
+    // Billing Generator (paket massal = Super Admin)
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
     Route::post('/billing/generate', [BillingController::class, 'generate'])->name('billing.generate');
-    Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package');
+    Route::post('/billing/generate-package', [BillingController::class, 'generatePackage'])->name('billing.package')->middleware('super');
     Route::post('/billing/mark-overdue', [BillingController::class, 'markOverdue'])->name('billing.overdue');
 
     // Laporan
     Route::get('/laporan', [ReportController::class, 'index'])->name('laporan');
 
-    // Pengaturan
-    Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan');
-    Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
+    // Pengaturan (Super Admin saja)
+    Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan')->middleware('super');
+    Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update')->middleware('super');
 
     // Tiket bantuan wali
     Route::get('/tiket', [\App\Http\Controllers\Admin\TicketController::class, 'index'])->name('tiket');

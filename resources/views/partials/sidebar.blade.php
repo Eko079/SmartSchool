@@ -29,8 +29,12 @@
             ];
             $menuLainnya = [
                 ['route' => 'admin.tiket', 'label' => 'Tiket Bantuan', 'icon' => 'life-buoy'],
+            ];
+            $menuSuper = [
                 ['route' => 'admin.pengaturan', 'label' => 'Pengaturan', 'icon' => 'settings'],
             ];
+            $isSuper = ((Auth::user()->role ?? '') === 'superadmin');
+            $roleLabel = $isSuper ? 'Super Admin' : 'Bendahara';
         @endphp
         @foreach($menuUtama as $item)
             <a href="{{ route($item['route']) }}"
@@ -77,6 +81,16 @@
                 {{ $item['label'] }}
             </a>
         @endforeach
+        @if($isSuper)
+            @foreach($menuSuper as $item)
+                <a href="{{ route($item['route']) }}"
+                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
+                          {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    @include('partials.icons.' . $item['icon'])
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
+        @endif
     </nav>
 
     {{-- Spacer (dorong profil ke bawah) --}}
@@ -89,7 +103,7 @@
         </div>
         <div class="flex-1 min-w-0">
             <div class="text-xs font-semibold truncate">{{ Auth::user()->name ?? 'Admin' }}</div>
-            <div class="text-[10px] text-slate-400 truncate">{{ Auth::user()->email ?? '-' }}</div>
+            <div class="text-[10px] text-slate-400 truncate">{{ $roleLabel ?? '' }} • {{ Auth::user()->email ?? '-' }}</div>
         </div>
         <form method="POST" action="{{ route('logout') }}">
             @csrf

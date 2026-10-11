@@ -30,4 +30,24 @@ class Device
 
         return (bool) preg_match('/iphone|ipod|windows\s*phone|blackberry|iemobile|opera\s*mini|mobile/', $ua);
     }
+
+    /**
+     True bila halaman staf boleh tampil versi HP.
+     Super Admin selalu dapat tampilan laptop (tidak ada versi mobile).
+     Tablet/laptop/desktop => false (tampil desktop).
+     */
+    public static function useMobileView(?Request $request = null): bool
+    {
+        if (! static::isPhone($request)) {
+            return false;
+        }
+
+        try {
+            $role = auth()->user()->role ?? null;
+        } catch (\Throwable $e) {
+            $role = null;
+        }
+
+        return $role !== 'superadmin';
+    }
 }
