@@ -12,21 +12,29 @@ class SemesterPackageSeeder extends Seeder
 {
     public function run(): void
     {
-        // Paket SMA 2026/2027 Ganjil + Genap. SPP tetap lintas semester (bulanan).
+        // Paket SMA 2026/2027: umum + khusus jurusan + kondisional.
+        // majors: null = semua jurusan; grades: null = semua tingkat (X/XI/XII).
         $packages = [
-            ['code' => 'HRG-GJL', 'name' => 'Herregistrasi Ganjil 2026/2027', 'type' => 'semesteran', 'default_amount' => 500000, 'description' => 'Daftar ulang semester ganjil', 'semester' => 'ganjil', 'due' => '2026-07-15', 'month' => 7],
-            ['code' => 'LKS-GJL', 'name' => 'LKS & Modul Semester Ganjil', 'type' => 'semesteran', 'default_amount' => 600000, 'description' => 'Paket LKS dan modul 1 semester', 'semester' => 'ganjil', 'due' => '2026-07-31', 'month' => 7],
-            ['code' => 'LAB-GJL', 'name' => 'Praktikum Lab & CBT Ganjil', 'type' => 'semesteran', 'default_amount' => 450000, 'description' => 'Dana praktikum dan ujian CBT', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8],
-            ['code' => 'EKS-GJL', 'name' => 'Ekskul & OSIS Ganjil', 'type' => 'semesteran', 'default_amount' => 200000, 'description' => 'Iuran ekskul dan OSIS per semester', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8],
-            ['code' => 'PTS-GJL', 'name' => 'Ujian PTS/STS Ganjil', 'type' => 'semesteran', 'default_amount' => 300000, 'description' => 'Biaya ujian tengah semester', 'semester' => 'ganjil', 'due' => '2026-09-30', 'month' => 9],
-            ['code' => 'PAS-GJL', 'name' => 'Ujian PAS/SAS Ganjil', 'type' => 'semesteran', 'default_amount' => 400000, 'description' => 'Biaya ujian akhir semester', 'semester' => 'ganjil', 'due' => '2026-11-30', 'month' => 11],
-            ['code' => 'HRG-GNP', 'name' => 'Herregistrasi Genap 2026/2027', 'type' => 'semesteran', 'default_amount' => 500000, 'description' => 'Daftar ulang semester genap', 'semester' => 'genap', 'due' => '2027-01-15', 'month' => 1],
-            ['code' => 'LKS-GNP', 'name' => 'LKS & Modul Semester Genap', 'type' => 'semesteran', 'default_amount' => 600000, 'description' => 'Paket LKS dan modul 1 semester', 'semester' => 'genap', 'due' => '2027-01-31', 'month' => 1],
-            ['code' => 'LAB-GNP', 'name' => 'Praktikum Lab & CBT Genap', 'type' => 'semesteran', 'default_amount' => 450000, 'description' => 'Dana praktikum dan ujian CBT', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2],
-            ['code' => 'EKS-GNP', 'name' => 'Ekskul & OSIS Genap', 'type' => 'semesteran', 'default_amount' => 200000, 'description' => 'Iuran ekskul dan OSIS per semester', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2],
-            ['code' => 'PTS-GNP', 'name' => 'Ujian PTS/STS Genap', 'type' => 'semesteran', 'default_amount' => 300000, 'description' => 'Biaya ujian tengah semester', 'semester' => 'genap', 'due' => '2027-03-30', 'month' => 3],
-            ['code' => 'PAS-GNP', 'name' => 'Ujian PAS/SAS Genap', 'type' => 'semesteran', 'default_amount' => 400000, 'description' => 'Biaya ujian akhir semester', 'semester' => 'genap', 'due' => '2027-05-31', 'month' => 5],
-            ['code' => 'PSAJ-GNP', 'name' => 'PSAJ / UKK Kelas XII Genap', 'type' => 'semesteran', 'default_amount' => 750000, 'description' => 'Ujian akhir jenjang khusus kelas XII', 'semester' => 'genap', 'due' => '2027-03-31', 'month' => 3],
+            // 1. Umum — Daftar Ulang hanya Ganjil.
+            ['code' => 'DU-GJL', 'name' => 'Daftar Ulang', 'type' => 'semesteran', 'default_amount' => 500000, 'description' => 'Administrasi pendataan awal semester ganjil', 'semester' => 'ganjil', 'due' => '2026-07-15', 'month' => 7, 'majors' => null, 'grades' => null],
+            ['code' => 'LKS-GJL', 'name' => 'Buku LKS / Modul', 'type' => 'semesteran', 'default_amount' => 600000, 'description' => 'Buku kerja cetak pendamping 1 semester', 'semester' => 'ganjil', 'due' => '2026-07-31', 'month' => 7, 'majors' => null, 'grades' => null],
+            ['code' => 'UJI-GJL', 'name' => 'Ujian Semester', 'type' => 'semesteran', 'default_amount' => 700000, 'description' => 'Iuran PTS dan PAS digabung', 'semester' => 'ganjil', 'due' => '2026-11-30', 'month' => 11, 'majors' => null, 'grades' => null],
+            ['code' => 'KOM-GJL', 'name' => 'Iuran Komite / OSIS', 'type' => 'semesteran', 'default_amount' => 200000, 'description' => 'Dukungan ekstrakurikuler dan acara sekolah', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8, 'majors' => null, 'grades' => null],
+            ['code' => 'LKS-GNP', 'name' => 'Buku LKS / Modul', 'type' => 'semesteran', 'default_amount' => 600000, 'description' => 'Buku kerja cetak pendamping 1 semester', 'semester' => 'genap', 'due' => '2027-01-31', 'month' => 1, 'majors' => null, 'grades' => null],
+            ['code' => 'UJI-GNP', 'name' => 'Ujian Semester', 'type' => 'semesteran', 'default_amount' => 700000, 'description' => 'Iuran PTS dan PAS digabung', 'semester' => 'genap', 'due' => '2027-05-31', 'month' => 5, 'majors' => null, 'grades' => null],
+            ['code' => 'KOM-GNP', 'name' => 'Iuran Komite / OSIS', 'type' => 'semesteran', 'default_amount' => 200000, 'description' => 'Dukungan ekstrakurikuler dan acara sekolah', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2, 'majors' => null, 'grades' => null],
+            // 2. Khusus jurusan.
+            ['code' => 'LAB-IPA-GJL', 'name' => 'Praktikum Laboratorium', 'type' => 'semesteran', 'default_amount' => 450000, 'description' => 'Bahan habis pakai kimia, biologi, fisika', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8, 'majors' => ['IPA'], 'grades' => null],
+            ['code' => 'LAB-IPA-GNP', 'name' => 'Praktikum Laboratorium', 'type' => 'semesteran', 'default_amount' => 450000, 'description' => 'Bahan habis pakai kimia, biologi, fisika', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2, 'majors' => ['IPA'], 'grades' => null],
+            ['code' => 'STD-IPS-GJL', 'name' => 'Studi Lapangan', 'type' => 'semesteran', 'default_amount' => 400000, 'description' => 'Kunjungan observasi museum/wilayah', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8, 'majors' => ['IPS'], 'grades' => null],
+            ['code' => 'STD-IPS-GNP', 'name' => 'Studi Lapangan', 'type' => 'semesteran', 'default_amount' => 400000, 'description' => 'Kunjungan observasi museum/wilayah', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2, 'majors' => ['IPS'], 'grades' => null],
+            ['code' => 'LAB-IBB-GJL', 'name' => 'Praktikum Bahasa', 'type' => 'semesteran', 'default_amount' => 350000, 'description' => 'Penggunaan dan perawatan lab bahasa', 'semester' => 'ganjil', 'due' => '2026-08-31', 'month' => 8, 'majors' => ['IBB'], 'grades' => null],
+            ['code' => 'LAB-IBB-GNP', 'name' => 'Praktikum Bahasa', 'type' => 'semesteran', 'default_amount' => 350000, 'description' => 'Penggunaan dan perawatan lab bahasa', 'semester' => 'genap', 'due' => '2027-02-28', 'month' => 2, 'majors' => ['IBB'], 'grades' => null],
+            ['code' => 'PEN-IBB-GJL', 'name' => 'Pentas Budaya', 'type' => 'semesteran', 'default_amount' => 300000, 'description' => 'Pagelaran seni, teater, festival bahasa', 'semester' => 'ganjil', 'due' => '2026-09-30', 'month' => 9, 'majors' => ['IBB'], 'grades' => null],
+            ['code' => 'PEN-IBB-GNP', 'name' => 'Pentas Budaya', 'type' => 'semesteran', 'default_amount' => 300000, 'description' => 'Pagelaran seni, teater, festival bahasa', 'semester' => 'genap', 'due' => '2027-03-30', 'month' => 3, 'majors' => ['IBB'], 'grades' => null],
+            // 4. PSAJ khusus XII Genap. 5. Seragam khusus X Ganjil.
+            ['code' => 'PSAJ-GNP', 'name' => 'PSAJ / UKK Kelas XII', 'type' => 'semesteran', 'default_amount' => 750000, 'description' => 'Ujian akhir jenjang khusus kelas XII', 'semester' => 'genap', 'due' => '2027-03-31', 'month' => 3, 'majors' => null, 'grades' => ['XII']],
+            ['code' => 'SRG-GJL', 'name' => 'Paket Seragam Sekolah', 'type' => 'sekali', 'default_amount' => 1200000, 'description' => 'Paket seragam siswa baru kelas X', 'semester' => 'ganjil', 'due' => '2026-07-15', 'month' => 7, 'majors' => null, 'grades' => ['X']],
         ];
 
         $cats = [];
@@ -37,12 +45,30 @@ class SemesterPackageSeeder extends Seeder
             ]);
         }
 
-        $students = Student::where('status', 'aktif')->get();
+        // Nonaktifkan kategori lama yang digantikan (tagihan lama tetap tersimpan).
+        FeeCategory::whereIn('code', [
+            'HRG-GJL', 'HRG-GNP', 'PTS-GJL', 'PAS-GJL', 'PTS-GNP', 'PAS-GNP',
+            'LAB-GJL', 'LAB-GNP', 'EKS-GJL', 'EKS-GNP',
+        ])->update(['is_active' => false]);
+
+        $students = Student::with('classRoom')->where('status', 'aktif')->get();
         foreach ($students as $st) {
+            $major = $st->classRoom->major ?? null;
+            $grade = $st->classRoom->grade ?? null;
             foreach ($packages as $p) {
+                // Daftar Ulang hanya Ganjil.
+                if ($p['semester'] === 'genap' && str_starts_with($p['code'], 'DU-')) {
+                    continue;
+                }
+                if ($p['majors'] !== null && ! in_array($major, $p['majors'], true)) {
+                    continue;
+                }
+                if ($p['grades'] !== null && ! in_array($grade, $p['grades'], true)) {
+                    continue;
+                }
                 $tag = $p['semester'] === 'ganjil' ? 'GJL' : 'GNP';
                 $year = $p['semester'] === 'ganjil' ? 2026 : 2027;
-                $billCode = 'INV-' . $year . '-' . $tag . '-' . substr($p['code'], 0, 3) . '-' . str_pad($st->id, 4, '0', STR_PAD_LEFT);
+                $billCode = 'INV-'.$year.'-'.$tag.'-'.substr(strtoupper(preg_replace('/[^A-Z0-9]/', '', $p['code'])), 0, 3).'-'.str_pad($st->id, 4, '0', STR_PAD_LEFT);
                 Bill::updateOrCreate(
                     ['bill_code' => $billCode],
                     [
@@ -60,10 +86,5 @@ class SemesterPackageSeeder extends Seeder
                 );
             }
         }
-
-        // Tandai tagihan lama tanpa TA sebagai lintas-semester SPP bila kategorinya bulanan.
-        Bill::whereNull('academic_year')
-            ->whereHas('feeCategory', fn ($q) => $q->where('type', 'bulanan'))
-            ->update(['academic_year' => '2026/2027', 'semester' => 'ganjil']);
     }
 }

@@ -127,7 +127,7 @@ class BillingController extends Controller
 
         $tag = $validated['semester'] === 'ganjil' ? 'GJL' : 'GNP';
         $cats = FeeCategory::where('is_active', true)
-            ->where('type', 'semesteran')
+            ->whereIn('type', ['semesteran', 'sekali'])
             ->where('code', 'like', '%-' . $tag)
             ->get();
 
@@ -135,12 +135,23 @@ class BillingController extends Controller
             return redirect()->route('admin.billing')->with('error', 'Tidak ada kategori semesteran aktif untuk semester ' . $validated['semester'] . '.');
         }
 
-        $students = Student::whereIn('class_id', $validated['classes'])->where('status', 'aktif')->get();
+        $students = Student::with('classRoom')->whereIn('class_id', $validated['classes'])->where('status', 'aktif')->get();
         $created = 0;
         $skipped = 0;
 
         foreach ($students as $student) {
+            $major = $student->classRoom->major ?? null;
+            $grade = $student->classRoom->grade ?? null;
             foreach ($cats as $cat) {
+                // Daftar Ulang hanya Ganjil; khusus jurusan/tingkat ikut aturan paket.
+                if ($validated['semester'] === 'genap' && str_starts_with($cat->code, 'DU-')) {
+                    $skipped++;
+                    continue;
+                }
+                if (! \App\Support\PackageRules::appliesTo($cat->code, $major, $grade)) {
+                    $skipped++;
+                    continue;
+                }
                 $exists = Bill::where('student_id', $student->id)
                     ->where('fee_category_id', $cat->id)
                     ->where('academic_year', $validated['academic_year'])

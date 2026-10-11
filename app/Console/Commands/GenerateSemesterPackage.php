@@ -25,7 +25,7 @@ class GenerateSemesterPackage extends Command
 
         $tag = $semester === 'ganjil' ? 'GJL' : 'GNP';
         $cats = FeeCategory::where('is_active', true)
-            ->where('type', 'semesteran')
+            ->whereIn('type', ['semesteran', 'sekali'])
             ->where('code', 'like', '%-'.$tag)
             ->get();
         if ($cats->isEmpty()) {
@@ -35,7 +35,7 @@ class GenerateSemesterPackage extends Command
         }
 
         $classIds = (array) ($this->option('classes') ?? []);
-        $students = Student::where('status', 'aktif')
+        $students = Student::with('classRoom')->where('status', 'aktif')
             ->when($classIds, fn ($q) => $q->whereIn('class_id', $classIds))
             ->get();
         if ($students->isEmpty()) {
@@ -51,7 +51,18 @@ class GenerateSemesterPackage extends Command
         $created = 0;
         $skipped = 0;
         foreach ($students as $student) {
+            $major = $student->classRoom->major ?? null;
+            $grade = $student->classRoom->grade ?? null;
             foreach ($cats as $cat) {
+                // Daftar Ulang hanya Ganjil; khusus jurusan/tingkat ikut aturan paket.
+                if ($semester === 'genap' && str_starts_with($cat->code, 'DU-')) {
+                    $skipped++;
+                    continue;
+                }
+                if (! \App\Support\PackageRules::appliesTo($cat->code, $major, $grade)) {
+                    $skipped++;
+                    continue;
+                }
                 $exists = Bill::where('student_id', $student->id)
                     ->where('fee_category_id', $cat->id)
                     ->where('academic_year', $year)
