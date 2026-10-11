@@ -23,6 +23,9 @@
                 ['route' => 'admin.siswa', 'label' => 'Data Siswa', 'icon' => 'users'],
                 ['route' => 'admin.kategori-tagihan', 'label' => 'Kategori Tagihan', 'icon' => 'tag'],
             ];
+            $menuMasterSuper = [
+                ['route' => 'admin.kelas', 'label' => 'Data Kelas', 'icon' => 'school'],
+            ];
             $menuTransaksi = [
                 ['route' => 'admin.billing', 'label' => 'Billing Generator', 'icon' => 'receipt'],
                 ['route' => 'admin.laporan', 'label' => 'Laporan', 'icon' => 'file-text'],
@@ -57,6 +60,16 @@
                 {{ $item['label'] }}
             </a>
         @endforeach
+        @if($isSuper)
+            @foreach($menuMasterSuper as $item)
+                <a href="{{ route($item['route']) }}"
+                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition
+                          {{ request()->routeIs($item['route'] . '*') ? 'bg-blue-600 font-semibold text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    @include('partials.icons.' . $item['icon'])
+                    {{ $item['label'] }}
+                </a>
+            @endforeach
+        @endif
     </nav>
 
     <div class="text-[11px] font-semibold text-slate-500 mt-4 mb-1 px-3">TRANSAKSI</div>

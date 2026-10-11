@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BillingController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StaffAccountController;
+use App\Http\Controllers\Admin\ClassRoomController;
 use App\Http\Controllers\Portal\AuthController as PortalAuthController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\BillingController as PortalBillingController;
@@ -78,6 +79,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/akun-staf', [StaffAccountController::class, 'store'])->name('akun.store');
     Route::post('/akun-staf/{user}/reset', [StaffAccountController::class, 'reset'])->name('akun.reset');
     Route::post('/akun-staf/{user}/toggle', [StaffAccountController::class, 'toggle'])->name('akun.toggle')->middleware('super');
+
+    // Data Kelas (Super Admin saja)
+    Route::get('/kelas', [ClassRoomController::class, 'index'])->name('kelas')->middleware('super');
+    Route::post('/kelas', [ClassRoomController::class, 'store'])->name('kelas.store')->middleware('super');
+    Route::put('/kelas/{class}', [ClassRoomController::class, 'update'])->name('kelas.update')->middleware('super');
+    Route::delete('/kelas/{class}', [ClassRoomController::class, 'destroy'])->name('kelas.destroy')->middleware('super');
 });
 
 // ---------- Portal Siswa / Wali di root (main link milik portal) ----------
