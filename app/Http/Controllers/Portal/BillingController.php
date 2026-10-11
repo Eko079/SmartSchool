@@ -218,10 +218,20 @@ class BillingController extends Controller
         $student = $this->student();
         abort_if(! $student, 422);
 
-        $payments = Payment::with(['bill.feeCategory'])
-            ->where('student_id', $student->id)
-            ->latest('paid_at')
-            ->paginate(10);
+        $query = Payment::with(['bill.feeCategory'])->where('student_id', $student->id);
+        if ($request->filled('q')) {
+            $q = $request->string('q')->toString();
+            $query->where(function ($w) use ($q) {
+                $w->where('invoice_number', 'like', "%{$q}%")
+                    ->orWhere('payment_method', 'like', "%{$q}%")
+                    ->orWhereHas('bill', fn ($b) => $b->where('bill_code', 'like', "%{$q}%")
+                        ->orWhereHas('feeCategory', fn ($f) => $f->where('name', 'like', "%{$q}%")));
+            });
+        }
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        $payments = $query->latest('paid_at')->paginate(10)->withQueryString();
 
         if ($request->expectsJson() || ! view()->exists('portal.riwayat')) {
             return response()->json(['payments' => $payments]);
