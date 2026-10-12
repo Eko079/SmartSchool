@@ -2,14 +2,12 @@
 @section('title', 'Detail Tagihan')
 
 @section('hero')
-    <div class="m-rev-label">{{ $bill->bill_code }} • {{ $bill->display_name }}</div>
     <div class="m-rev-row">
         <div class="m-rev-value">Rp {{ number_format($bill->total_due, 0, ',', '.') }}</div>
         @if($bill->status === 'paid')<span class="m-delta">Lunas</span>
         @elseif($bill->status === 'overdue')<span class="m-delta down">Menunggak</span>
         @else<span class="m-delta">Aktif</span>@endif
     </div>
-    <div class="m-rev-sub">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }} • Order {{ $bill->order_id ?? '-' }}</div>
 @endsection
 
 @section('kpi')

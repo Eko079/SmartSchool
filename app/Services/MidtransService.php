@@ -114,15 +114,36 @@ class MidtransService
             $params['bank_transfer'] = ['bank' => $method === 'bni_va' ? 'bni' : 'bca'];
         }
 
-        $resp = Http::withBasicAuth($this->serverKey(), '')
-            ->acceptJson()->timeout(25)
-            ->post($this->baseUrl() . '/v2/charge', $params);
+        // Midtrans bisa balas HTTP 200 berisi status_code 406 (order duplikat):
+        // wajib cek isi body, lalu coba suffix berikut (-2, -3, …) maksimal 5x.
+        $data = [];
+        for ($i = 0; $i < 5; $i++) {
+            $params['transaction_details']['order_id'] = $orderId;
+            $resp = Http::withBasicAuth($this->serverKey(), '')
+                ->acceptJson()->timeout(25)
+                ->post($this->baseUrl() . '/v2/charge', $params);
 
-        if (! $resp->successful()) {
-            $msg = $resp->json('status_message') ?? $resp->json('message') ?? $resp->body();
-            throw new \RuntimeException('Midtrans menolak transaksi: ' . $msg);
+            if (! $resp->successful()) {
+                $msg = $resp->json('status_message') ?? $resp->json('message') ?? $resp->body();
+                throw new \RuntimeException('Midtrans menolak transaksi: ' . $msg);
+            }
+            $data = $resp->json() ?? [];
+            $code = (string) ($data['status_code'] ?? '');
+            if ($code === '200' || $code === '201') {
+                break;
+            }
+            $msg = (string) ($data['status_message'] ?? '');
+            if ($code === '406' || stripos($msg, 'conflict') !== false) {
+                $bill->order_id = $orderId; // sementara (belum disimpan) agar nextOrderId naik
+                $orderId = $this->nextOrderId($bill);
+                $data = [];
+                continue;
+            }
+            throw new \RuntimeException('Midtrans menolak transaksi: ' . ($msg ?: $resp->body()));
         }
-        $data = $resp->json();
+        if (empty($data)) {
+            throw new \RuntimeException('Midtrans menolak transaksi: order duplikat berulang, coba lagi.');
+        }
         $expired = now()->addHours(24);
         if (! empty($data['expiry_time'])) {
             try {

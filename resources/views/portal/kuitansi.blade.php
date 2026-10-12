@@ -35,7 +35,8 @@
   </div>
   <table>
     <tr><td>Siswa</td><td>{{ $pay->student->name ?? '-' }} ({{ $pay->student->classRoom->name ?? '-' }})</td></tr>
-    <tr><td>Tagihan</td><td>{{ $pay->bill->bill_code ?? '-' }} • {{ $pay->bill->display_name }}</td></tr>
+    <tr><td>Tagihan</td><td>{{ $pay->bill->display_name }}</td></tr>
+    <tr><td>Order</td><td>{{ $pay->bill->bill_code ?? '-' }}</td></tr>
     <tr><td>TA / Semester</td><td>{{ $pay->bill->display_year ?? '-' }}{{ $pay->bill->semester ? ' • ' . ucfirst($pay->bill->semester) : '' }}</td></tr>
     <tr><td>Metode</td><td>{{ $pay->method_label }}</td></tr>
     <tr><td>Tanggal Bayar</td><td>{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</td></tr>

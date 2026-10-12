@@ -39,7 +39,8 @@ class DashboardController extends Controller
             return ($ta && $sm) ? $ta . ' • ' . $sm : ($ta ?? $sm ?? 'Lainnya');
         })->map(fn ($g) => ['total' => (float) $g->sum('amount'), 'count' => $g->count()])->sortKeysDesc();
 
-        $latest = Bill::with('feeCategory')->where('student_id', $student->id)->latest()->take(6)->get();
+        // Tagihan Terbaru: belum lunas (tunggak/belum/sebagian) di atas, lunas di bawah.
+        $latest = Bill::with('feeCategory')->where('student_id', $student->id)->orderByRaw("CASE WHEN status = 'paid' THEN 1 ELSE 0 END")->latest()->take(6)->get();
         $events = $student->bills()->with('events')->latest()->take(1)->first()?->events()->latest()->take(5)->get() ?? [];
 
         $payload = [

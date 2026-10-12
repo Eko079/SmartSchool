@@ -4,6 +4,7 @@
 @section('hero')
     <div class="m-rev-row">
         <div class="m-rev-value" data-m-count="{{ $summary['waiting'] }}" data-m-fmt="rp-short">Rp {{ number_format($summary['waiting'], 0, ',', '.') }}</div>
+        <span class="m-delta">Total Tagihan</span>
     </div>
 @endsection
 
