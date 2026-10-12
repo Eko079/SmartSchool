@@ -46,7 +46,6 @@
     @endif
     <div class="m-sec-head">
         <div class="m-sec-title">Menu Layanan</div>
-        <a class="m-see" href="{{ route('portal.tagihan') }}">Lihat ›</a>
     </div>
     <div class="m-quick">
         <a class="m-qa" href="{{ route('portal.tagihan') }}">
