@@ -56,11 +56,4 @@
             </div>
         </form>
     </div>
-
-    <div class="m-card">
-        <div class="m-sec-head" style="margin-bottom:8px"><div class="m-sec-title">Anak Tertaut</div></div>
-        <div class="m-kv"><span>Nama</span><b>{{ $user->student->name ?? '-' }}</b></div>
-        <div class="m-kv"><span>NIS</span><b>{{ $user->student->nis ?? '-' }}</b></div>
-        <div class="m-kv"><span>Kelas</span><b>{{ $user->student->classRoom->name ?? '-' }}</b></div>
-    </div>
 @endsection
