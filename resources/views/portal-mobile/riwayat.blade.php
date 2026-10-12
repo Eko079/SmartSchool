@@ -40,13 +40,16 @@
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $pay->bill->display_name }}</div>
-                    <div class="m-stu-sub">{{ $pay->invoice_number }} • {{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
-                    <div class="m-stu-sub">{{ $pay->method_label }} • Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
+                    <div class="m-stu-sub">{{ $pay->invoice_number }}</div>
+                    <div class="m-stu-sub">{{ $pay->paid_at?->format('d M Y H:i') ?? '-' }}</div>
+                    <div class="m-stu-sub">via {{ $pay->method_label }}</div>
                 </div>
-                <div class="m-stu-price">Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
-                @if($pay->status === 'success')<span class="m-pill m-pill-ok">{{ $pay->status_label }}</span>
-                @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">{{ $pay->status_label }}</span>
-                @else<span class="m-pill m-pill-err">{{ $pay->status_label }}</span>@endif
+                <div class="m-stu-right">
+                    @if($pay->status === 'success')<span class="m-pill m-pill-ok">{{ $pay->status_label }}</span>
+                    @elseif($pay->status === 'pending')<span class="m-pill m-pill-warn">{{ $pay->status_label }}</span>
+                    @else<span class="m-pill m-pill-err">{{ $pay->status_label }}</span>@endif
+                    <div class="m-stu-price">Rp {{ number_format($pay->amount, 0, ',', '.') }}</div>
+                </div>
             </div>
             <div class="m-actions">
                 <a class="m-btn m-btn-primary" href="{{ route('portal.kuitansi', $pay->id) }}">Kuitansi</a>

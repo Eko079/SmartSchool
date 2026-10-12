@@ -115,7 +115,7 @@
     background: var(--m-card); border: 1px solid var(--m-border);
     border-radius: 16px; padding: 14px;
 }
-.m-sec-head { display: flex; align-items: center; gap: 8px; }
+.m-sec-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .m-sec-title { font-size: 14px; font-weight: 700; }
 .m-see { margin-left: auto; color: #2563EB; font-size: 12px; font-weight: 600; text-decoration: none; }
 
@@ -149,8 +149,11 @@
 .m-stu-mid { flex: 1; min-width: 0; }
 .m-stu-name { font-size: 13px; font-weight: 700; }
 .m-stu-price { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.m-stu-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.m-stu-right .m-stu-price { font-size: 14px; font-weight: 800; }
 .m-stu-sub { font-size: 11px; color: var(--m-muted); }
 .m-due { color: #DC2626; }
+.m-paid { color: #15803D; font-weight: 600; }
 .m-pill { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 20px; padding: 4px 8px; }
 .m-pill-ok { background: #DCFCE7; color: #15803D; }
 .m-pill-warn { background: #FEF3C7; color: #92400E; }

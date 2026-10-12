@@ -24,7 +24,7 @@
         <div class="m-kv"><span>Nama Wali</span><b>{{ $user->name }}</b></div>
         <div class="m-kv"><span>Telepon / WA</span><b>{{ $user->phone ?: ($user->student->guardian_phone ?? '-') }}</b></div>
         <div class="m-kv"><span>Siswa</span><b>{{ $user->student->name ?? '-' }}</b></div>
-        <div class="m-fdesc">Data induk dari sekolah — perubahan hanya via bendahara.</div>
+        <div class="m-fdesc">Data induk dari sekolah, untuk perubahan hanya via bendahara.</div>
     </div>
 
     <div class="m-card">
@@ -32,8 +32,8 @@
         <form method="POST" action="{{ route('portal.pengaturan.update') }}">
             @csrf
             @method('PUT')
-            <label class="m-stu-sub"><input type="checkbox" name="notify_wa" value="1" {{ $user->notify_wa ? 'checked' : '' }}> Pengingat WA jatuh tempo</label>
-            <label class="m-stu-sub"><input type="checkbox" name="notify_email" value="1" {{ $user->notify_email ? 'checked' : '' }}> Bukti bayar via email</label>
+            <label class="m-stu-sub" style="display:block;margin-bottom:8px"><input type="checkbox" name="notify_wa" value="1" {{ $user->notify_wa ? 'checked' : '' }}> Pengingat WA jatuh tempo</label>
+            <label class="m-stu-sub" style="display:block"><input type="checkbox" name="notify_email" value="1" {{ $user->notify_email ? 'checked' : '' }}> Bukti bayar via email</label>
             <div class="m-actions" style="margin-top:10px">
                 <button type="submit" class="m-btn m-btn-primary">Simpan Notifikasi</button>
             </div>

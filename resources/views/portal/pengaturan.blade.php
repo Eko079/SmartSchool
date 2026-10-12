@@ -7,7 +7,7 @@
         <div class="ss-card space-y-3 flex flex-col">
             <div>
                 <h2 class="text-sm font-bold">Profil Wali</h2>
-                <p class="text-xs text-slate-400">Data induk dari sekolah — perubahan hanya via bendahara</p>
+                <p class="text-xs text-slate-400">Data induk dari sekolah, untuk perubahan hanya via bendahara</p>
             </div>
             <dl class="grid grid-cols-1 gap-2 text-xs flex-1">
                 <div class="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">

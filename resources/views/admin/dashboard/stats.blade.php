@@ -3,7 +3,7 @@
 
     $cards = [
         [
-            'title' => 'Total Terkumpul',
+            'title' => 'Total Uang Terkumpul',
             'val' => 'Rp ' . number_format($totalIncome ?? 0, 0, ',', '.'),
             'count' => (float) ($totalIncome ?? 0),
             'fmt' => 'rp',
@@ -22,7 +22,7 @@
             'tip' => 'Selisih total tagihan terbit dikurangi yang sudah terbayar',
         ],
         [
-            'title' => 'Siswa Aktif',
+            'title' => 'Total Siswa Aktif',
             'val' => number_format($activeStudents ?? 0, 0, ',', '.'),
             'count' => (float) ($activeStudents ?? 0),
             'fmt' => 'int',

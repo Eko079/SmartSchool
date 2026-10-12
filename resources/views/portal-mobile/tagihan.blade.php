@@ -52,19 +52,23 @@
     @if(! empty($isArchived))
     <div class="m-card"><div class="m-fdesc">Akun arsip: hanya riwayat, pembayaran dinonaktifkan.</div></div>
     @endif
-    <div class="m-sec-head"><div class="m-sec-title">Tagihan Semester {{ isset($selSemester) ? ucfirst($selSemester) : '' }}</div><span class="m-see">{{ $bills->total() }} data ›</span></div>
-    @forelse($bills as $i => $bill)
+    <div class="m-sec-head"><div class="m-sec-title">Tagihan Semester {{ isset($selSemester) ? ucfirst($selSemester) : '' }}</div><a class="m-see" style="text-decoration:none" href="{{ request()->fullUrlWithQuery(['show' => request('show') === 'all' ? null : 'all']) }}">{{ request('show') === 'all' ? 'Tutup ›' : 'Detail ›' }}</a></div>
+    @forelse((request('show') === 'all' ? $bills->getCollection() : $bills->getCollection()->take(3)) as $i => $bill)
         @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
         <div class="m-card m-stu-card">
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $bill->display_name }}</div>
-                    <div class="m-stu-sub">{{ $bill->bill_code }} • jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>
-                    <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+                    <div class="m-stu-sub">{{ $bill->bill_code }}</div>
+                    @if($isPaid)<div class="m-stu-sub m-paid">Telah dibayar</div>
+                    @else<div class="m-stu-sub m-due">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>@endif
                 </div>
-                @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
-                @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
-                @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
+                <div class="m-stu-right">
+                    @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
+                    @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
+                    @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
+                    <div class="m-stu-price">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+                </div>
             </div>
             <div class="m-actions">
                 <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"
@@ -89,6 +93,12 @@
         <div class="m-card"><div class="m-fdesc">Tidak ada tagihan pada semester ini.</div></div>
     @endforelse
 
+    @if($bills->total() > 3)
+    <div class="m-actions" style="margin-top:10px;margin-bottom:8px">
+        <a class="m-btn m-btn-primary" style="flex:1;text-align:center;text-decoration:none" href="{{ request()->fullUrlWithQuery(['show' => request('show') === 'all' ? null : 'all']) }}">{{ request('show') === 'all' ? 'Tutup' : 'Detail Tagihan Semester' }}</a>
+    </div>
+    @endif
+
     <div class="m-sec-head"><div class="m-sec-title">Tagihan Lainnya</div><span class="m-see">{{ $otherTotal ?? 0 }} data ›</span></div>
     @forelse(($otherBills ?? collect()) as $bill)
         @php $pay = $payOf($bill); $isPaid = $bill->status === 'paid'; $statusLabel = $bill->status_label; $methodLabel = $pay ? $pay->method_label : '-'; @endphp
@@ -97,11 +107,15 @@
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $bill->display_name }}</div>
                     <div class="m-stu-sub">{{ $bill->bill_code }} • {{ $bill->academic_year ?? '-' }} {{ isset($bill->semester) ? ucfirst($bill->semester) : '' }}</div>
-                    <div class="m-stu-sub">Rp {{ number_format($bill->amount, 0, ',', '.') }}@if((float) $bill->fine_amount > 0) + denda Rp {{ number_format($bill->fine_amount, 0, ',', '.') }}@endif • {{ $pay?->paid_at?->format('d M Y') ?? '-' }} • {{ $methodLabel }}</div>
+                    @if($isPaid)<div class="m-stu-sub m-paid">Telah dibayar</div>
+                    @else<div class="m-stu-sub m-due">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>@endif
                 </div>
-                @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
-                @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
-                @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
+                <div class="m-stu-right">
+                    @if($isPaid)<span class="m-pill m-pill-ok">Lunas</span>
+                    @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
+                    @else<span class="m-pill m-pill-warn">{{ $statusLabel }}</span>@endif
+                    <div class="m-stu-price">Rp {{ number_format($bill->amount, 0, ',', '.') }}@if((float) $bill->fine_amount > 0) + denda Rp {{ number_format($bill->fine_amount, 0, ',', '.') }}@endif</div>
+                </div>
             </div>
             <div class="m-actions">
                 <button type="button" class="m-btn" onclick="openPayModal({{ $bill->id }}, this, true)"

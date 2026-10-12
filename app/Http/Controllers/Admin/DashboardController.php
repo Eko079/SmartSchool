@@ -10,6 +10,7 @@ use App\Models\FeeCategory;
 use App\Support\Device;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -64,9 +65,12 @@ class DashboardController extends Controller
         $shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $fullMonths = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
+        // YEAR()/MONTH() hanya ada di MySQL; SQLite pakai strftime (ponytail: agregasi PHP bila butuh portabel penuh).
+        $yExpr = DB::getDriverName() === 'sqlite' ? "strftime('%Y', paid_at)" : 'YEAR(paid_at)';
+        $mExpr = DB::getDriverName() === 'sqlite' ? 'CAST(strftime(\'%m\', paid_at) AS INTEGER)' : 'MONTH(paid_at)';
         $rows = Payment::where('status', 'success')
             ->where('paid_at', '>=', $now->copy()->startOfMonth()->subMonthsNoOverflow(11))
-            ->selectRaw('YEAR(paid_at) AS y, MONTH(paid_at) AS m, SUM(amount) AS total')
+            ->selectRaw("{$yExpr} AS y, {$mExpr} AS m, SUM(amount) AS total")
             ->groupBy('y', 'm')
             ->get()
             ->keyBy(fn ($r) => $r->y . '-' . $r->m);

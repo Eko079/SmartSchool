@@ -22,11 +22,16 @@
             <div class="m-stu">
                 <div class="m-stu-mid">
                     <div class="m-stu-name">{{ $bill->display_name }}</div>
-                    <div class="m-stu-sub">{{ $bill->bill_code }} • {{ $bill->due_date?->format('d M Y') ?? '-' }} • Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+                    <div class="m-stu-sub">{{ $bill->bill_code }}</div>
+                    @if($bill->status === 'paid')<div class="m-stu-sub m-paid">Telah dibayar</div>
+                    @else<div class="m-stu-sub m-due">Jatuh tempo {{ $bill->due_date?->format('d M Y') ?? '-' }}</div>@endif
                 </div>
-                @if($bill->status === 'paid')<span class="m-pill m-pill-ok">Lunas</span>
-                @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
-                @else<span class="m-pill m-pill-warn">{{ $bill->status_label }}</span>@endif
+                <div class="m-stu-right">
+                    @if($bill->status === 'paid')<span class="m-pill m-pill-ok">Lunas</span>
+                    @elseif($bill->status === 'overdue')<span class="m-pill m-pill-err">Menunggak</span>
+                    @else<span class="m-pill m-pill-warn">{{ $bill->status_label }}</span>@endif
+                    <div class="m-stu-price">Rp {{ number_format($bill->amount, 0, ',', '.') }}</div>
+                </div>
             </div>
         </a>
     @empty

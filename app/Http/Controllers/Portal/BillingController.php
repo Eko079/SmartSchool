@@ -93,8 +93,9 @@ class BillingController extends Controller
             }
         }
 
-        // Urutan tabel rancangan: sort_order lalu jatuh tempo (status hanya label).
-        $bills = $query->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->paginate($perPage)->withQueryString();
+        // Urutan: belum lunas (tunggak/belum/sebagian) di atas, lunas di bawah; lalu sort_order + jatuh tempo.
+        $unpaidFirst = "CASE WHEN status = 'paid' THEN 1 ELSE 0 END";
+        $bills = $query->orderByRaw($unpaidFirst)->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->paginate($perPage)->withQueryString();
         $waitingQuery = (clone $query)->whereIn('status', ['unpaid', 'partial', 'overdue']);
         $summary = [
             'waiting' => (float) $waitingQuery->sum('amount') - (float) (clone $waitingQuery)->sum('paid_amount') + (float) (clone $waitingQuery)->sum('fine_amount'),
@@ -160,7 +161,7 @@ class BillingController extends Controller
             $otherQuery->where('academic_year', $selYear)->where('semester', $selSemester);
             $otherQuery->whereNotIn('fee_category_id', \App\Models\FeeCategory::whereIn('code', \App\Support\PackageRules::packageCodes())->pluck('id'));
             $otherTotal = (clone $otherQuery)->count();
-            $otherBills = $otherQuery->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->take(10)->get();
+            $otherBills = $otherQuery->orderByRaw("CASE WHEN status = 'paid' THEN 1 ELSE 0 END")->orderBy('sort_order')->orderBy('due_date')->orderBy('id')->take(10)->get();
         }
 
         // Channel aktif dari Pengaturan (modal bayar hanya tampilkan yang aktif).
