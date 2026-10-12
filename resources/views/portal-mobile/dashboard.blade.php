@@ -92,49 +92,4 @@
     @empty
         <div class="m-card"><div class="m-fdesc">Belum ada tagihan.</div></div>
     @endforelse
-
-    <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Per Semester</div></div>
-        @forelse(($per_semester ?? collect()) as $label => $row)
-            <div @if(!$loop->first) style="margin-top:10px" @endif>
-                <div class="m-stu"><div class="m-stu-name">{{ $label }}</div><div class="m-stu-price">Rp {{ number_format($row['total'], 0, ',', '.') }}</div></div>
-                <div class="m-stu-sub">{{ $row['count'] }} tagihan</div>
-                <div class="m-seg"><div data-m-seg="{{ $per_semester->max('total') > 0 ? round($row['total'] / $per_semester->max('total') * 100, 1) : 0 }}" style="width: {{ $per_semester->max('total') > 0 ? round($row['total'] / $per_semester->max('total') * 100, 1) : 0 }}%"></div></div>
-            </div>
-        @empty
-            <div class="m-fdesc">Belum ada data semester.</div>
-        @endforelse
-    </div>
-
-    <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Per Kategori</div></div>
-        @forelse($per_category as $name => $total)
-            @php $pct = $per_category->sum() > 0 ? round($total / $per_category->sum() * 100, 1) : 0; @endphp
-            <div @if(!$loop->first) style="margin-top:10px" @endif>
-                <div class="m-stu"><div class="m-stu-name">{{ $name }}</div><div class="m-stu-price">{{ $rpShort($total) }}</div></div>
-                <div class="m-stu-sub">{{ number_format($pct, 1, ',', '.') }}% dari total tagihan</div>
-                <div class="m-seg"><div data-m-seg="{{ $pct }}" style="width: {{ $pct }}%"></div></div>
-            </div>
-        @empty
-            <div class="m-fdesc">Belum ada data kategori.</div>
-        @endforelse
-    </div>
-
-    <div class="m-card">
-        <div class="m-sec-head"><div class="m-sec-title">Aktivitas</div></div>
-        @forelse($activities as $ev)
-            <div class="m-feed" data-m-feed>
-                <div class="m-fav">•</div>
-                <div class="m-fmid">
-                    <div class="m-fname">{{ $ev->friendly }}</div>
-                    <div class="m-fdesc">{{ $ev->created_at?->format('d M Y H:i') }}</div>
-                </div>
-            </div>
-        @empty
-            <div class="m-fdesc">Belum ada aktivitas.</div>
-        @endforelse
-        @if($stats['nearest_due'])
-            <div class="m-fdesc">Batas bayar {{ $stats['nearest_due']->bill_code }} • {{ $stats['nearest_due']->due_date?->format('d M Y') }}</div>
-        @endif
-    </div>
 @endsection
